@@ -9,7 +9,6 @@ import 'package:flutter_deer/util/app_navigator.dart';
 import 'package:flutter_deer/util/device_utils.dart';
 import 'package:flutter_deer/util/image_utils.dart';
 import 'package:flutter_deer/util/theme_utils.dart';
-import 'package:flutter_deer/widgets/fractionally_aligned_sized_box.dart';
 import 'package:flutter_deer/widgets/load_image.dart';
 import 'package:flutter_swiper_null_safety_flutter3/flutter_swiper_null_safety_flutter3.dart';
 import 'package:quick_actions/quick_actions.dart';
@@ -89,12 +88,15 @@ class _SplashPageState extends State<SplashPage> {
     return Material(
       color: context.backgroundColor,
       child: _status == 0 ?
-      const FractionallyAlignedSizedBox(
-        heightFactor: 0.3,
-        widthFactor: 0.33,
-        leftFactor: 0.33,
-        bottomFactor: 0,
-        child: LoadAssetImage('logo')
+      const Center(
+        child: SizedBox(
+          width: 180.0,
+          height: 180.0,
+          child: LoadAssetImage(
+            'splash_logo',
+            fit: BoxFit.contain,
+          ),
+        ),
       ) :
       Swiper(
         key: const Key('swiper'),
