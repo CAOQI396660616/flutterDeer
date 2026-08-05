@@ -66,7 +66,7 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                     enabled: _gender != null,
                     onPressed: _gender == null
                         ? null
-                        : () => Navigator.pushReplacement<void, void>(
+                        : () => Navigator.push<void>(
                             context,
                             MaterialPageRoute<void>(builder: (_) => CompleteProfileAiPage(gender: _gender!)),
                           ),

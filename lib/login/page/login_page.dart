@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!context.mounted) {
       return;
     }
-    Navigator.of(context).pushReplacement<void, void>(
+    Navigator.of(context).push<void>(
       MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()),
     );
   }
