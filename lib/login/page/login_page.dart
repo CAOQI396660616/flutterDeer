@@ -11,6 +11,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _acceptedTerms = true;
 
+  bool get _canSignIn => _acceptedTerms;
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -53,21 +55,40 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: constraints.maxHeight * .09),
                         _SocialButton(
-                          asset: 'ic_login_facebook.png',
-                          label: 'Sign in with Facebook',
-                          onPressed: () => _showUnavailable(context),
+                          asset: 'ic_login_google.png',
+                          label: 'Google ile Giriş',
+                          onPressed: _canSignIn ? () => _showUnavailable(context) : null,
                         ),
                         const SizedBox(height: 16),
                         _SocialButton(
-                          asset: 'ic_login_google.png',
-                          label: 'Sign in with Google',
-                          onPressed: () => _showUnavailable(context),
+                          asset: 'ic_login_facebook.png',
+                          label: 'Facebook ile Giriş',
+                          onPressed: _canSignIn ? () => _showUnavailable(context) : null,
                         ),
                         const SizedBox(height: 16),
                         _SocialButton(
                           asset: 'ic_login_email.png',
-                          label: 'Sign in with Email',
-                          onPressed: () => Navigator.pushNamed(context, '/login/smsLogin'),
+                          label: 'Kolay Giriş',
+                          onPressed: _canSignIn ? () => Navigator.pushNamed(context, '/login/smsLogin') : null,
+                        ),
+                        const SizedBox(height: 28),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            _SmallLoginButton(
+                              icon: Icons.lock_outline,
+                              label: '账号\n密码',
+                              enabled: _canSignIn,
+                              onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                            ),
+                            const SizedBox(width: 18),
+                            _SmallLoginButton(
+                              icon: Icons.apple,
+                              label: 'Apple',
+                              enabled: _canSignIn,
+                              onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                            ),
+                          ],
                         ),
                         SizedBox(height: constraints.maxHeight * .12),
                         Padding(
@@ -124,7 +145,7 @@ class _SocialButton extends StatelessWidget {
   const _SocialButton({required this.asset, required this.label, required this.onPressed});
   final String asset;
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -133,7 +154,7 @@ class _SocialButton extends StatelessWidget {
     child: ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: onPressed == null ? Colors.white.withOpacity(.38) : Colors.white,
         foregroundColor: const Color(0xFF1F2529),
         elevation: 0,
         shape: const StadiumBorder(),
@@ -146,6 +167,34 @@ class _SocialButton extends StatelessWidget {
           const SizedBox(width: 22),
         ],
       ),
+    ),
+  );
+}
+
+class _SmallLoginButton extends StatelessWidget {
+  const _SmallLoginButton({required this.icon, required this.label, required this.enabled, required this.onPressed});
+  final IconData icon;
+  final String label;
+  final bool enabled;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 58,
+    child: Column(
+      children: <Widget>[
+        InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(30),
+          child: CircleAvatar(
+            radius: 27,
+            backgroundColor: Colors.white.withOpacity(enabled ? .18 : .08),
+            child: Icon(icon, size: 22, color: Colors.white.withOpacity(enabled ? .95 : .45)),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(label, textAlign: TextAlign.center, style: TextStyle(color: Colors.white.withOpacity(enabled ? .9 : .45), fontSize: 10, height: 1.1)),
+      ],
     ),
   );
 }
