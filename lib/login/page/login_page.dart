@@ -128,20 +128,26 @@ class _LoginPageState extends State<LoginPage> {
               height: 104,
               padding: const EdgeInsets.all(1),
               decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-              child: ClipOval(
-                child: Image.asset(
-                  SpUtil.getString(Constant.mockLoginUserAvatar) ?? 'assets/images/order/icon_avatar.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
+              child: ClipOval(child: _buildMockAvatar()),
             ),
             Positioned(
               right: -10,
               top: 4,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                decoration: const ShapeDecoration(color: Color(0xFF13D7D4), shape: StadiumBorder()),
-                child: const Text('Last', style: TextStyle(color: Color(0xFF123F42), fontSize: 12, fontWeight: FontWeight.w600)),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: <Color>[Color(0xFFFFD166), Color(0xFFFF8A5B), Color(0xFFE85D9E)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  border: Border.all(color: Colors.white, width: 1),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const <BoxShadow>[
+                    BoxShadow(color: Color(0x66000000), blurRadius: 4, offset: Offset(0, 2)),
+                  ],
+                ),
+                child: const Text('Last', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
               ),
             ),
           ],
@@ -152,10 +158,23 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget _buildMockAvatar() {
+    final String? avatarUrl = SpUtil.getString(Constant.mockLoginUserAvatarUrl);
+    if (avatarUrl == null || avatarUrl.isEmpty) {
+      return Image.asset('assets/images/order/icon_avatar.png', fit: BoxFit.cover);
+    }
+    return Image.network(
+      avatarUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Image.asset('assets/images/order/icon_avatar.png', fit: BoxFit.cover),
+    );
+  }
+
   void _mockLogin(BuildContext context) {
     SpUtil.putBool(Constant.mockLoginUser, true);
     SpUtil.putString(Constant.mockLoginUserName, 'Kral Şakir');
     SpUtil.putString(Constant.mockLoginUserAvatar, 'assets/images/order/icon_avatar.png');
+    SpUtil.putString(Constant.mockLoginUserAvatarUrl, 'https://randomuser.me/api/portraits/men/32.jpg');
     setState(() => _hasMockUser = true);
     _showUnavailable(context);
   }
@@ -202,8 +221,8 @@ class _SocialLoginGroup extends StatelessWidget {
       ),
       const SizedBox(height: 16),
       _SocialButton(
-        asset: 'ic_login_email.png',
         label: 'Kolay Giriş',
+        icon: Icons.phone,
         onPressed: enabled ? onPhonePressed : null,
       ),
     ],
@@ -483,7 +502,10 @@ class _PasswordField extends StatelessWidget {
         onChanged: onChanged,
         decoration: InputDecoration(
           isDense: true,
-          contentPadding: EdgeInsets.zero,
+          // Without a suffix icon Flutter's InputDecorator uses a shorter
+          // intrinsic height, so give the account field the same vertical
+          // center as the password field.
+          contentPadding: EdgeInsets.only(top: obscureText ? 0 : 16),
           hintText: hintText,
           hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
           border: InputBorder.none,
@@ -536,8 +558,9 @@ class _TermsAgreement extends StatelessWidget {
 }
 
 class _SocialButton extends StatelessWidget {
-  const _SocialButton({required this.asset, required this.label, required this.onPressed});
-  final String asset;
+  const _SocialButton({this.asset, this.icon, required this.label, required this.onPressed});
+  final String? asset;
+  final IconData? icon;
   final String label;
   final VoidCallback? onPressed;
 
@@ -558,7 +581,10 @@ class _SocialButton extends StatelessWidget {
         ),
         child: Row(
           children: <Widget>[
-            Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
+            if (icon != null)
+              Icon(icon, size: 22, color: const Color(0xFF5794F2))
+            else
+              Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
             Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
             const SizedBox(width: 22),
           ],
