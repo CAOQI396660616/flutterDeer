@@ -120,6 +120,7 @@ flutter:
     - assets/images/order/
     - assets/images/order/dark/
     - assets/images/login/
+    - assets/images/login_social/
     - assets/images/goods/
     - assets/images/shop/
     - assets/images/account/

@@ -1,155 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_deer/login/widgets/my_text_field.dart';
-import 'package:flutter_deer/res/constant.dart';
-import 'package:flutter_deer/res/resources.dart';
-import 'package:flutter_deer/routers/fluro_navigator.dart';
-import 'package:flutter_deer/store/store_router.dart';
-import 'package:flutter_deer/util/change_notifier_manage.dart';
-import 'package:flutter_deer/util/other_utils.dart';
-import 'package:flutter_deer/widgets/my_app_bar.dart';
-import 'package:flutter_deer/widgets/my_button.dart';
-import 'package:flutter_deer/widgets/my_scroll_view.dart';
-import 'package:sp_util/sp_util.dart';
-
-import '../../l10n/deer_localizations.dart';
-import '../login_router.dart';
-
-/// design/1注册登录/index.html
-class LoginPage extends StatefulWidget {
-
+/// Hiplay social sign-in page.
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> with ChangeNotifierMixin<LoginPage> {
-  //定义一个controller
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final FocusNode _nodeText1 = FocusNode();
-  final FocusNode _nodeText2 = FocusNode();
-  bool _clickable = false;
-
-  @override
-  Map<ChangeNotifier, List<VoidCallback>?>? changeNotifier() {
-    final List<VoidCallback> callbacks = <VoidCallback>[_verify];
-    return <ChangeNotifier, List<VoidCallback>?>{
-      _nameController: callbacks,
-      _passwordController: callbacks,
-      _nodeText1: null,
-      _nodeText2: null,
-    };
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      /// 显示状态栏和导航栏
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
-    });
-    _nameController.text = SpUtil.getString(Constant.phone).nullSafe;
-  }
-
-  void _verify() {
-    final String name = _nameController.text;
-    final String password = _passwordController.text;
-    bool clickable = true;
-    if (name.isEmpty || name.length < 11) {
-      clickable = false;
-    }
-    if (password.isEmpty || password.length < 6) {
-      clickable = false;
-    }
-
-    /// 状态不一样再刷新，避免不必要的setState
-    if (clickable != _clickable) {
-      setState(() {
-        _clickable = clickable;
-      });
-    }
-  }
-  
-  void _login() {
-    SpUtil.putString(Constant.phone, _nameController.text);
-    NavigatorUtils.push(context, StoreRouter.auditPage);
-  }
-  
-  @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     return Scaffold(
-      appBar: MyAppBar(
-        isBack: false,
-        actionName: DeerLocalizations.of(context)!.verificationCodeLogin,
-        onPressed: () {
-          NavigatorUtils.push(context, LoginRouter.smsLoginPage);
-        },
-      ),
-      body: MyScrollView(
-        keyboardConfig: Utils.getKeyboardActionsConfig(context, <FocusNode>[_nodeText1, _nodeText2]),
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
-        children: _buildBody,
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Container(color: const Color(0xFF14C9D0)),
+          Image.asset(
+            'assets/images/login_social/bg_login.png',
+            fit: BoxFit.cover,
+            color: const Color(0xFF14C9D0),
+            colorBlendMode: BlendMode.srcATop,
+          ),
+          SafeArea(
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double logoTop = constraints.maxHeight * .19;
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: logoTop),
+                        Image.asset(
+                          'assets/images/login_social/ic_launcher.png',
+                          width: 88,
+                          height: 88,
+                        ),
+                        const SizedBox(height: 6),
+                        Image.asset(
+                          'assets/images/login_social/ic_packet_logo.webp',
+                          width: 86,
+                          height: 32,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(height: constraints.maxHeight * .09),
+                        _SocialButton(
+                          asset: 'ic_login_facebook.png',
+                          label: 'Sign in with Facebook',
+                          onPressed: () => _showUnavailable(context),
+                        ),
+                        const SizedBox(height: 16),
+                        _SocialButton(
+                          asset: 'ic_login_google.png',
+                          label: 'Sign in with Google',
+                          onPressed: () => _showUnavailable(context),
+                        ),
+                        const SizedBox(height: 16),
+                        _SocialButton(
+                          asset: 'ic_login_email.png',
+                          label: 'Sign in with Email',
+                          onPressed: () => Navigator.pushNamed(context, '/login/smsLogin'),
+                        ),
+                        SizedBox(height: constraints.maxHeight * .12),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 32),
+                          child: Text(
+                            '✓ By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  List<Widget> get _buildBody => <Widget>[
-    Text(
-      DeerLocalizations.of(context)!.passwordLogin,
-      style: TextStyles.textBold26,
-    ),
-    Gaps.vGap16,
-    MyTextField(
-      key: const Key('phone'),
-      focusNode: _nodeText1,
-      controller: _nameController,
-      maxLength: 11,
-      keyboardType: TextInputType.phone,
-      hintText: DeerLocalizations.of(context)!.inputUsernameHint,
-    ),
-    Gaps.vGap8,
-    MyTextField(
-      key: const Key('password'),
-      keyName: 'password',
-      focusNode: _nodeText2,
-      isInputPwd: true,
-      controller: _passwordController,
-      keyboardType: TextInputType.visiblePassword,
-      hintText: DeerLocalizations.of(context)!.inputPasswordHint,
-    ),
-    Gaps.vGap24,
-    MyButton(
-      key: const Key('login'),
-      onPressed: _clickable ? _login : null,
-      text: DeerLocalizations.of(context)!.login,
-    ),
-    Container(
-      height: 40.0,
-      alignment: Alignment.centerRight,
-      child: GestureDetector(
-        child: Text(
-          DeerLocalizations.of(context)!.forgotPasswordLink,
-          key: const Key('forgotPassword'),
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        onTap: () => NavigatorUtils.push(context, LoginRouter.resetPasswordPage),
+  static void _showUnavailable(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-in service is not configured yet')));
+  }
+}
+
+class _SocialButton extends StatelessWidget {
+  const _SocialButton({required this.asset, required this.label, required this.onPressed});
+  final String asset;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 46,
+    width: double.infinity,
+    child: ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1F2529),
+        elevation: 0,
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+      ),
+      child: Row(
+        children: <Widget>[
+          Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
+          Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+          const SizedBox(width: 22),
+        ],
       ),
     ),
-    Gaps.vGap16,
-    Container(
-      alignment: Alignment.center,
-      child: GestureDetector(
-        child: Text(
-          DeerLocalizations.of(context)!.noAccountRegisterLink,
-          key: const Key('noAccountRegister'),
-          style: TextStyle(
-            color: Theme.of(context).primaryColor
-          ),
-        ),
-        onTap: () => NavigatorUtils.push(context, LoginRouter.registerPage),
-      )
-    )
-  ];
+  );
 }
