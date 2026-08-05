@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 /// Hiplay social sign-in page.
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _acceptedTerms = true;
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +19,14 @@ class LoginPage extends StatelessWidget {
         fit: StackFit.expand,
         children: <Widget>[
           Container(color: const Color(0xFF14C9D0)),
-          Image.asset(
-            'assets/images/login_social/bg_login.png',
-            fit: BoxFit.cover,
-            color: const Color(0xFF14C9D0),
-            colorBlendMode: BlendMode.srcATop,
+          Opacity(
+            opacity: .14,
+            child: Image.asset(
+              'assets/images/login_social/bg_login.png',
+              fit: BoxFit.cover,
+              color: Colors.white,
+              colorBlendMode: BlendMode.srcIn,
+            ),
           ),
           SafeArea(
             child: LayoutBuilder(
@@ -62,10 +72,35 @@ class LoginPage extends StatelessWidget {
                         SizedBox(height: constraints.maxHeight * .12),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 32),
-                          child: Text(
-                            '✓ By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
+                          child: GestureDetector(
+                            onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 1, right: 5),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 150),
+                                    width: 16,
+                                    height: 16,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _acceptedTerms ? Colors.white : Colors.transparent,
+                                      border: Border.all(color: Colors.white, width: 1.5),
+                                    ),
+                                    child: _acceptedTerms
+                                        ? const Icon(Icons.check, size: 12, color: Color(0xFF14C9D0))
+                                        : null,
+                                  ),
+                                ),
+                                Text(
+                                  'By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
