@@ -18,6 +18,8 @@ class Constant {
   static const String mockLoginUserName = 'mockLoginUserName';
   static const String mockLoginUserAvatar = 'mockLoginUserAvatar';
   static const String mockLoginUserAvatarUrl = 'mockLoginUserAvatarUrl';
+  static const String loginUsers = 'loginUsers';
+  static const String currentLoginUser = 'currentLoginUser';
   static const String accessToken = 'accessToken';
   static const String refreshToken = 'refreshToken';
 

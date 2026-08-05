@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_deer/res/constant.dart';
-import 'package:sp_util/sp_util.dart';
+import 'package:flutter_deer/login/models/login_user.dart';
+import 'package:flutter_deer/login/store/login_user_store.dart';
 /// Hiplay social sign-in page.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,14 +13,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _acceptedTerms = true;
-  bool _hasMockUser = false;
+  LoginUser? _currentUser;
 
   bool get _canSignIn => _acceptedTerms;
 
   @override
   void initState() {
     super.initState();
-    _hasMockUser = SpUtil.getBool(Constant.mockLoginUser) ?? false;
+    _currentUser = LoginUserStore.currentUser;
   }
 
   @override
@@ -63,7 +63,8 @@ class _LoginPageState extends State<LoginPage> {
                       _SocialLoginGroup(
                         enabled: _canSignIn,
                         onPhonePressed: () => _showPhoneLoginSheet(context),
-                        onSocialLogin: () => _mockLogin(context),
+                        onGoogleLogin: () => _simulateLogin(context, _demoUser('google')),
+                        onFacebookLogin: () => _simulateLogin(context, _demoUser('facebook')),
                       ),
                       const SizedBox(height: 30),
                       Row(
@@ -81,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                               icon: Icons.apple,
                               label: 'Apple',
                               enabled: _canSignIn,
-                              onPressed: _canSignIn ? () => _mockLogin(context) : null,
+                              onPressed: _canSignIn ? () => _simulateLogin(context, _demoUser('apple')) : null,
                             ),
                           ],
                         ],
@@ -102,12 +103,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  static void _showUnavailable(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Demo giriş tamamlandı')));
-  }
-
   Widget _buildProfileHeader() {
-    if (!_hasMockUser) {
+    final LoginUser? user = _currentUser;
+    if (user == null) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -131,38 +129,34 @@ class _LoginPageState extends State<LoginPage> {
               child: ClipOval(child: _buildMockAvatar()),
             ),
             Positioned(
-              right: -10,
-              top: 4,
+              right: -6,
+              top: 6,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: <Color>[Color(0xFFFFD166), Color(0xFFFF8A5B), Color(0xFFE85D9E)],
+                    colors: <Color>[Color(0xFFFFE082), Color(0xFFFFB300)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  border: Border.all(color: Colors.white, width: 1),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: const <BoxShadow>[
-                    BoxShadow(color: Color(0x66000000), blurRadius: 4, offset: Offset(0, 2)),
+                    BoxShadow(color: Color(0x55000000), blurRadius: 3, offset: Offset(0, 1)),
                   ],
                 ),
-                child: const Text('Last', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+                child: const Text('Last', style: TextStyle(color: Color(0xFF6D4300), fontSize: 8, fontWeight: FontWeight.w700)),
               ),
             ),
           ],
         ),
         const SizedBox(height: 10),
-        Text(SpUtil.getString(Constant.mockLoginUserName) ?? 'Kral Şakir', style: const TextStyle(color: Colors.white, fontSize: 20)),
+        Text(user.nickname, style: const TextStyle(color: Colors.white, fontSize: 20)),
       ],
     );
   }
 
   Widget _buildMockAvatar() {
-    final String? avatarUrl = SpUtil.getString(Constant.mockLoginUserAvatarUrl);
-    if (avatarUrl == null || avatarUrl.isEmpty) {
-      return Image.asset('assets/images/order/icon_avatar.png', fit: BoxFit.cover);
-    }
+    final String avatarUrl = _currentUser?.avatar ?? 'https://randomuser.me/api/portraits/men/32.jpg';
     return Image.network(
       avatarUrl,
       fit: BoxFit.cover,
@@ -170,13 +164,38 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _mockLogin(BuildContext context) {
-    SpUtil.putBool(Constant.mockLoginUser, true);
-    SpUtil.putString(Constant.mockLoginUserName, 'Kral Şakir');
-    SpUtil.putString(Constant.mockLoginUserAvatar, 'assets/images/order/icon_avatar.png');
-    SpUtil.putString(Constant.mockLoginUserAvatarUrl, 'https://randomuser.me/api/portraits/men/32.jpg');
-    setState(() => _hasMockUser = true);
-    _showUnavailable(context);
+  LoginUser _demoUser(String method) {
+    const Map<String, Map<String, String>> demoUsers = <String, Map<String, String>>{
+      'google': <String, String>{'name': 'Emre Yılmaz', 'avatar': 'https://randomuser.me/api/portraits/men/32.jpg'},
+      'facebook': <String, String>{'name': 'Elif Kaya', 'avatar': 'https://randomuser.me/api/portraits/women/44.jpg'},
+      'phone': <String, String>{'name': 'Kral Şakir', 'avatar': 'https://randomuser.me/api/portraits/men/75.jpg'},
+      'password': <String, String>{'name': 'Mert Demir', 'avatar': 'https://randomuser.me/api/portraits/men/15.jpg'},
+      'apple': <String, String>{'name': 'Deniz Arslan', 'avatar': 'https://randomuser.me/api/portraits/women/65.jpg'},
+    };
+    final Map<String, String> data = demoUsers[method]!;
+    return LoginUser(
+      id: method,
+      nickname: data['name']!,
+      avatar: data['avatar']!,
+      loginMethod: method,
+      lastLoginAt: DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
+  Future<void> _simulateLogin(BuildContext context, LoginUser user) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black26,
+      builder: (_) => const Center(child: CircularProgressIndicator(color: Color(0xFFFFB300))),
+    );
+    await Future<void>.delayed(const Duration(seconds: 1));
+    if (!context.mounted) {
+      return;
+    }
+    Navigator.of(context, rootNavigator: true).pop();
+    LoginUserStore.save(user);
+    setState(() => _currentUser = user);
   }
 
   void _showPhoneLoginSheet(BuildContext context) {
@@ -184,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _PhoneLoginSheet(onMockLogin: () => _mockLogin(context)),
+      builder: (_) => _PhoneLoginSheet(onMockLogin: () => _simulateLogin(context, _demoUser('phone'))),
     );
   }
 
@@ -193,16 +212,17 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _PasswordLoginSheet(onMockLogin: () => _mockLogin(context)),
+      builder: (_) => _PasswordLoginSheet(onMockLogin: () => _simulateLogin(context, _demoUser('password'))),
     );
   }
 }
 
 class _SocialLoginGroup extends StatelessWidget {
-  const _SocialLoginGroup({required this.enabled, required this.onPhonePressed, required this.onSocialLogin});
+  const _SocialLoginGroup({required this.enabled, required this.onPhonePressed, required this.onGoogleLogin, required this.onFacebookLogin});
   final bool enabled;
   final VoidCallback onPhonePressed;
-  final VoidCallback onSocialLogin;
+  final VoidCallback onGoogleLogin;
+  final VoidCallback onFacebookLogin;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -211,13 +231,13 @@ class _SocialLoginGroup extends StatelessWidget {
       _SocialButton(
         asset: 'ic_login_google.png',
         label: 'Google ile Giriş',
-        onPressed: enabled ? onSocialLogin : null,
+        onPressed: enabled ? onGoogleLogin : null,
       ),
       const SizedBox(height: 16),
       _SocialButton(
         asset: 'ic_login_facebook.png',
         label: 'Facebook ile Giriş',
-        onPressed: enabled ? onSocialLogin : null,
+        onPressed: enabled ? onFacebookLogin : null,
       ),
       const SizedBox(height: 16),
       _SocialButton(
@@ -585,7 +605,7 @@ class _SocialButton extends StatelessWidget {
               Icon(icon, size: 22, color: const Color(0xFF5794F2))
             else
               Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
-            Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+            Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
             const SizedBox(width: 22),
           ],
         ),
