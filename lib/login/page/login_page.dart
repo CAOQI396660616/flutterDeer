@@ -29,21 +29,15 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SafeArea(
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final double logoTop = constraints.maxHeight * .19;
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              children: <Widget>[
+                // Region 1: occupies all remaining space; the brand stays centered here.
+                Expanded(
+                  child: Center(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        SizedBox(height: logoTop),
-                        Image.asset(
-                          'assets/images/login_social/ic_launcher.png',
-                          width: 88,
-                          height: 88,
-                        ),
+                        Image.asset('assets/images/login_social/ic_launcher.png', width: 88, height: 88),
                         const SizedBox(height: 6),
                         Image.asset(
                           'assets/images/login_social/ic_packet_logo.webp',
@@ -51,84 +45,47 @@ class _LoginPageState extends State<LoginPage> {
                           height: 32,
                           fit: BoxFit.contain,
                         ),
-                        SizedBox(height: constraints.maxHeight * .09),
-                        _SocialButton(
-                          asset: 'ic_login_google.png',
-                          label: 'Google ile Giriş',
-                          onPressed: _canSignIn ? () => _showUnavailable(context) : null,
-                        ),
-                        const SizedBox(height: 16),
-                        _SocialButton(
-                          asset: 'ic_login_facebook.png',
-                          label: 'Facebook ile Giriş',
-                          onPressed: _canSignIn ? () => _showUnavailable(context) : null,
-                        ),
-                        const SizedBox(height: 16),
-                        _SocialButton(
-                          asset: 'ic_login_email.png',
-                          label: 'Kolay Giriş',
-                          onPressed: _canSignIn ? () => Navigator.pushNamed(context, '/login/smsLogin') : null,
-                        ),
-                        const SizedBox(height: 28),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            _SmallLoginButton(
-                              icon: Icons.lock_outline,
-                              label: 'Hesap\nŞifresi',
-                              enabled: _canSignIn,
-                              onPressed: _canSignIn ? () => _showUnavailable(context) : null,
-                            ),
-                            if (defaultTargetPlatform == TargetPlatform.iOS) ...<Widget>[
-                              const SizedBox(width: 18),
-                              _SmallLoginButton(
-                                icon: Icons.apple,
-                                label: 'Apple',
-                                enabled: _canSignIn,
-                                onPressed: _canSignIn ? () => _showUnavailable(context) : null,
-                              ),
-                            ],
-                          ],
-                        ),
-                        SizedBox(height: constraints.maxHeight * .12),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 32),
-                          child: GestureDetector(
-                            onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 1, right: 5),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 150),
-                                    width: 16,
-                                    height: 16,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _acceptedTerms ? Colors.white : Colors.transparent,
-                                      border: Border.all(color: Colors.white, width: 1.5),
-                                    ),
-                                    child: _acceptedTerms
-                                        ? const Icon(Icons.check, size: 12, color: Color(0xFF14C9D0))
-                                        : null,
-                                  ),
-                                ),
-                                Text(
-                                  'By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
-                );
-              },
+                ),
+                // Region 2: intrinsic-height content anchored to the bottom.
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      _SocialLoginGroup(enabled: _canSignIn),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          _SmallLoginButton(
+                            icon: Icons.lock_outline,
+                            label: 'Hesap\nŞifresi',
+                            enabled: _canSignIn,
+                            onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                          ),
+                          if (defaultTargetPlatform == TargetPlatform.iOS) ...<Widget>[
+                            const SizedBox(width: 18),
+                            _SmallLoginButton(
+                              icon: Icons.apple,
+                              label: 'Apple',
+                              enabled: _canSignIn,
+                              onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      _TermsAgreement(
+                        accepted: _acceptedTerms,
+                        onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -139,6 +96,71 @@ class _LoginPageState extends State<LoginPage> {
   static void _showUnavailable(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-in service is not configured yet')));
   }
+}
+
+class _SocialLoginGroup extends StatelessWidget {
+  const _SocialLoginGroup({required this.enabled});
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      _SocialButton(
+        asset: 'ic_login_google.png',
+        label: 'Google ile Giriş',
+        onPressed: enabled ? () => _LoginPageState._showUnavailable(context) : null,
+      ),
+      const SizedBox(height: 16),
+      _SocialButton(
+        asset: 'ic_login_facebook.png',
+        label: 'Facebook ile Giriş',
+        onPressed: enabled ? () => _LoginPageState._showUnavailable(context) : null,
+      ),
+      const SizedBox(height: 16),
+      _SocialButton(
+        asset: 'ic_login_email.png',
+        label: 'Kolay Giriş',
+        onPressed: enabled ? () => Navigator.pushNamed(context, '/login/smsLogin') : null,
+      ),
+    ],
+  );
+}
+
+class _TermsAgreement extends StatelessWidget {
+  const _TermsAgreement({required this.accepted, required this.onTap});
+  final bool accepted;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 1, right: 5),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: accepted ? Colors.white : Colors.transparent,
+              border: Border.all(color: Colors.white, width: 1.5),
+            ),
+            child: accepted ? const Icon(Icons.check, size: 12, color: Color(0xFF14C9D0)) : null,
+          ),
+        ),
+        Text(
+          'By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
+          textAlign: TextAlign.left,
+          style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
+        ),
+      ],
+    ),
+  );
 }
 
 class _SocialButton extends StatelessWidget {
