@@ -22,8 +22,7 @@ class _LoginPageState extends State<LoginPage> {
         fit: StackFit.expand,
         children: <Widget>[
           Container(color: const Color(0xFF14C9D0)),
-          Opacity(
-            opacity: .28,
+          Positioned.fill(
             child: Image.asset(
               'assets/images/login_social/bg_login.png',
               fit: BoxFit.cover,
