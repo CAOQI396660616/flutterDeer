@@ -18,6 +18,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     return Scaffold(
+      // The phone sheet handles the keyboard inset itself. Keep the two-region
+      // login page fixed so the background page cannot overflow behind it.
+      resizeToAvoidBottomInset: false,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -67,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                             icon: Icons.lock_outline,
                             label: 'Hesap\nŞifresi',
                             enabled: _canSignIn,
-                            onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                            onPressed: _canSignIn ? () => _showPasswordLoginSheet(context) : null,
                           ),
                           if (defaultTargetPlatform == TargetPlatform.iOS) ...<Widget>[
                             const SizedBox(width: 18),
@@ -106,6 +109,15 @@ class _LoginPageState extends State<LoginPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const _PhoneLoginSheet(),
+    );
+  }
+
+  void _showPasswordLoginSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const _PasswordLoginSheet(),
     );
   }
 }
@@ -149,10 +161,23 @@ class _PhoneLoginSheet extends StatefulWidget {
 
 class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
   final TextEditingController _phoneController = TextEditingController();
+  final FocusNode _phoneFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Let the bottom-sheet entrance animation finish before opening the keyboard.
+    Future<void>.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        _phoneFocusNode.requestFocus();
+      }
+    });
+  }
 
   @override
   void dispose() {
     _phoneController.dispose();
+    _phoneFocusNode.dispose();
     super.dispose();
   }
 
@@ -209,7 +234,7 @@ class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
                       Expanded(
                         child: TextField(
                           controller: _phoneController,
-                          autofocus: true,
+                          focusNode: _phoneFocusNode,
                           maxLength: 10,
                           keyboardType: TextInputType.phone,
                           inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
@@ -249,6 +274,165 @@ class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
   void _showPhoneUnavailable(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS doğrulama servisi henüz yapılandırılmadı')));
   }
+}
+
+class _PasswordLoginSheet extends StatefulWidget {
+  const _PasswordLoginSheet();
+
+  @override
+  State<_PasswordLoginSheet> createState() => _PasswordLoginSheetState();
+}
+
+class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
+  final TextEditingController _accountController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _accountFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Let the bottom-sheet entrance animation finish before opening the keyboard.
+    Future<void>.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        _accountFocusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _accountController.dispose();
+    _passwordController.dispose();
+    _accountFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool canContinue = _accountController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Material(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.centerLeft,
+                    icon: const Icon(Icons.chevron_left, color: Color(0xFF4A4A4A), size: 28),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Hesap / Şifre ile Giriş',
+                    style: TextStyle(fontSize: 26, color: Color(0xFF252525), fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Hesabınızla giriş yapmak için bilgilerinizi girin.',
+                    style: TextStyle(fontSize: 13, color: Color(0xFF777777)),
+                  ),
+                  const SizedBox(height: 24),
+                  _PasswordField(
+                    controller: _accountController,
+                    hintText: 'Kullanıcı adı',
+                    keyboardType: TextInputType.text,
+                    focusNode: _accountFocusNode,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 14),
+                  _PasswordField(
+                    controller: _passwordController,
+                    hintText: 'Şifre',
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: GestureDetector(
+                      onTap: canContinue ? () => _showPasswordUnavailable(context) : null,
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
+                        child: const Icon(Icons.arrow_forward, color: Colors.white, size: 32),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPasswordUnavailable(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hesap girişi henüz yapılandırılmadı')));
+  }
+}
+
+class _PasswordField extends StatelessWidget {
+  const _PasswordField({
+    required this.controller,
+    required this.hintText,
+    required this.keyboardType,
+    required this.onChanged,
+    this.focusNode,
+    this.obscureText = false,
+  });
+
+  final TextEditingController controller;
+  final String hintText;
+  final TextInputType keyboardType;
+  final ValueChanged<String> onChanged;
+  final FocusNode? focusNode;
+  final bool obscureText;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 60,
+    decoration: BoxDecoration(
+      border: Border.all(color: const Color(0xFF999999)),
+      borderRadius: BorderRadius.circular(32),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 22),
+    child: SizedBox.expand(
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        textAlignVertical: TextAlignVertical.center,
+        textInputAction: TextInputAction.next,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.zero,
+          hintText: hintText,
+          hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
+          border: InputBorder.none,
+          suffixIcon: obscureText
+              ? const SizedBox(
+                  width: 48,
+                  child: Center(child: Icon(Icons.lock_outline, color: Color(0xFFAAAAAA))),
+                )
+              : null,
+        ),
+      ),
+    ),
+  );
 }
 
 class _TermsAgreement extends StatelessWidget {
