@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_deer/res/constant.dart';
+import 'package:sp_util/sp_util.dart';
 /// Hiplay social sign-in page.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,8 +13,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _acceptedTerms = true;
+  bool _hasMockUser = false;
 
   bool get _canSignIn => _acceptedTerms;
+
+  @override
+  void initState() {
+    super.initState();
+    _hasMockUser = SpUtil.getBool(Constant.mockLoginUser) ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Image.asset('assets/images/login_social/ic_launcher.png', width: 88, height: 88),
-                        const SizedBox(height: 6),
-                        Image.asset(
-                          'assets/images/login_social/ic_packet_logo.webp',
-                          width: 86,
-                          height: 32,
-                          fit: BoxFit.contain,
-                        ),
+                        _buildProfileHeader(),
                       ],
                     ),
                   ),
@@ -61,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                       _SocialLoginGroup(
                         enabled: _canSignIn,
                         onPhonePressed: () => _showPhoneLoginSheet(context),
+                        onSocialLogin: () => _mockLogin(context),
                       ),
                       const SizedBox(height: 30),
                       Row(
@@ -78,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                               icon: Icons.apple,
                               label: 'Apple',
                               enabled: _canSignIn,
-                              onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                              onPressed: _canSignIn ? () => _mockLogin(context) : null,
                             ),
                           ],
                         ],
@@ -100,7 +103,61 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   static void _showUnavailable(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-in service is not configured yet')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Demo giriş tamamlandı')));
+  }
+
+  Widget _buildProfileHeader() {
+    if (!_hasMockUser) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset('assets/images/login_social/ic_launcher.png', width: 88, height: 88),
+          const SizedBox(height: 6),
+          Image.asset('assets/images/login_social/ic_packet_logo.webp', width: 86, height: 32, fit: BoxFit.contain),
+        ],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Stack(
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            Container(
+              width: 104,
+              height: 104,
+              padding: const EdgeInsets.all(1),
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+              child: ClipOval(
+                child: Image.asset(
+                  SpUtil.getString(Constant.mockLoginUserAvatar) ?? 'assets/images/order/icon_avatar.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              right: -10,
+              top: 4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: const ShapeDecoration(color: Color(0xFF13D7D4), shape: StadiumBorder()),
+                child: const Text('Last', style: TextStyle(color: Color(0xFF123F42), fontSize: 12, fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(SpUtil.getString(Constant.mockLoginUserName) ?? 'Kral Şakir', style: const TextStyle(color: Colors.white, fontSize: 20)),
+      ],
+    );
+  }
+
+  void _mockLogin(BuildContext context) {
+    SpUtil.putBool(Constant.mockLoginUser, true);
+    SpUtil.putString(Constant.mockLoginUserName, 'Kral Şakir');
+    SpUtil.putString(Constant.mockLoginUserAvatar, 'assets/images/order/icon_avatar.png');
+    setState(() => _hasMockUser = true);
+    _showUnavailable(context);
   }
 
   void _showPhoneLoginSheet(BuildContext context) {
@@ -108,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const _PhoneLoginSheet(),
+      builder: (_) => _PhoneLoginSheet(onMockLogin: () => _mockLogin(context)),
     );
   }
 
@@ -117,15 +174,16 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const _PasswordLoginSheet(),
+      builder: (_) => _PasswordLoginSheet(onMockLogin: () => _mockLogin(context)),
     );
   }
 }
 
 class _SocialLoginGroup extends StatelessWidget {
-  const _SocialLoginGroup({required this.enabled, required this.onPhonePressed});
+  const _SocialLoginGroup({required this.enabled, required this.onPhonePressed, required this.onSocialLogin});
   final bool enabled;
   final VoidCallback onPhonePressed;
+  final VoidCallback onSocialLogin;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -134,13 +192,13 @@ class _SocialLoginGroup extends StatelessWidget {
       _SocialButton(
         asset: 'ic_login_google.png',
         label: 'Google ile Giriş',
-        onPressed: enabled ? () => _LoginPageState._showUnavailable(context) : null,
+        onPressed: enabled ? onSocialLogin : null,
       ),
       const SizedBox(height: 16),
       _SocialButton(
         asset: 'ic_login_facebook.png',
         label: 'Facebook ile Giriş',
-        onPressed: enabled ? () => _LoginPageState._showUnavailable(context) : null,
+        onPressed: enabled ? onSocialLogin : null,
       ),
       const SizedBox(height: 16),
       _SocialButton(
@@ -153,7 +211,8 @@ class _SocialLoginGroup extends StatelessWidget {
 }
 
 class _PhoneLoginSheet extends StatefulWidget {
-  const _PhoneLoginSheet();
+  const _PhoneLoginSheet({required this.onMockLogin});
+  final VoidCallback onMockLogin;
 
   @override
   State<_PhoneLoginSheet> createState() => _PhoneLoginSheetState();
@@ -254,7 +313,12 @@ class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
                 const SizedBox(height: 20),
                 Center(
                   child: GestureDetector(
-                    onTap: canContinue ? () => _showPhoneUnavailable(context) : null,
+                    onTap: canContinue
+                        ? () {
+                            Navigator.pop(context);
+                            widget.onMockLogin();
+                          }
+                        : null,
                     child: CircleAvatar(
                       radius: 30,
                       backgroundColor: canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
@@ -271,13 +335,11 @@ class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
     );
   }
 
-  void _showPhoneUnavailable(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS doğrulama servisi henüz yapılandırılmadı')));
-  }
 }
 
 class _PasswordLoginSheet extends StatefulWidget {
-  const _PasswordLoginSheet();
+  const _PasswordLoginSheet({required this.onMockLogin});
+  final VoidCallback onMockLogin;
 
   @override
   State<_PasswordLoginSheet> createState() => _PasswordLoginSheetState();
@@ -361,7 +423,12 @@ class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
                   const SizedBox(height: 20),
                   Center(
                     child: GestureDetector(
-                      onTap: canContinue ? () => _showPasswordUnavailable(context) : null,
+                      onTap: canContinue
+                          ? () {
+                              Navigator.pop(context);
+                              widget.onMockLogin();
+                            }
+                          : null,
                       child: CircleAvatar(
                         radius: 30,
                         backgroundColor: canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
@@ -378,9 +445,6 @@ class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
     );
   }
 
-  void _showPasswordUnavailable(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hesap girişi henüz yapılandırılmadı')));
-  }
 }
 
 class _PasswordField extends StatelessWidget {
