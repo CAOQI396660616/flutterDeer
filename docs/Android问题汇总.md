@@ -54,3 +54,15 @@ flutter build apk --target-platform android-arm64 --obfuscate --split-debug-info
 
 - 1.9.1已支持，使用`keyboardType: TextInputType.visiblePassword`即可。~~输入框在不设置`obscureText`属性的情况下(false)，[无法弹出密码模式键盘](https://github.com/flutter/flutter/issues/31738)，可暂时使用`BlacklistingTextInputFormatter`去除可能会输入的中文。~~
 
+
+
+
+有如下问题
+1背景上那张图片对应的细节还没完善 也就是  bg_login  是一个带透明通道的 图 背景可以显示出来 这个图片
+这个没处理好
+2 底部的 账号密码 应该判断 如果是安卓平台 就只显示  账号密码 如果是ios才显示右边的 apple
+3 账号密码 需要翻译 我们目前都是 土耳其语言 这个是demo 只做 土耳其语言先
+4截图中的 登录三个按钮的左右间距 需要 按照百分比 也就是现在的间距的2倍 然后高度加高现在高度的 1.3
+
+
+1 第三个邮箱登录的 UI 改成电话登录  点击以后按照

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 /// Hiplay social sign-in page.
@@ -22,12 +23,10 @@ class _LoginPageState extends State<LoginPage> {
         children: <Widget>[
           Container(color: const Color(0xFF14C9D0)),
           Opacity(
-            opacity: .14,
+            opacity: .28,
             child: Image.asset(
               'assets/images/login_social/bg_login.png',
               fit: BoxFit.cover,
-              color: Colors.white,
-              colorBlendMode: BlendMode.srcIn,
             ),
           ),
           SafeArea(
@@ -77,17 +76,19 @@ class _LoginPageState extends State<LoginPage> {
                           children: <Widget>[
                             _SmallLoginButton(
                               icon: Icons.lock_outline,
-                              label: '账号\n密码',
+                              label: 'Hesap\nŞifresi',
                               enabled: _canSignIn,
                               onPressed: _canSignIn ? () => _showUnavailable(context) : null,
                             ),
-                            const SizedBox(width: 18),
-                            _SmallLoginButton(
-                              icon: Icons.apple,
-                              label: 'Apple',
-                              enabled: _canSignIn,
-                              onPressed: _canSignIn ? () => _showUnavailable(context) : null,
-                            ),
+                            if (defaultTargetPlatform == TargetPlatform.iOS) ...<Widget>[
+                              const SizedBox(width: 18),
+                              _SmallLoginButton(
+                                icon: Icons.apple,
+                                label: 'Apple',
+                                enabled: _canSignIn,
+                                onPressed: _canSignIn ? () => _showUnavailable(context) : null,
+                              ),
+                            ],
                           ],
                         ),
                         SizedBox(height: constraints.maxHeight * .12),
@@ -148,24 +149,27 @@ class _SocialButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 46,
-    width: double.infinity,
-    child: ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: onPressed == null ? Colors.white.withOpacity(.38) : Colors.white,
-        foregroundColor: const Color(0xFF1F2529),
-        elevation: 0,
-        shape: const StadiumBorder(),
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-      ),
-      child: Row(
-        children: <Widget>[
-          Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
-          Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
-          const SizedBox(width: 22),
-        ],
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 24),
+    child: SizedBox(
+      height: 60,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: onPressed == null ? Colors.white.withOpacity(.38) : Colors.white,
+          foregroundColor: const Color(0xFF1F2529),
+          elevation: 0,
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+        ),
+        child: Row(
+          children: <Widget>[
+            Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
+            Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+            const SizedBox(width: 22),
+          ],
+        ),
       ),
     ),
   );
