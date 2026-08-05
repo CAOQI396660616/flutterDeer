@@ -5,6 +5,7 @@ import 'package:flutter_deer/login/models/login_user.dart';
 import 'package:flutter_deer/login/page/complete_profile_gender_page.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
+import 'package:lottie/lottie.dart';
 /// Hiplay social sign-in page.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -181,22 +182,31 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _simulateLogin(BuildContext context, LoginUser user) async {
+    if (!context.mounted) {
+      return;
+    }
+    // Update the active profile immediately; the loading overlay only delays
+    // entering the profile-completion flow.
+    LoginUserStore.save(user);
+    setState(() => _currentUser = user);
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.black26,
-      builder: (_) => const Center(child: CircularProgressIndicator(color: Color(0xFFFFB300))),
+      builder: (_) => Center(
+        child: Lottie.asset(
+          'assets/lottie/loading.json',
+          width: 88,
+          height: 88,
+          repeat: true,
+        ),
+      ),
     );
-    await Future<void>.delayed(const Duration(seconds: 1));
+    await Future<void>.delayed(const Duration(milliseconds: 2500));
     if (!context.mounted) {
       return;
     }
     Navigator.of(context, rootNavigator: true).pop();
-    LoginUserStore.save(user);
-    setState(() => _currentUser = user);
-    if (!context.mounted) {
-      return;
-    }
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()),
     );

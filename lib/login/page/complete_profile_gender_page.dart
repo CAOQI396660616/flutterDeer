@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/page/complete_profile_ai_page.dart';
+import 'package:lottie/lottie.dart';
 
 class CompleteProfileGenderPage extends StatefulWidget {
   const CompleteProfileGenderPage({super.key});
@@ -32,6 +33,15 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      SizedBox(
+                        height: 82,
+                        child: Lottie.asset(
+                          'assets/lottie/gender_choice.json',
+                          repeat: true,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -45,12 +55,16 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                         children: <Widget>[
                           _GenderChoice(
                             label: 'Erkek',
+                            isMale: true,
                             selected: _gender == 'male',
+                            activeGender: _gender,
                             onTap: () => setState(() => _gender = 'male'),
                           ),
                           _GenderChoice(
                             label: 'Kadın',
+                            isMale: false,
                             selected: _gender == 'female',
+                            activeGender: _gender,
                             onTap: () => setState(() => _gender = 'female'),
                           ),
                         ],
@@ -82,28 +96,55 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
 }
 
 class _GenderChoice extends StatelessWidget {
-  const _GenderChoice({required this.label, required this.selected, required this.onTap});
+  const _GenderChoice({required this.label, required this.isMale, required this.selected, required this.activeGender, required this.onTap});
   final String label;
+  final bool isMale;
   final bool selected;
+  final String? activeGender;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      width: 138,
-      height: 138,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: selected ? Colors.white : Colors.white.withOpacity(.18),
-        border: Border.all(color: selected ? Colors.white : Colors.white54),
-        boxShadow: selected ? const <BoxShadow>[BoxShadow(color: Color(0x55000000), blurRadius: 12)] : null,
+  Widget build(BuildContext context) {
+    final bool hasSelection = activeGender != null;
+    final bool selectedByOther = hasSelection && !selected;
+    final double scale = selected ? 1.12 : selectedByOther ? .86 : 1;
+    final double horizontalShift = selected
+        ? (isMale ? .08 : -.08)
+        : selectedByOther
+        ? (isMale ? -.04 : .04)
+        : 0;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedSlide(
+        offset: Offset(horizontalShift, 0),
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+        child: AnimatedScale(
+          scale: scale,
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOutBack,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 260),
+            width: 138,
+            height: 138,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: selected ? Colors.white : Colors.white.withOpacity(.18),
+              border: Border.all(color: selected ? Colors.white : Colors.white54, width: selected ? 2 : 1),
+              boxShadow: selected ? const <BoxShadow>[BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)] : null,
+            ),
+            alignment: Alignment.center,
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 180),
+              style: TextStyle(color: selected ? const Color(0xFF14AEB5) : Colors.white, fontSize: selected ? 19 : 18, fontWeight: FontWeight.w600),
+              child: Text(label),
+            ),
+          ),
+        ),
       ),
-      alignment: Alignment.center,
-      child: Text(label, style: TextStyle(color: selected ? const Color(0xFF14AEB5) : Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
-    ),
-  );
+    );
+  }
 }
 
 class _ContinueButton extends StatelessWidget {
