@@ -55,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      _SocialLoginGroup(enabled: _canSignIn),
+                      _SocialLoginGroup(
+                        enabled: _canSignIn,
+                        onPhonePressed: () => _showPhoneLoginSheet(context),
+                      ),
                       const SizedBox(height: 30),
                       Row(
                         mainAxisSize: MainAxisSize.min,
@@ -96,11 +99,21 @@ class _LoginPageState extends State<LoginPage> {
   static void _showUnavailable(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-in service is not configured yet')));
   }
+
+  void _showPhoneLoginSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const _PhoneLoginSheet(),
+    );
+  }
 }
 
 class _SocialLoginGroup extends StatelessWidget {
-  const _SocialLoginGroup({required this.enabled});
+  const _SocialLoginGroup({required this.enabled, required this.onPhonePressed});
   final bool enabled;
+  final VoidCallback onPhonePressed;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -121,10 +134,121 @@ class _SocialLoginGroup extends StatelessWidget {
       _SocialButton(
         asset: 'ic_login_email.png',
         label: 'Kolay Giriş',
-        onPressed: enabled ? () => Navigator.pushNamed(context, '/login/smsLogin') : null,
+        onPressed: enabled ? onPhonePressed : null,
       ),
     ],
   );
+}
+
+class _PhoneLoginSheet extends StatefulWidget {
+  const _PhoneLoginSheet();
+
+  @override
+  State<_PhoneLoginSheet> createState() => _PhoneLoginSheetState();
+}
+
+class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
+  final TextEditingController _phoneController = TextEditingController();
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool canContinue = _phoneController.text.isNotEmpty;
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Material(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  alignment: Alignment.centerLeft,
+                  icon: const Icon(Icons.chevron_left, color: Color(0xFF4A4A4A), size: 28),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Telefon Giriş / Kayıt',
+                  style: TextStyle(fontSize: 26, color: Color(0xFF252525), fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Kayıtlı değilseniz, doğrulama SMS'i otomatik gönderilir.",
+                  style: TextStyle(fontSize: 13, color: Color(0xFF777777)),
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFF999999)),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      const SizedBox(width: 22),
+                      const Text('+90', style: TextStyle(fontSize: 16, color: Color(0xFF999999))),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14),
+                        child: Text('|', style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 22)),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _phoneController,
+                          autofocus: true,
+                          maxLength: 10,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                          textInputAction: TextInputAction.done,
+                          onChanged: (_) => setState(() {}),
+                          decoration: const InputDecoration(
+                            hintText: 'Telefon numarası',
+                            hintStyle: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
+                            border: InputBorder.none,
+                            counterText: '',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: GestureDetector(
+                    onTap: canContinue ? () => _showPhoneUnavailable(context) : null,
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
+                      child: const Icon(Icons.arrow_forward, color: Colors.white, size: 32),
+                    ),
+                  ),
+                ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPhoneUnavailable(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS doğrulama servisi henüz yapılandırılmadı')));
+  }
 }
 
 class _TermsAgreement extends StatelessWidget {
