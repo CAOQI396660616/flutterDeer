@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/page/complete_profile_ai_page.dart';
-import 'package:lottie/lottie.dart';
 
 class CompleteProfileGenderPage extends StatefulWidget {
   const CompleteProfileGenderPage({super.key});
@@ -27,34 +26,29 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                 icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
                 onPressed: () => Navigator.pop(context),
               ),
+              const SizedBox(height: 30),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Center(
+                  child: Text(
+                    'Sosyal cinsiyetinizi seçin?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(
-                        height: 82,
-                        child: Lottie.asset(
-                          'assets/lottie/gender_choice.json',
-                          repeat: true,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Sosyal cinsiyetinizi seçin?',
-                          style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      const SizedBox(height: 52),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           _GenderChoice(
                             label: 'Erkek',
+                            icon: Icons.male,
                             isMale: true,
                             selected: _gender == 'male',
                             activeGender: _gender,
@@ -62,6 +56,7 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                           ),
                           _GenderChoice(
                             label: 'Kadın',
+                            icon: Icons.female,
                             isMale: false,
                             selected: _gender == 'female',
                             activeGender: _gender,
@@ -96,8 +91,9 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
 }
 
 class _GenderChoice extends StatelessWidget {
-  const _GenderChoice({required this.label, required this.isMale, required this.selected, required this.activeGender, required this.onTap});
+  const _GenderChoice({required this.label, required this.icon, required this.isMale, required this.selected, required this.activeGender, required this.onTap});
   final String label;
+  final IconData icon;
   final bool isMale;
   final bool selected;
   final String? activeGender;
@@ -135,10 +131,21 @@ class _GenderChoice extends StatelessWidget {
               boxShadow: selected ? const <BoxShadow>[BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)] : null,
             ),
             alignment: Alignment.center,
-            child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 180),
-              style: TextStyle(color: selected ? const Color(0xFF14AEB5) : Colors.white, fontSize: selected ? 19 : 18, fontWeight: FontWeight.w600),
-              child: Text(label),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  icon,
+                  size: selected ? 52 : 46,
+                  color: selected ? const Color(0xFF14AEB5) : Colors.white,
+                ),
+                const SizedBox(height: 10),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 180),
+                  style: TextStyle(color: selected ? const Color(0xFF14AEB5) : Colors.white, fontSize: selected ? 19 : 18, fontWeight: FontWeight.w600),
+                  child: Text(label),
+                ),
+              ],
             ),
           ),
         ),
