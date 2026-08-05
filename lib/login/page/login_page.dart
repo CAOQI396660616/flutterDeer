@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/login/models/login_user.dart';
+import 'package:flutter_deer/login/page/complete_profile_gender_page.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
+import 'package:flutter_deer/login/widgets/remote_avatar.dart';
 /// Hiplay social sign-in page.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -157,11 +159,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildMockAvatar() {
     final String avatarUrl = _currentUser?.avatar ?? 'https://randomuser.me/api/portraits/men/32.jpg';
-    return Image.network(
-      avatarUrl,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => Image.asset('assets/images/order/icon_avatar.png', fit: BoxFit.cover),
-    );
+    return RemoteAvatar(imageUrl: avatarUrl);
   }
 
   LoginUser _demoUser(String method) {
@@ -196,6 +194,12 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context, rootNavigator: true).pop();
     LoginUserStore.save(user);
     setState(() => _currentUser = user);
+    if (!context.mounted) {
+      return;
+    }
+    Navigator.of(context).pushReplacement<void, void>(
+      MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()),
+    );
   }
 
   void _showPhoneLoginSheet(BuildContext context) {

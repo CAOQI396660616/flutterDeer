@@ -20,6 +20,10 @@ class Constant {
   static const String mockLoginUserAvatarUrl = 'mockLoginUserAvatarUrl';
   static const String loginUsers = 'loginUsers';
   static const String currentLoginUser = 'currentLoginUser';
+  static const String profileGender = 'profileGender';
+  static const String profileBirthday = 'profileBirthday';
+  static const String profileInviteCode = 'profileInviteCode';
+  static const String profileCompleted = 'profileCompleted';
   static const String accessToken = 'accessToken';
   static const String refreshToken = 'refreshToken';
 
