@@ -1,7 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter_deer/routers/i_router.dart';
 
-import 'page/login_page.dart';
+import 'page/login_flow_page.dart';
 import 'page/register_page.dart';
 import 'page/reset_password_page.dart';
 import 'page/sms_login_page.dart';
@@ -18,7 +18,7 @@ class LoginRouter implements IRouterProvider{
   
   @override
   void initRouter(FluroRouter router) {
-    router.define(loginPage, handler: Handler(handlerFunc: (_, __) => const LoginPage()));
+    router.define(loginPage, handler: Handler(handlerFunc: (_, __) => const LoginFlowPage()));
     router.define(registerPage, handler: Handler(handlerFunc: (_, __) => const RegisterPage()));
     router.define(smsLoginPage, handler: Handler(handlerFunc: (_, __) => const SMSLoginPage()));
     router.define(resetPasswordPage, handler: Handler(handlerFunc: (_, __) => const ResetPasswordPage()));

@@ -8,7 +8,8 @@ import 'package:flutter_deer/login/widgets/remote_avatar.dart';
 import 'package:lottie/lottie.dart';
 /// Hiplay social sign-in page.
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.onLoginComplete});
+  final ValueChanged<LoginUser>? onLoginComplete;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -207,9 +208,11 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     Navigator.of(context, rootNavigator: true).pop();
-    Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()),
-    );
+    if (widget.onLoginComplete != null) {
+      widget.onLoginComplete!(user);
+      return;
+    }
+    Navigator.of(context).push<void>(MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()));
   }
 
   void _showPhoneLoginSheet(BuildContext context) {

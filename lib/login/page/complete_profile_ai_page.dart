@@ -7,8 +7,10 @@ import 'package:flutter_deer/routers/routers.dart';
 import 'package:sp_util/sp_util.dart';
 
 class CompleteProfileAiPage extends StatefulWidget {
-  const CompleteProfileAiPage({super.key, required this.gender});
+  const CompleteProfileAiPage({super.key, required this.gender, this.onBack, this.onComplete});
   final String gender;
+  final VoidCallback? onBack;
+  final VoidCallback? onComplete;
 
   @override
   State<CompleteProfileAiPage> createState() => _CompleteProfileAiPageState();
@@ -51,7 +53,7 @@ class _CompleteProfileAiPageState extends State<CompleteProfileAiPage> {
                   alignment: Alignment.centerLeft,
                   child: IconButton(
                     icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: widget.onBack ?? () => Navigator.pop(context),
                   ),
                 ),
                 Expanded(
@@ -93,6 +95,10 @@ class _CompleteProfileAiPageState extends State<CompleteProfileAiPage> {
     SpUtil.putString(Constant.profileBirthday, _birthdayController.text);
     SpUtil.putString(Constant.profileInviteCode, _inviteController.text);
     SpUtil.putBool(Constant.profileCompleted, true);
+    if (widget.onComplete != null) {
+      widget.onComplete!();
+      return;
+    }
     Navigator.of(context).pushNamedAndRemoveUntil(Routes.home, (_) => false);
   }
 }

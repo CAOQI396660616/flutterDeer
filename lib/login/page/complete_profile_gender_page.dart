@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/page/complete_profile_ai_page.dart';
 
 class CompleteProfileGenderPage extends StatefulWidget {
-  const CompleteProfileGenderPage({super.key});
+  const CompleteProfileGenderPage({super.key, this.onBack, this.onNext});
+  final VoidCallback? onBack;
+  final ValueChanged<String>? onNext;
 
   @override
   State<CompleteProfileGenderPage> createState() => _CompleteProfileGenderPageState();
@@ -24,7 +26,7 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
             children: <Widget>[
               IconButton(
                 icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
-                onPressed: () => Navigator.pop(context),
+                onPressed: widget.onBack ?? () => Navigator.pop(context),
               ),
               const SizedBox(height: 30),
               const Padding(
@@ -75,10 +77,13 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                     enabled: _gender != null,
                     onPressed: _gender == null
                         ? null
-                        : () => Navigator.push<void>(
-                            context,
-                            MaterialPageRoute<void>(builder: (_) => CompleteProfileAiPage(gender: _gender!)),
-                          ),
+                        : () {
+                            if (widget.onNext != null) {
+                              widget.onNext!(_gender!);
+                              return;
+                            }
+                            Navigator.push<void>(context, MaterialPageRoute<void>(builder: (_) => CompleteProfileAiPage(gender: _gender!)));
+                          },
                   ),
                 ),
               ),
