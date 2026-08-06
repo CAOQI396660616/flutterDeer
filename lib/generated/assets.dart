@@ -11,6 +11,7 @@ class Assets {
   static const $AssetsDataGen data = $AssetsDataGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLottieGen lottie = $AssetsLottieGen();
+  static const $AssetsMp4Gen mp4 = $AssetsMp4Gen();
 }
 
 class $AssetsDataGen {
@@ -262,7 +263,14 @@ class $AssetsLottieGen {
   final String bunnyNewMouth = 'assets/lottie/bunny_new_mouth.json';
   final LottieGenImage genderChoice = const LottieGenImage('assets/lottie/gender_choice.json');
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
+  final String login = 'assets/lottie/login.json';
   final String tabMain = 'assets/lottie/tab_main.json';
+}
+
+class $AssetsMp4Gen {
+  const $AssetsMp4Gen();
+
+  final String levelMax = 'assets/mp4/level_max.mp4';
 }
 
 class AssetGenImage {
