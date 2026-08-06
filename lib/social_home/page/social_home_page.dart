@@ -17,6 +17,7 @@ class _SocialHomePageState extends State<SocialHomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    extendBody: true,
     backgroundColor: const Color(0xFF202224),
     body: SafeArea(
       child: AnimatedSwitcher(
@@ -46,7 +47,7 @@ class _SocialHomePageState extends State<SocialHomePage> {
 }
 
 class HomeBottomBarLabels {
-  static const List<String> _labels = <String>['Video', 'Parti', 'Meydan', 'Sohbet', 'Hediye'];
+  static const List<String> _labels = <String>['Ana Sayfa', 'Meydan', 'Sohbet', 'Profil'];
   static String labelFor(int index) => _labels[index];
 }
 
