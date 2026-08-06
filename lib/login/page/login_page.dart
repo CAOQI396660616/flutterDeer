@@ -50,20 +50,15 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            Container(color: const Color(0xFF101820)),
             Positioned.fill(
-              child: Image.asset(
-                'assets/images/login_social/bg_login.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: MediaQuery.sizeOf(context).height * .5,
-              child: const IgnorePointer(
-                child: WelcomeLottieAnimation(asset: 'assets/lottie/login.json'),
+              child: ClipRect(
+                child: Transform.scale(
+                  scale: 1.02,
+                  child: Image.asset(
+                    'assets/images/login_social/bg_login_page.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
             Positioned.fill(
