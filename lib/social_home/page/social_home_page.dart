@@ -142,7 +142,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
                 selected: _categoryIndex,
                 onChanged: (int value) => setState(() => _categoryIndex = value))),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 24),
           sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) => RoomCard(
@@ -150,9 +150,9 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
                 childCount: rooms.length),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 14,
-                childAspectRatio: .82),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 16,
+                childAspectRatio: .91),
           ),
         ),
       ],

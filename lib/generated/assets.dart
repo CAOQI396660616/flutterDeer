@@ -259,6 +259,18 @@ class $AssetsSocialHomeGen {
   final AssetGenImage iconTab2A = const AssetGenImage('assets/images/social_home/icon_tab_2_a.png');
   final AssetGenImage iconTab3A = const AssetGenImage('assets/images/social_home/icon_tab_3_a.png');
   final AssetGenImage iconTab4A = const AssetGenImage('assets/images/social_home/icon_tab_4_a.png');
+  final AssetGenImage roomWoman44 =
+      const AssetGenImage('assets/images/social_home/room_woman_44.jpg');
+  final AssetGenImage roomWoman47 =
+      const AssetGenImage('assets/images/social_home/room_woman_47.jpg');
+  final AssetGenImage roomWoman49 =
+      const AssetGenImage('assets/images/social_home/room_woman_49.jpg');
+  final AssetGenImage roomWoman65 =
+      const AssetGenImage('assets/images/social_home/room_woman_65.jpg');
+  final AssetGenImage roomWoman68 =
+      const AssetGenImage('assets/images/social_home/room_woman_68.jpg');
+  final AssetGenImage roomWoman75 =
+      const AssetGenImage('assets/images/social_home/room_woman_75.jpg');
 }
 
 class $AssetsLottieGen {
