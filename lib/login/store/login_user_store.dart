@@ -13,7 +13,8 @@ class LoginUserStore {
     try {
       final List<dynamic> jsonList = jsonDecode(value) as List<dynamic>;
       return jsonList
-          .map((dynamic item) => LoginUser.fromJson(Map<String, dynamic>.from(item as Map<dynamic, dynamic>)))
+          .map((dynamic item) =>
+              LoginUser.fromJson(Map<String, dynamic>.from(item as Map<dynamic, dynamic>)))
           .toList();
     } on Object {
       return <LoginUser>[];
@@ -31,8 +32,18 @@ class LoginUserStore {
   }
 
   static void save(LoginUser user) {
-    final List<LoginUser> updatedUsers = users.where((LoginUser item) => item.id != user.id).toList()..add(user);
-    SpUtil.putString(Constant.loginUsers, jsonEncode(updatedUsers.map((LoginUser item) => item.toJson()).toList()));
+    final List<LoginUser> updatedUsers =
+        users.where((LoginUser item) => item.id != user.id).toList()..add(user);
+    SpUtil.putString(Constant.loginUsers,
+        jsonEncode(updatedUsers.map((LoginUser item) => item.toJson()).toList()));
     SpUtil.putString(Constant.currentLoginUser, user.id);
+  }
+
+  static void clear() {
+    SpUtil.putString(Constant.loginUsers, '[]');
+    SpUtil.putString(Constant.currentLoginUser, '');
+    SpUtil.putString(Constant.profileGender, '');
+    SpUtil.putString(Constant.profileBirthday, '');
+    SpUtil.putString(Constant.profileInviteCode, '');
   }
 }

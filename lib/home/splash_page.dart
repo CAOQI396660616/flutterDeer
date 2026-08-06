@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/demo/demo_page.dart';
 import 'package:flutter_deer/login/login_router.dart';
+import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/res/constant.dart';
 import 'package:flutter_deer/routers/fluro_navigator.dart';
+import 'package:flutter_deer/routers/routers.dart';
 import 'package:flutter_deer/util/app_navigator.dart';
 import 'package:flutter_deer/util/device_utils.dart';
 import 'package:flutter_deer/util/image_utils.dart';
@@ -40,6 +42,7 @@ class _SplashPageState extends State<SplashPage> {
         void precacheImages(String image) {
           precacheImage(ImageUtils.getAssetImage(image, format: ImageFormat.webp), context);
         }
+
         _guideList.forEach(precacheImages);
       }
       _initSplash();
@@ -80,44 +83,45 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _goLogin() {
-    NavigatorUtils.push(context, LoginRouter.loginPage, replace: true);
+    NavigatorUtils.push(
+        context, LoginUserStore.currentUser == null ? LoginRouter.loginPage : Routes.home,
+        replace: true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: context.backgroundColor,
-      child: _status == 0 ?
-      const Center(
-        child: SizedBox(
-          width: 180.0,
-          height: 180.0,
-          child: LoadAssetImage(
-            'splash_logo',
-            fit: BoxFit.contain,
-          ),
-        ),
-      ) :
-      Swiper(
-        key: const Key('swiper'),
-        itemCount: _guideList.length,
-        loop: false,
-        itemBuilder: (_, index) {
-          return LoadAssetImage(
-            _guideList[index],
-            key: Key(_guideList[index]),
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-            format: ImageFormat.webp,
-          );
-        },
-        onTap: (index) {
-          if (index == _guideList.length - 1) {
-            _goLogin();
-          }
-        },
-      )
-    );
+        color: context.backgroundColor,
+        child: _status == 0
+            ? const Center(
+                child: SizedBox(
+                  width: 180.0,
+                  height: 180.0,
+                  child: LoadAssetImage(
+                    'splash_logo',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              )
+            : Swiper(
+                key: const Key('swiper'),
+                itemCount: _guideList.length,
+                loop: false,
+                itemBuilder: (_, index) {
+                  return LoadAssetImage(
+                    _guideList[index],
+                    key: Key(_guideList[index]),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    format: ImageFormat.webp,
+                  );
+                },
+                onTap: (index) {
+                  if (index == _guideList.length - 1) {
+                    _goLogin();
+                  }
+                },
+              ));
   }
 }

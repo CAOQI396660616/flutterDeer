@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/social_home/data/mock_home_data.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
+import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 import 'package:flutter_deer/social_home/widgets/room_card.dart';
@@ -32,6 +33,9 @@ class _SocialHomePageState extends State<SocialHomePage> {
 
   Widget _buildBody(int bottomIndex) {
     if (bottomIndex != 0) {
+      if (bottomIndex == 3) {
+        return const ProfileTabPage();
+      }
       return Center(
           child: Text(HomeBottomBarLabels.labelFor(bottomIndex),
               style: const TextStyle(color: Colors.white70, fontSize: 20)));
