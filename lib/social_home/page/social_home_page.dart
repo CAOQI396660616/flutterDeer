@@ -17,16 +17,18 @@ class SocialHomePage extends StatefulWidget {
   State<SocialHomePage> createState() => _SocialHomePageState();
 }
 
-class _SocialHomePageState extends State<SocialHomePage> {
+class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObserver {
   // 调整这里的数值即可改变首页背景毛玻璃强度，数值越大越模糊。
   static const double _backgroundBlurSigma = 6;
 
   int _bottomIndex = 0;
   bool _showWelcomeAnimation = true;
+  bool _hasProcessedInitialResume = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -37,6 +39,26 @@ class _SocialHomePageState extends State<SocialHomePage> {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarContrastEnforced: false,
     ));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      return;
+    }
+    if (!_hasProcessedInitialResume) {
+      _hasProcessedInitialResume = true;
+      return;
+    }
+    if (mounted) {
+      setState(() => _showWelcomeAnimation = true);
+    }
   }
 
   @override
