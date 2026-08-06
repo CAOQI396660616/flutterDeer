@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            Container(color: const Color(0xFF14C9D0)),
+            Container(color: const Color(0xFF101820)),
             Positioned.fill(
               child: Image.asset(
                 'assets/images/login_social/bg_login.png',
@@ -62,6 +64,14 @@ class _LoginPageState extends State<LoginPage> {
               height: MediaQuery.sizeOf(context).height * .5,
               child: const IgnorePointer(
                 child: WelcomeLottieAnimation(asset: 'assets/lottie/login.json'),
+              ),
+            ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 9, sigmaY: 9),
+                  child: Container(color: const Color(0x24101820)),
+                ),
               ),
             ),
             SafeArea(
@@ -157,10 +167,37 @@ class _LoginPageState extends State<LoginPage> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Image.asset('assets/images/login_social/ic_launcher.png', width: 88, height: 88),
-          const SizedBox(height: 6),
-          Image.asset('assets/images/login_social/ic_packet_logo.webp',
-              width: 86, height: 32, fit: BoxFit.contain),
+          Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              const Positioned(
+                left: -18,
+                top: -18,
+                width: 140,
+                height: 140,
+                child: IgnorePointer(
+                  child: WelcomeLottieAnimation(asset: 'assets/lottie/wave.json'),
+                ),
+              ),
+              Container(
+                width: 104,
+                height: 104,
+                padding: const EdgeInsets.all(1),
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/login_social/ic_launcher.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 22),
+          const Text(
+            'HiPlay',
+            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+          ),
         ],
       );
     }
@@ -170,6 +207,15 @@ class _LoginPageState extends State<LoginPage> {
         Stack(
           clipBehavior: Clip.none,
           children: <Widget>[
+            const Positioned(
+              left: -18,
+              top: -18,
+              width: 140,
+              height: 140,
+              child: IgnorePointer(
+                child: WelcomeLottieAnimation(asset: 'assets/lottie/wave.json'),
+              ),
+            ),
             Container(
               width: 104,
               height: 104,

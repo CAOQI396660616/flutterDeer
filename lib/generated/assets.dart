@@ -265,6 +265,7 @@ class $AssetsLottieGen {
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
   final String login = 'assets/lottie/login.json';
   final String tabMain = 'assets/lottie/tab_main.json';
+  final LottieGenImage wave = const LottieGenImage('assets/lottie/wave.json');
   final String welcome = 'assets/lottie/welcome.json';
 }
 
