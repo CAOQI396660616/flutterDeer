@@ -14,8 +14,9 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
   String? _gender;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Stack(
+  Widget build(BuildContext context) => PopScope<void>(
+    child: Scaffold(
+      body: Stack(
       fit: StackFit.expand,
       children: <Widget>[
         const ColoredBox(color: Color(0xFF14C9D0)),
@@ -91,6 +92,7 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
           ),
         ),
       ],
+      ),
     ),
   );
 }

@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _acceptedTerms = true;
   LoginUser? _currentUser;
+  DateTime? _lastBackPressedAt;
 
   bool get _canSignIn => _acceptedTerms;
 
@@ -30,13 +31,21 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    return Scaffold(
-      // The phone sheet handles the keyboard inset itself. Keep the two-region
-      // login page fixed so the background page cannot overflow behind it.
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
+    return PopScope<void>(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, void result) {
+        if (didPop) {
+          return;
+        }
+        _handleSystemBack(context);
+      },
+      child: Scaffold(
+        // The phone sheet handles the keyboard inset itself. Keep the two-region
+        // login page fixed so the background page cannot overflow behind it.
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
           Container(color: const Color(0xFF14C9D0)),
           Positioned.fill(
             child: Image.asset(
@@ -102,9 +111,30 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  void _handleSystemBack(BuildContext context) {
+    final DateTime now = DateTime.now();
+    final bool shouldExit = _lastBackPressedAt != null && now.difference(_lastBackPressedAt!).inMilliseconds < 2000;
+    if (shouldExit) {
+      SystemNavigator.pop();
+      return;
+    }
+
+    _lastBackPressedAt = now;
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    messenger
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Çıkmak için tekrar geri tuşuna basın'),
+          duration: Duration(seconds: 2),
+        ),
+      );
   }
 
   Widget _buildProfileHeader() {

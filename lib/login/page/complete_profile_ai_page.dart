@@ -40,8 +40,9 @@ class _CompleteProfileAiPageState extends State<CompleteProfileAiPage> {
   @override
   Widget build(BuildContext context) {
     final LoginUser? user = LoginUserStore.currentUser;
-    return Scaffold(
-      body: Stack(
+    return PopScope<void>(
+      child: Scaffold(
+        body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           const ColoredBox(color: Color(0xFF14C9D0)),
@@ -91,6 +92,7 @@ class _CompleteProfileAiPageState extends State<CompleteProfileAiPage> {
             ),
           ),
         ],
+        ),
       ),
     );
   }
