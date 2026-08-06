@@ -171,12 +171,12 @@ class _LoginPageState extends State<LoginPage> {
             clipBehavior: Clip.none,
             children: <Widget>[
               const Positioned(
-                left: -18,
-                top: -18,
-                width: 140,
-                height: 140,
+                left: -31,
+                top: -31,
+                width: 166,
+                height: 166,
                 child: IgnorePointer(
-                  child: WelcomeLottieAnimation(asset: 'assets/lottie/wave.json'),
+                  child: WelcomeLottieAnimation(asset: 'assets/lottie/wave.json', repeat: true),
                 ),
               ),
               Container(
@@ -208,12 +208,12 @@ class _LoginPageState extends State<LoginPage> {
           clipBehavior: Clip.none,
           children: <Widget>[
             const Positioned(
-              left: -18,
-              top: -18,
-              width: 140,
-              height: 140,
+              left: -31,
+              top: -31,
+              width: 166,
+              height: 166,
               child: IgnorePointer(
-                child: WelcomeLottieAnimation(asset: 'assets/lottie/wave.json'),
+                child: WelcomeLottieAnimation(asset: 'assets/lottie/wave.json', repeat: true),
               ),
             ),
             Container(

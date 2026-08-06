@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class WelcomeLottieAnimation extends StatefulWidget {
-  const WelcomeLottieAnimation({super.key, required this.asset, this.onCompleted});
+  const WelcomeLottieAnimation(
+      {super.key, required this.asset, this.onCompleted, this.repeat = false});
 
   final String asset;
   final VoidCallback? onCompleted;
+  final bool repeat;
 
   @override
   State<WelcomeLottieAnimation> createState() => _WelcomeLottieAnimationState();
@@ -21,7 +23,13 @@ class _WelcomeLottieAnimationState extends State<WelcomeLottieAnimation>
   void initState() {
     super.initState();
     _controller.addStatusListener((AnimationStatus status) {
-      if (status == AnimationStatus.completed) widget.onCompleted?.call();
+      if (status == AnimationStatus.completed) {
+        if (widget.repeat) {
+          _controller.repeat();
+        } else {
+          widget.onCompleted?.call();
+        }
+      }
     });
   }
 
@@ -37,9 +45,12 @@ class _WelcomeLottieAnimationState extends State<WelcomeLottieAnimation>
         controller: _controller,
         repeat: false,
         onLoaded: (LottieComposition composition) {
-          _controller
-            ..duration = composition.duration
-            ..forward();
+          _controller.duration = composition.duration;
+          if (widget.repeat) {
+            _controller.repeat();
+          } else {
+            _controller.forward();
+          }
         },
       );
 }
