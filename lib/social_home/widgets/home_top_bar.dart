@@ -5,10 +5,12 @@ class HomeTopBar extends StatelessWidget {
       {super.key,
       required this.selected,
       required this.indicatorProgress,
+      required this.onWelcomeTap,
       required this.onChanged});
 
   final int selected;
   final double indicatorProgress;
+  final VoidCallback onWelcomeTap;
   final ValueChanged<int> onChanged;
 
   @override
@@ -22,7 +24,7 @@ class HomeTopBar extends StatelessWidget {
               children: <Widget>[
                 Positioned(
                   left: 14 + (indicatorProgress * 87),
-                  bottom: 5,
+                  bottom: 8,
                   width: 27,
                   height: 8,
                   child: const IgnorePointer(
@@ -48,7 +50,7 @@ class HomeTopBar extends StatelessWidget {
           const Spacer(),
           _CircleAction(icon: Icons.search, label: 'Ara', onTap: () {}),
           const SizedBox(width: 12),
-          _CircleAction(icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: () {}),
+          _CircleAction(icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
         ],
       );
 }
@@ -62,11 +64,13 @@ class _TopTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
-        child: Text(label,
-            style: TextStyle(
-                color: selected ? Colors.white : Colors.white60,
-                fontSize: 22,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
+        child: Center(
+          child: Text(label,
+              style: TextStyle(
+                  color: selected ? Colors.white : Colors.white60,
+                  fontSize: 22,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
+        ),
       );
 }
 
@@ -78,22 +82,17 @@ class _TopTabIndicatorPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = const Color(0xFF14D8D4)
+      ..shader = const LinearGradient(
+        colors: <Color>[Color(0xFFFFD54F), Color(0xFFFF7A00)],
+      ).createShader(Offset.zero & size)
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 3.5
       ..style = PaintingStyle.stroke;
     final Path path = Path()
-      ..moveTo(3, size.height * .58)
-      ..quadraticBezierTo(size.width * .33, size.height * .15, size.width * .62, size.height * .52)
-      ..quadraticBezierTo(size.width * .82, size.height * .78, size.width - 2, size.height * .38);
+      ..moveTo(3, size.height * .62)
+      ..quadraticBezierTo(size.width * .28, size.height * .15, size.width * .55, size.height * .52)
+      ..quadraticBezierTo(size.width * .78, size.height * .82, size.width - 2, size.height * .48);
     canvas.drawPath(path, paint);
-
-    final Paint highlight = Paint()
-      ..color = const Color(0xAA70FFF3)
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1.4;
-    canvas.drawLine(
-        Offset(8, size.height * .75), Offset(size.width - 8, size.height * .55), highlight);
   }
 
   @override

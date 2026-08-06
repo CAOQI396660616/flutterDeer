@@ -112,34 +112,72 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    Positioned.fill(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                        child: const ColoredBox(color: Color(0x33000000)),
-                      ),
-                    ),
-                    const ModalBarrier(color: Colors.transparent, dismissible: false),
+                    const ModalBarrier(color: Color(0x99000000), dismissible: false),
                     Center(
-                      child: SizedBox(
-                        width: (MediaQuery.sizeOf(context).width * .52).clamp(180.0, 220.0),
-                        height: (MediaQuery.sizeOf(context).width * .52).clamp(180.0, 220.0),
-                        child: WelcomeLottieAnimation(
-                          asset: 'assets/lottie/welcome.json',
-                          onCompleted: () => setState(() => _showWelcomeAnimation = false),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 12,
-                      child: SafeArea(
-                        child: IconButton(
-                          onPressed: () => setState(() => _showWelcomeAnimation = false),
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.black45,
-                            foregroundColor: Colors.white,
+                      child: FractionallySizedBox(
+                        widthFactor: .88,
+                        heightFactor: .68,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: const Color(0x66101820),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.white24),
+                              ),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: <Widget>[
+                                  const Positioned(
+                                    top: 34,
+                                    left: 24,
+                                    right: 24,
+                                    height: 108,
+                                    child: WelcomeLottieAnimation(
+                                      asset: 'assets/lottie/welcome_top.json',
+                                      repeat: true,
+                                    ),
+                                  ),
+                                  Center(
+                                    child: SizedBox(
+                                      width: (MediaQuery.sizeOf(context).width * .52)
+                                          .clamp(180.0, 220.0),
+                                      height: (MediaQuery.sizeOf(context).width * .52)
+                                          .clamp(180.0, 220.0),
+                                      child: WelcomeLottieAnimation(
+                                        asset: 'assets/lottie/welcome.json',
+                                        onCompleted: () =>
+                                            setState(() => _showWelcomeAnimation = false),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 16,
+                                    child: Center(
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(.16),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: Colors.white24),
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () =>
+                                              setState(() => _showWelcomeAnimation = false),
+                                          color: Colors.white70,
+                                          icon: const Icon(Icons.close),
+                                          tooltip: 'Kapat',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          icon: const Icon(Icons.close),
                         ),
                       ),
                     ),
@@ -161,7 +199,7 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
           child: Text(HomeBottomBarLabels.labelFor(bottomIndex),
               style: const TextStyle(color: Colors.white70, fontSize: 20)));
     }
-    return const _RoomsHomeTab();
+    return _RoomsHomeTab(onWelcomeTap: () => setState(() => _showWelcomeAnimation = true));
   }
 }
 
@@ -171,7 +209,8 @@ class HomeBottomBarLabels {
 }
 
 class _RoomsHomeTab extends StatefulWidget {
-  const _RoomsHomeTab();
+  const _RoomsHomeTab({required this.onWelcomeTap});
+  final VoidCallback onWelcomeTap;
 
   @override
   State<_RoomsHomeTab> createState() => _RoomsHomeTabState();
@@ -219,6 +258,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
           child: HomeTopBar(
             selected: _topTab,
             indicatorProgress: (_pagePosition - 1).clamp(0.0, 1.0),
+            onWelcomeTap: widget.onWelcomeTap,
             onChanged: (int value) {
               final int targetPage = value == 0 ? 0 : 2;
               _topPageController.animateToPage(targetPage,
