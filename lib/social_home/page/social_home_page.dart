@@ -4,8 +4,8 @@ import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
-import 'package:flutter_deer/social_home/widgets/mp4_animation_player.dart';
 import 'package:flutter_deer/social_home/widgets/room_card.dart';
+import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
 
 class SocialHomePage extends StatefulWidget {
   const SocialHomePage({super.key});
@@ -37,20 +37,18 @@ class _SocialHomePageState extends State<SocialHomePage> {
         if (_showWelcomeAnimation)
           Positioned.fill(
             child: Material(
-              color: const Color(0xFF101214),
+              color: Colors.transparent,
               child: Stack(
                 fit: StackFit.expand,
                 children: <Widget>[
-                  const Mp4AnimationPlayer(
-                    asset: 'assets/mp4/level_max.mp4',
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: IconButton(
-                      onPressed: () => setState(() => _showWelcomeAnimation = false),
-                      icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                  const ModalBarrier(color: Colors.transparent, dismissible: false),
+                  Center(
+                    child: SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: WelcomeLottieAnimation(
+                        onCompleted: () => setState(() => _showWelcomeAnimation = false),
+                      ),
                     ),
                   ),
                 ],
