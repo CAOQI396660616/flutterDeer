@@ -2,7 +2,6 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/account/account_router.dart';
 import 'package:flutter_deer/goods/goods_router.dart';
-import 'package:flutter_deer/home/home_page.dart';
 import 'package:flutter_deer/home/webview_page.dart';
 import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/order/order_router.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_deer/routers/i_router.dart';
 import 'package:flutter_deer/routers/not_found_page.dart';
 import 'package:flutter_deer/setting/setting_router.dart';
 import 'package:flutter_deer/shop/shop_router.dart';
+import 'package:flutter_deer/social_home/page/social_home_page.dart';
 import 'package:flutter_deer/statistics/statistics_router.dart';
 import 'package:flutter_deer/store/store_router.dart';
 
@@ -31,7 +31,7 @@ class Routes {
       });
 
     router.define(home, handler: Handler(
-      handlerFunc: (BuildContext? context, Map<String, List<String>> params) => const Home()));
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) => const SocialHomePage()));
     
     router.define(webViewPage, handler: Handler(handlerFunc: (_, params) {
       final String title = params['title']?.first ?? '';
