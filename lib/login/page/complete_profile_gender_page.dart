@@ -51,57 +51,50 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                _GenderChoice(
-                                  label: 'Erkek',
-                                  icon: Icons.male,
-                                  isMale: true,
-                                  selected: _gender == 'male',
-                                  activeGender: _gender,
-                                  onTap: () => setState(() => _gender = 'male'),
-                                ),
-                                _GenderChoice(
-                                  label: 'Kadın',
-                                  icon: Icons.female,
-                                  isMale: false,
-                                  selected: _gender == 'female',
-                                  activeGender: _gender,
-                                  onTap: () => setState(() => _gender = 'female'),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                    const SizedBox(height: 58),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          _GenderChoice(
+                            label: 'Erkek',
+                            icon: Icons.male,
+                            isMale: true,
+                            selected: _gender == 'male',
+                            activeGender: _gender,
+                            onTap: () => setState(() => _gender = 'male'),
+                          ),
+                          _GenderChoice(
+                            label: 'Kadın',
+                            icon: Icons.female,
+                            isMale: false,
+                            selected: _gender == 'female',
+                            activeGender: _gender,
+                            onTap: () => setState(() => _gender = 'female'),
+                          ),
+                        ],
                       ),
                     ),
+                    const SizedBox(height: 56),
                     Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 32),
-                        child: _ContinueButton(
-                          enabled: _gender != null,
-                          onPressed: _gender == null
-                              ? null
-                              : () {
-                                  if (widget.onNext != null) {
-                                    widget.onNext!(_gender!);
-                                    return;
-                                  }
-                                  Navigator.push<void>(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                          builder: (_) => CompleteProfileAiPage(gender: _gender!)));
-                                },
-                        ),
+                      child: _ContinueButton(
+                        enabled: _gender != null,
+                        onPressed: _gender == null
+                            ? null
+                            : () {
+                                if (widget.onNext != null) {
+                                  widget.onNext!(_gender!);
+                                  return;
+                                }
+                                Navigator.push<void>(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                        builder: (_) => CompleteProfileAiPage(gender: _gender!)));
+                              },
                       ),
                     ),
+                    const Spacer(),
                   ],
                 ),
               ),
@@ -170,10 +163,13 @@ class _GenderChoice extends StatelessWidget {
                       : null,
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Lottie.asset(
-                  isMale ? 'assets/lottie/man.json' : 'assets/lottie/woman.json',
-                  fit: BoxFit.contain,
-                  repeat: true,
+                child: Transform.scale(
+                  scale: 1.35,
+                  child: Lottie.asset(
+                    isMale ? 'assets/lottie/man.json' : 'assets/lottie/woman.json',
+                    fit: BoxFit.contain,
+                    repeat: true,
+                  ),
                 ),
               ),
               const SizedBox(height: 6),
