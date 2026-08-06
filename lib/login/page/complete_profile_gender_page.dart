@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/page/complete_profile_ai_page.dart';
 
@@ -15,90 +17,107 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
 
   @override
   Widget build(BuildContext context) => PopScope<void>(
-    child: Scaffold(
-      body: Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        const ColoredBox(color: Color(0xFF14C9D0)),
-        Image.asset('assets/images/login_social/bg_login.png', fit: BoxFit.cover),
-        SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Scaffold(
+          body: Stack(
+            fit: StackFit.expand,
             children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
-                onPressed: widget.onBack ?? () => Navigator.pop(context),
-              ),
-              const SizedBox(height: 30),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Center(
-                  child: Text(
-                    'Sosyal cinsiyetinizi seçin?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w600),
+              Image.asset('assets/images/login_social/bg_login_page.jpg', fit: BoxFit.cover),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 9, sigmaY: 9),
+                    child: Container(color: const Color(0x24101820)),
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          _GenderChoice(
-                            label: 'Erkek',
-                            icon: Icons.male,
-                            isMale: true,
-                            selected: _gender == 'male',
-                            activeGender: _gender,
-                            onTap: () => setState(() => _gender = 'male'),
-                          ),
-                          _GenderChoice(
-                            label: 'Kadın',
-                            icon: Icons.female,
-                            isMale: false,
-                            selected: _gender == 'female',
-                            activeGender: _gender,
-                            onTap: () => setState(() => _gender = 'female'),
-                          ),
-                        ],
+              SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
+                      onPressed: widget.onBack ?? () => Navigator.pop(context),
+                    ),
+                    const SizedBox(height: 30),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Center(
+                        child: Text(
+                          'Sosyal cinsiyetinizi seçin?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 25, fontWeight: FontWeight.w600),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: _ContinueButton(
-                    enabled: _gender != null,
-                    onPressed: _gender == null
-                        ? null
-                        : () {
-                            if (widget.onNext != null) {
-                              widget.onNext!(_gender!);
-                              return;
-                            }
-                            Navigator.push<void>(context, MaterialPageRoute<void>(builder: (_) => CompleteProfileAiPage(gender: _gender!)));
-                          },
-                  ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                _GenderChoice(
+                                  label: 'Erkek',
+                                  icon: Icons.male,
+                                  isMale: true,
+                                  selected: _gender == 'male',
+                                  activeGender: _gender,
+                                  onTap: () => setState(() => _gender = 'male'),
+                                ),
+                                _GenderChoice(
+                                  label: 'Kadın',
+                                  icon: Icons.female,
+                                  isMale: false,
+                                  selected: _gender == 'female',
+                                  activeGender: _gender,
+                                  onTap: () => setState(() => _gender = 'female'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 32),
+                        child: _ContinueButton(
+                          enabled: _gender != null,
+                          onPressed: _gender == null
+                              ? null
+                              : () {
+                                  if (widget.onNext != null) {
+                                    widget.onNext!(_gender!);
+                                    return;
+                                  }
+                                  Navigator.push<void>(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                          builder: (_) => CompleteProfileAiPage(gender: _gender!)));
+                                },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      ],
-      ),
-    ),
-  );
+      );
 }
 
 class _GenderChoice extends StatelessWidget {
-  const _GenderChoice({required this.label, required this.icon, required this.isMale, required this.selected, required this.activeGender, required this.onTap});
+  const _GenderChoice(
+      {required this.label,
+      required this.icon,
+      required this.isMale,
+      required this.selected,
+      required this.activeGender,
+      required this.onTap});
   final String label;
   final IconData icon;
   final bool isMale;
@@ -110,12 +129,16 @@ class _GenderChoice extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasSelection = activeGender != null;
     final bool selectedByOther = hasSelection && !selected;
-    final double scale = selected ? 1.12 : selectedByOther ? .86 : 1;
+    final double scale = selected
+        ? 1.12
+        : selectedByOther
+            ? .86
+            : 1;
     final double horizontalShift = selected
         ? (isMale ? .08 : -.08)
         : selectedByOther
-        ? (isMale ? -.04 : .04)
-        : 0;
+            ? (isMale ? -.04 : .04)
+            : 0;
 
     return GestureDetector(
       onTap: onTap,
@@ -134,8 +157,13 @@ class _GenderChoice extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: selected ? Colors.white : Colors.white.withOpacity(.18),
-              border: Border.all(color: selected ? Colors.white : Colors.white54, width: selected ? 2 : 1),
-              boxShadow: selected ? const <BoxShadow>[BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)] : null,
+              border: Border.all(
+                  color: selected ? Colors.white : Colors.white54, width: selected ? 2 : 1),
+              boxShadow: selected
+                  ? const <BoxShadow>[
+                      BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)
+                    ]
+                  : null,
             ),
             alignment: Alignment.center,
             child: Column(
@@ -149,7 +177,10 @@ class _GenderChoice extends StatelessWidget {
                 const SizedBox(height: 10),
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 180),
-                  style: TextStyle(color: selected ? const Color(0xFF14AEB5) : Colors.white, fontSize: selected ? 19 : 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      color: selected ? const Color(0xFF14AEB5) : Colors.white,
+                      fontSize: selected ? 19 : 18,
+                      fontWeight: FontWeight.w600),
                   child: Text(label),
                 ),
               ],
@@ -168,11 +199,12 @@ class _ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onPressed,
-    child: CircleAvatar(
-      radius: 31,
-      backgroundColor: enabled ? Colors.white : Colors.white24,
-      child: Icon(Icons.arrow_forward, color: enabled ? const Color(0xFF14AEB5) : Colors.white54, size: 32),
-    ),
-  );
+        onTap: onPressed,
+        child: CircleAvatar(
+          radius: 31,
+          backgroundColor: enabled ? Colors.white : Colors.white24,
+          child: Icon(Icons.arrow_forward,
+              color: enabled ? const Color(0xFF14AEB5) : Colors.white54, size: 32),
+        ),
+      );
 }

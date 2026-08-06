@@ -143,6 +143,8 @@ class $AssetsLoginSocialGen {
   const $AssetsLoginSocialGen();
 
   final AssetGenImage bgLogin = const AssetGenImage('assets/images/login_social/bg_login.png');
+  final AssetGenImage bgLoginPage =
+      const AssetGenImage('assets/images/login_social/bg_login_page.jpg');
   final AssetGenImage icLauncher =
       const AssetGenImage('assets/images/login_social/ic_launcher.png');
   final AssetGenImage icLoginEmail =
@@ -251,6 +253,8 @@ class $AssetsStatisticGen {
 class $AssetsSocialHomeGen {
   const $AssetsSocialHomeGen();
 
+  final AssetGenImage bgMainPage =
+      const AssetGenImage('assets/images/social_home/bg_main_page.jpg');
   final AssetGenImage iconTab1A = const AssetGenImage('assets/images/social_home/icon_tab_1_a.png');
   final AssetGenImage iconTab2A = const AssetGenImage('assets/images/social_home/icon_tab_2_a.png');
   final AssetGenImage iconTab3A = const AssetGenImage('assets/images/social_home/icon_tab_3_a.png');

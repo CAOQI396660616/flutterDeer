@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
             Positioned.fill(
               child: ClipRect(
                 child: Transform.scale(
-                  scale: 1.02,
+                  scale: 1,
                   child: Image.asset(
                     'assets/images/login_social/bg_login_page.jpg',
                     fit: BoxFit.cover,

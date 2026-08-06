@@ -26,9 +26,16 @@ class _SocialHomePageState extends State<SocialHomePage> {
       children: <Widget>[
         Scaffold(
           extendBody: true,
-          backgroundColor: const Color(0xFF202224),
-          body: SafeArea(
-            child: KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Image.asset('assets/images/social_home/bg_main_page.jpg', fit: BoxFit.cover),
+              SafeArea(
+                child:
+                    KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
+              ),
+            ],
           ),
           bottomNavigationBar: HomeBottomBar(
               currentIndex: bottomIndex,
