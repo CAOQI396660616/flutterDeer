@@ -112,14 +112,34 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
+                    Positioned.fill(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: const ColoredBox(color: Color(0x33000000)),
+                      ),
+                    ),
                     const ModalBarrier(color: Colors.transparent, dismissible: false),
                     Center(
                       child: SizedBox(
-                        width: 180,
-                        height: 180,
+                        width: (MediaQuery.sizeOf(context).width * .52).clamp(180.0, 220.0),
+                        height: (MediaQuery.sizeOf(context).width * .52).clamp(180.0, 220.0),
                         child: WelcomeLottieAnimation(
                           asset: 'assets/lottie/welcome.json',
                           onCompleted: () => setState(() => _showWelcomeAnimation = false),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 12,
+                      child: SafeArea(
+                        child: IconButton(
+                          onPressed: () => setState(() => _showWelcomeAnimation = false),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.black45,
+                            foregroundColor: Colors.white,
+                          ),
+                          icon: const Icon(Icons.close),
                         ),
                       ),
                     ),
@@ -158,20 +178,33 @@ class _RoomsHomeTab extends StatefulWidget {
 }
 
 class _RoomsHomeTabState extends State<_RoomsHomeTab> {
-  int _topTab = 1;
-  int _pageIndex = 2;
+  int _topTab = 0;
+  int _pageIndex = 0;
   late final PageController _topPageController;
+  double _pagePosition = 0;
 
   @override
   void initState() {
     super.initState();
     _topPageController = PageController(initialPage: _pageIndex);
+    _topPageController.addListener(_handlePageScroll);
   }
 
   @override
   void dispose() {
     _topPageController.dispose();
     super.dispose();
+  }
+
+  void _handlePageScroll() {
+    if (!_topPageController.hasClients || !_topPageController.position.haveDimensions) {
+      return;
+    }
+    final double position = _topPageController.page ?? _pageIndex.toDouble();
+    if ((position - _pagePosition).abs() < .001 || !mounted) {
+      return;
+    }
+    setState(() => _pagePosition = position);
   }
 
   @override
@@ -185,6 +218,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
           child: HomeTopBar(
             selected: _topTab,
+            indicatorProgress: (_pagePosition - 1).clamp(0.0, 1.0),
             onChanged: (int value) {
               final int targetPage = value == 0 ? 0 : 2;
               _topPageController.animateToPage(targetPage,
@@ -213,36 +247,12 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
   }
 
   Widget _buildPage(int pageIndex) {
-    if (pageIndex < 2) {
-      return Center(
-          child: Text(MockHomeData.familyCategories[pageIndex],
-              style: const TextStyle(color: Colors.white70, fontSize: 20)));
-    }
-    final String category = MockHomeData.categories[pageIndex - 2];
-    final List<RoomModel> rooms = category == 'All'
-        ? MockHomeData.rooms
-        : MockHomeData.rooms.where((RoomModel room) => room.category == category).toList();
-    return _buildRoomsGrid(rooms);
+    return _FakeRoomListPage(
+      key: ValueKey<int>(pageIndex),
+      pageIndex: pageIndex,
+      onRoomTap: (RoomModel room) => _showRoomPreview(context, room),
+    );
   }
-
-  Widget _buildRoomsGrid(List<RoomModel> rooms) => CustomScrollView(
-        slivers: <Widget>[
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 24),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) => RoomCard(
-                      room: rooms[index], onTap: () => _showRoomPreview(context, rooms[index])),
-                  childCount: rooms.length),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 6,
-                  childAspectRatio: .91),
-            ),
-          ),
-        ],
-      );
 
   void _showRoomPreview(BuildContext context, RoomModel room) {
     showModalBottomSheet<void>(
@@ -266,6 +276,106 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
         ]),
       ),
     );
+  }
+}
+
+class _FakeRoomListPage extends StatefulWidget {
+  const _FakeRoomListPage({super.key, required this.pageIndex, required this.onRoomTap});
+  final int pageIndex;
+  final ValueChanged<RoomModel> onRoomTap;
+
+  @override
+  State<_FakeRoomListPage> createState() => _FakeRoomListPageState();
+}
+
+class _FakeRoomListPageState extends State<_FakeRoomListPage> {
+  static const int _pageSize = 10;
+  final ScrollController _scrollController = ScrollController();
+  late List<RoomModel> _rooms;
+  bool _loadingMore = false;
+  int _page = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _rooms = MockHomeData.roomsForPage(widget.pageIndex, 0, _pageSize);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        color: const Color(0xFF14D8D4),
+        onRefresh: _refresh,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: <Widget>[
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 24),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) =>
+                        RoomCard(room: _rooms[index], onTap: () => widget.onRoomTap(_rooms[index])),
+                    childCount: _rooms.length),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 6,
+                    childAspectRatio: .91),
+              ),
+            ),
+            if (_loadingMore)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 28),
+                  child: Center(
+                    child: SizedBox(
+                        width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2)),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refresh() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _page = 1;
+      _rooms = MockHomeData.roomsForPage(widget.pageIndex, 0, _pageSize);
+    });
+  }
+
+  Future<void> _loadMore() async {
+    setState(() => _loadingMore = true);
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted) {
+      return;
+    }
+    final List<RoomModel> nextRooms =
+        MockHomeData.roomsForPage(widget.pageIndex, _page * _pageSize, _pageSize);
+    setState(() {
+      _rooms = <RoomModel>[..._rooms, ...nextRooms];
+      _page++;
+      _loadingMore = false;
+    });
   }
 }
 

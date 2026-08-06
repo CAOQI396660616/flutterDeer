@@ -284,7 +284,7 @@ class $AssetsLottieGen {
   final LottieGenImage man = const LottieGenImage('assets/lottie/man.json');
   final String tabMain = 'assets/lottie/tab_main.json';
   final LottieGenImage wave = const LottieGenImage('assets/lottie/wave.json');
-  final String welcome = 'assets/lottie/welcome.json';
+  final LottieGenImage welcome = const LottieGenImage('assets/lottie/welcome.json');
   final LottieGenImage woman = const LottieGenImage('assets/lottie/woman.json');
 }
 
