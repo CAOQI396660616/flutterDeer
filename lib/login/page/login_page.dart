@@ -55,6 +55,15 @@ class _LoginPageState extends State<LoginPage> {
                 fit: BoxFit.cover,
               ),
             ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: MediaQuery.sizeOf(context).height * .5,
+              child: const IgnorePointer(
+                child: WelcomeLottieAnimation(asset: 'assets/lottie/login.json'),
+              ),
+            ),
             SafeArea(
               child: Column(
                 children: <Widget>[
@@ -148,11 +157,7 @@ class _LoginPageState extends State<LoginPage> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const SizedBox(
-            width: 100,
-            height: 100,
-            child: WelcomeLottieAnimation(asset: 'assets/lottie/login.json'),
-          ),
+          Image.asset('assets/images/login_social/ic_launcher.png', width: 88, height: 88),
           const SizedBox(height: 6),
           Image.asset('assets/images/login_social/ic_packet_logo.webp',
               width: 86, height: 32, fit: BoxFit.contain),
