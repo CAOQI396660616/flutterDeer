@@ -34,6 +34,7 @@ class $AssetsImagesGen {
   final $AssetsLoginSocialGen loginSocial = const $AssetsLoginSocialGen();
   final $AssetsOrderGen order = const $AssetsOrderGen();
   final $AssetsShopGen shop = const $AssetsShopGen();
+  final $AssetsSocialHomeGen socialHome = const $AssetsSocialHomeGen();
   final $AssetsStateGen state = const $AssetsStateGen();
   final $AssetsStatisticGen statistic = const $AssetsStatisticGen();
   final $AssetsStoreGen store = const $AssetsStoreGen();
@@ -246,13 +247,22 @@ class $AssetsStatisticGen {
   final AssetGenImage xdd = const AssetGenImage('assets/images/statistic/xdd.png');
 }
 
+class $AssetsSocialHomeGen {
+  const $AssetsSocialHomeGen();
+
+  final AssetGenImage iconTab1A = const AssetGenImage('assets/images/social_home/icon_tab_1_a.png');
+  final AssetGenImage iconTab2A = const AssetGenImage('assets/images/social_home/icon_tab_2_a.png');
+  final AssetGenImage iconTab3A = const AssetGenImage('assets/images/social_home/icon_tab_3_a.png');
+  final AssetGenImage iconTab4A = const AssetGenImage('assets/images/social_home/icon_tab_4_a.png');
+}
+
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
   final String bunnyNewMouth = 'assets/lottie/bunny_new_mouth.json';
   final LottieGenImage genderChoice = const LottieGenImage('assets/lottie/gender_choice.json');
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
-  final String tab1 = 'assets/lottie/tab_main.json';
+  final String tabMain = 'assets/lottie/tab_main.json';
 }
 
 class AssetGenImage {

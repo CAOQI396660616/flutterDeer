@@ -151,11 +151,13 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
                   child: widget.animate
                       ? Lottie.asset('assets/lottie/tab_main.json',
                           controller: _controller, repeat: false, onLoaded: _onCompositionLoaded)
-                      : Transform.scale(
-                          scale: widget.selected ? 1.5 : 1.0,
+                      : SizedBox(
+                          width: 32,
+                          height: 32,
                           child: Opacity(
-                              opacity: widget.selected ? 1.0 : .2,
-                              child: Image.asset(_icons[widget.index], fit: BoxFit.contain)),
+                            opacity: widget.selected ? 1.0 : .2,
+                            child: Image.asset(_icons[widget.index], fit: BoxFit.contain),
+                          ),
                         ),
                 ),
                 const SizedBox(height: 2),
