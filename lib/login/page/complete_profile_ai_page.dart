@@ -57,30 +57,35 @@ class _CompleteProfileAiPageState extends State<CompleteProfileAiPage> {
                   ),
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                    child: Column(
-                      children: <Widget>[
-                        const Text(
-                          'Yapay zeka sosyal profilinizi oluşturuyor',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600),
+                  child: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.viewInsetsOf(context).bottom + 32),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight - 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                      const Text(
+                        'Yapay zeka sosyal profilinizi oluşturuyor',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 30),
+                      _ProfileAvatar(user: user),
+                      const SizedBox(height: 28),
+                      _ProfileField(controller: _roomController, hintText: 'Sohbet odası'),
+                      const SizedBox(height: 14),
+                      _ProfileField(controller: _birthdayController, hintText: 'Doğum tarihi', keyboardType: TextInputType.datetime),
+                      const SizedBox(height: 14),
+                      _ProfileField(controller: _inviteController, hintText: 'Davet kodu (İsteğe bağlı)'),
+                      const SizedBox(height: 28),
+                      _ContinueButton(onPressed: _complete),
+                          ],
                         ),
-                        const SizedBox(height: 30),
-                        _ProfileAvatar(user: user),
-                        const SizedBox(height: 28),
-                        _ProfileField(controller: _roomController, hintText: 'Sohbet odası'),
-                        const SizedBox(height: 14),
-                        _ProfileField(controller: _birthdayController, hintText: 'Doğum tarihi', keyboardType: TextInputType.datetime),
-                        const SizedBox(height: 14),
-                        _ProfileField(controller: _inviteController, hintText: 'Davet kodu (İsteğe bağlı)'),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: _ContinueButton(onPressed: _complete),
                 ),
               ],
             ),

@@ -13,37 +13,51 @@ class LoginFlowPage extends StatefulWidget {
 }
 
 class _LoginFlowPageState extends State<LoginFlowPage> {
-  final PageController _pageController = PageController();
+  int _currentPage = 0;
   String? _gender;
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
   void _goTo(int page) {
-    _pageController.animateToPage(page, duration: const Duration(milliseconds: 420), curve: Curves.easeOutCubic);
+    if (_currentPage == page) {
+      return;
+    }
+    setState(() => _currentPage = page);
   }
 
   @override
-  Widget build(BuildContext context) => PageView(
-    controller: _pageController,
-    physics: const NeverScrollableScrollPhysics(),
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
     children: <Widget>[
-      LoginPage(onLoginComplete: (_) => _goTo(1)),
-      CompleteProfileGenderPage(
-        onBack: () => _goTo(0),
-        onNext: (gender) {
-          setState(() => _gender = gender);
-          _goTo(2);
-        },
+      _buildStage(0, LoginPage(onLoginComplete: (_) => _goTo(1))),
+      _buildStage(
+        1,
+        CompleteProfileGenderPage(
+          onBack: () => _goTo(0),
+          onNext: (gender) {
+            setState(() {
+              _gender = gender;
+              _currentPage = 2;
+            });
+          },
+        ),
       ),
-      CompleteProfileAiPage(
-        gender: _gender ?? 'male',
-        onBack: () => _goTo(1),
-        onComplete: () => Navigator.of(context).pushNamedAndRemoveUntil(Routes.home, (_) => false),
+      _buildStage(
+        2,
+        CompleteProfileAiPage(
+          gender: _gender ?? 'male',
+          onBack: () => _goTo(1),
+          onComplete: () => Navigator.of(context).pushNamedAndRemoveUntil(Routes.home, (_) => false),
+        ),
       ),
     ],
+  );
+
+  Widget _buildStage(int page, Widget child) => IgnorePointer(
+    ignoring: _currentPage != page,
+    child: AnimatedOpacity(
+      opacity: _currentPage == page ? 1 : 0,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeInOut,
+      child: child,
+    ),
   );
 }
