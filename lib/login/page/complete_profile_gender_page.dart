@@ -58,7 +58,6 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           _GenderChoice(
-                            label: 'Erkek',
                             icon: Icons.male,
                             isMale: true,
                             selected: _gender == 'male',
@@ -66,7 +65,6 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
                             onTap: () => setState(() => _gender = 'male'),
                           ),
                           _GenderChoice(
-                            label: 'Kadın',
                             icon: Icons.female,
                             isMale: false,
                             selected: _gender == 'female',
@@ -106,13 +104,11 @@ class _CompleteProfileGenderPageState extends State<CompleteProfileGenderPage> {
 
 class _GenderChoice extends StatelessWidget {
   const _GenderChoice(
-      {required this.label,
-      required this.icon,
+      {required this.icon,
       required this.isMale,
       required this.selected,
       required this.activeGender,
       required this.onTap});
-  final String label;
   final IconData icon;
   final bool isMale;
   final bool selected;
@@ -153,12 +149,20 @@ class _GenderChoice extends StatelessWidget {
                 height: 138,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected ? Colors.white24 : Colors.white.withOpacity(.12),
+                  gradient: selected
+                      ? const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: <Color>[Color(0xFFFFC107), Color(0xFFFF7043)],
+                        )
+                      : null,
+                  color: selected ? null : Colors.white.withOpacity(.12),
                   border: Border.all(
-                      color: selected ? Colors.white : Colors.white54, width: selected ? 2 : 1),
+                      color: selected ? const Color(0xFFFFD54F) : Colors.white54,
+                      width: selected ? 2 : 1),
                   boxShadow: selected
                       ? const <BoxShadow>[
-                          BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)
+                          BoxShadow(color: Color(0x99FF7043), blurRadius: 22, spreadRadius: 3)
                         ]
                       : null,
                 ),
@@ -177,25 +181,19 @@ class _GenderChoice extends StatelessWidget {
                 duration: const Duration(milliseconds: 220),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
-                  color: selected ? Colors.white24 : Colors.white.withOpacity(.12),
+                  gradient: selected
+                      ? const LinearGradient(colors: <Color>[Color(0xFFFFC107), Color(0xFFFF7043)])
+                      : null,
+                  color: selected ? null : Colors.white.withOpacity(.12),
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: Colors.white38),
+                  border: Border.all(color: selected ? const Color(0xFFFFD54F) : Colors.white38),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(icon,
                         size: selected ? 28 : 25,
-                        color: selected ? const Color(0xFF14AEB5) : Colors.white),
-                    const SizedBox(width: 7),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 180),
-                      style: TextStyle(
-                          color: selected ? const Color(0xFF14AEB5) : Colors.white,
-                          fontSize: selected ? 17 : 16,
-                          fontWeight: FontWeight.w600),
-                      child: Text(label),
-                    ),
+                        color: selected ? const Color(0xFFFFF3CD) : Colors.white),
                   ],
                 ),
               ),

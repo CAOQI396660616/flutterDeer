@@ -72,11 +72,10 @@ class _CompleteProfileAiPageState extends State<CompleteProfileAiPage> {
                           SingleChildScrollView(
                         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: EdgeInsets.fromLTRB(
-                            24, 16, 24, MediaQuery.viewInsetsOf(context).bottom + 32),
+                            24, 8, 24, MediaQuery.viewInsetsOf(context).bottom + 32),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minHeight: constraints.maxHeight - 16),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               const Text(
                                 'Yapay zeka sosyal profilinizi oluşturuyor',

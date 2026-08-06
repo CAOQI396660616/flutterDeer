@@ -11,7 +11,6 @@ import 'package:flutter_deer/util/device_utils.dart';
 import 'package:flutter_deer/util/theme_utils.dart';
 import 'package:flutter_deer/widgets/load_image.dart';
 import 'package:quick_actions/quick_actions.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:sp_util/sp_util.dart';
 
 class SplashPage extends StatefulWidget {
@@ -53,9 +52,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _initSplash() {
-    _subscription = Stream.value(1).delay(const Duration(milliseconds: 1500)).listen((_) {
-      _goLogin();
-    });
+    _goLogin();
   }
 
   void _goLogin() {
