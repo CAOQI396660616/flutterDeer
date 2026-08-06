@@ -16,19 +16,48 @@ class SocialHomePage extends StatefulWidget {
 
 class _SocialHomePageState extends State<SocialHomePage> {
   int _bottomIndex = 0;
+  bool _showWelcomeAnimation = true;
 
   @override
   Widget build(BuildContext context) {
     final int bottomIndex = _bottomIndex.clamp(0, 3);
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: const Color(0xFF202224),
-      body: SafeArea(
-        child: KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
-      ),
-      bottomNavigationBar: HomeBottomBar(
-          currentIndex: bottomIndex,
-          onTap: (int index) => setState(() => _bottomIndex = index.clamp(0, 3))),
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Scaffold(
+          extendBody: true,
+          backgroundColor: const Color(0xFF202224),
+          body: SafeArea(
+            child: KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
+          ),
+          bottomNavigationBar: HomeBottomBar(
+              currentIndex: bottomIndex,
+              onTap: (int index) => setState(() => _bottomIndex = index.clamp(0, 3))),
+        ),
+        if (_showWelcomeAnimation)
+          Positioned.fill(
+            child: Material(
+              color: const Color(0xFF101214),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  const Mp4AnimationPlayer(
+                    asset: 'assets/mp4/level_max.mp4',
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: IconButton(
+                      onPressed: () => setState(() => _showWelcomeAnimation = false),
+                      icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -60,7 +89,6 @@ class _RoomsHomeTab extends StatefulWidget {
 class _RoomsHomeTabState extends State<_RoomsHomeTab> {
   int _topTab = 1;
   int _categoryIndex = 0;
-  bool _showBanner = true;
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +103,6 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
             sliver: SliverToBoxAdapter(
                 child: HomeTopBar(
                     selected: _topTab, onChanged: (int value) => setState(() => _topTab = value)))),
-        if (_showBanner)
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
-            sliver: SliverToBoxAdapter(
-                child: _HomeBanner(onClose: () => setState(() => _showBanner = false))),
-          ),
         SliverToBoxAdapter(
             child: _CategoryBar(
                 selected: _categoryIndex,
@@ -126,38 +148,6 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
       ),
     );
   }
-}
-
-class _HomeBanner extends StatelessWidget {
-  const _HomeBanner({required this.onClose});
-  final VoidCallback onClose;
-
-  @override
-  Widget build(BuildContext context) => ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: SizedBox(
-          height: 166,
-          width: double.infinity,
-          child: Stack(children: <Widget>[
-            Positioned.fill(
-              child: Mp4AnimationPlayer(asset: 'assets/mp4/level_max.mp4', onCompleted: onClose),
-            ),
-            Positioned(
-                top: 10,
-                right: 10,
-                child: IconButton(
-                    onPressed: onClose, icon: const Icon(Icons.close, color: Colors.white70))),
-            const Positioned(
-                bottom: 12,
-                left: 0,
-                right: 0,
-                child: Text('Yeni kullanıcılar için hoş geldin sürprizi',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Color(0xFF14D8D4), fontSize: 13, fontWeight: FontWeight.w600))),
-          ]),
-        ),
-      );
 }
 
 class _CategoryBar extends StatelessWidget {

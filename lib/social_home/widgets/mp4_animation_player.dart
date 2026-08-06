@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class Mp4AnimationPlayer extends StatefulWidget {
-  const Mp4AnimationPlayer({super.key, required this.asset, this.onCompleted});
+  const Mp4AnimationPlayer(
+      {super.key,
+      required this.asset,
+      this.onCompleted,
+      this.borderRadius = const BorderRadius.all(Radius.circular(16))});
 
   final String asset;
   final VoidCallback? onCompleted;
+  final BorderRadius borderRadius;
 
   @override
   State<Mp4AnimationPlayer> createState() => _Mp4AnimationPlayerState();
@@ -47,7 +52,7 @@ class _Mp4AnimationPlayerState extends State<Mp4AnimationPlayer> {
     }
     final Size videoSize = _controller.value.size;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: widget.borderRadius,
       child: FittedBox(
         fit: BoxFit.cover,
         clipBehavior: Clip.hardEdge,
