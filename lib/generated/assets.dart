@@ -250,7 +250,9 @@ class $AssetsLottieGen {
   const $AssetsLottieGen();
 
   final String bunnyNewMouth = 'assets/lottie/bunny_new_mouth.json';
+  final LottieGenImage genderChoice = const LottieGenImage('assets/lottie/gender_choice.json');
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
+  final String tab1 = 'assets/lottie/tab_main.json';
 }
 
 class AssetGenImage {

@@ -125,6 +125,7 @@ flutter:
     - assets/images/shop/
     - assets/images/account/
     - assets/images/statistic/
+    - assets/images/social_home/
     - assets/lottie/
 
   # To add custom fonts to your application, add a fonts section here,
