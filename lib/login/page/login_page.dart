@@ -5,7 +5,9 @@ import 'package:flutter_deer/login/models/login_user.dart';
 import 'package:flutter_deer/login/page/complete_profile_gender_page.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
+import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
 import 'package:lottie/lottie.dart';
+
 /// Hiplay social sign-in page.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, this.onLoginComplete});
@@ -46,71 +48,73 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-          Container(color: const Color(0xFF14C9D0)),
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/login_social/bg_login.png',
-              fit: BoxFit.cover,
+            Container(color: const Color(0xFF14C9D0)),
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/login_social/bg_login.png',
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          SafeArea(
-            child: Column(
-              children: <Widget>[
-                // Region 1: occupies all remaining space; the brand stays centered here.
-                Expanded(
-                  child: Center(
+            SafeArea(
+              child: Column(
+                children: <Widget>[
+                  // Region 1: occupies all remaining space; the brand stays centered here.
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          _buildProfileHeader(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Region 2: intrinsic-height content anchored to the bottom.
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        _buildProfileHeader(),
+                        _SocialLoginGroup(
+                          enabled: _canSignIn,
+                          onPhonePressed: () => _showPhoneLoginSheet(context),
+                          onGoogleLogin: () => _simulateLogin(context, _demoUser('google')),
+                          onFacebookLogin: () => _simulateLogin(context, _demoUser('facebook')),
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            _SmallLoginButton(
+                              icon: Icons.lock_outline,
+                              label: 'Hesap\nŞifresi',
+                              enabled: _canSignIn,
+                              onPressed: _canSignIn ? () => _showPasswordLoginSheet(context) : null,
+                            ),
+                            if (defaultTargetPlatform == TargetPlatform.iOS) ...<Widget>[
+                              const SizedBox(width: 18),
+                              _SmallLoginButton(
+                                icon: Icons.apple,
+                                label: 'Apple',
+                                enabled: _canSignIn,
+                                onPressed: _canSignIn
+                                    ? () => _simulateLogin(context, _demoUser('apple'))
+                                    : null,
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        _TermsAgreement(
+                          accepted: _acceptedTerms,
+                          onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
+                        ),
                       ],
                     ),
                   ),
-                ),
-                // Region 2: intrinsic-height content anchored to the bottom.
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      _SocialLoginGroup(
-                        enabled: _canSignIn,
-                        onPhonePressed: () => _showPhoneLoginSheet(context),
-                        onGoogleLogin: () => _simulateLogin(context, _demoUser('google')),
-                        onFacebookLogin: () => _simulateLogin(context, _demoUser('facebook')),
-                      ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          _SmallLoginButton(
-                            icon: Icons.lock_outline,
-                            label: 'Hesap\nŞifresi',
-                            enabled: _canSignIn,
-                            onPressed: _canSignIn ? () => _showPasswordLoginSheet(context) : null,
-                          ),
-                          if (defaultTargetPlatform == TargetPlatform.iOS) ...<Widget>[
-                            const SizedBox(width: 18),
-                            _SmallLoginButton(
-                              icon: Icons.apple,
-                              label: 'Apple',
-                              enabled: _canSignIn,
-                              onPressed: _canSignIn ? () => _simulateLogin(context, _demoUser('apple')) : null,
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      _TermsAgreement(
-                        accepted: _acceptedTerms,
-                        onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
           ],
         ),
       ),
@@ -119,7 +123,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleSystemBack(BuildContext context) {
     final DateTime now = DateTime.now();
-    final bool shouldExit = _lastBackPressedAt != null && now.difference(_lastBackPressedAt!).inMilliseconds < 2000;
+    final bool shouldExit =
+        _lastBackPressedAt != null && now.difference(_lastBackPressedAt!).inMilliseconds < 2000;
     if (shouldExit) {
       SystemNavigator.pop();
       return;
@@ -143,9 +148,14 @@ class _LoginPageState extends State<LoginPage> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Image.asset('assets/images/login_social/ic_launcher.png', width: 88, height: 88),
+          const SizedBox(
+            width: 100,
+            height: 100,
+            child: WelcomeLottieAnimation(asset: 'assets/lottie/login.json'),
+          ),
           const SizedBox(height: 6),
-          Image.asset('assets/images/login_social/ic_packet_logo.webp', width: 86, height: 32, fit: BoxFit.contain),
+          Image.asset('assets/images/login_social/ic_packet_logo.webp',
+              width: 86, height: 32, fit: BoxFit.contain),
         ],
       );
     }
@@ -178,7 +188,9 @@ class _LoginPageState extends State<LoginPage> {
                     BoxShadow(color: Color(0x55000000), blurRadius: 3, offset: Offset(0, 1)),
                   ],
                 ),
-                child: const Text('Last', style: TextStyle(color: Color(0xFF6D4300), fontSize: 8, fontWeight: FontWeight.w700)),
+                child: const Text('Last',
+                    style: TextStyle(
+                        color: Color(0xFF6D4300), fontSize: 8, fontWeight: FontWeight.w700)),
               ),
             ),
           ],
@@ -190,17 +202,33 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildMockAvatar() {
-    final String avatarUrl = _currentUser?.avatar ?? 'https://randomuser.me/api/portraits/men/32.jpg';
+    final String avatarUrl =
+        _currentUser?.avatar ?? 'https://randomuser.me/api/portraits/men/32.jpg';
     return RemoteAvatar(imageUrl: avatarUrl);
   }
 
   LoginUser _demoUser(String method) {
     const Map<String, Map<String, String>> demoUsers = <String, Map<String, String>>{
-      'google': <String, String>{'name': 'Emre Yılmaz', 'avatar': 'https://randomuser.me/api/portraits/men/32.jpg'},
-      'facebook': <String, String>{'name': 'Elif Kaya', 'avatar': 'https://randomuser.me/api/portraits/women/44.jpg'},
-      'phone': <String, String>{'name': 'Kral Şakir', 'avatar': 'https://randomuser.me/api/portraits/men/75.jpg'},
-      'password': <String, String>{'name': 'Mert Demir', 'avatar': 'https://randomuser.me/api/portraits/men/15.jpg'},
-      'apple': <String, String>{'name': 'Deniz Arslan', 'avatar': 'https://randomuser.me/api/portraits/women/65.jpg'},
+      'google': <String, String>{
+        'name': 'Emre Yılmaz',
+        'avatar': 'https://randomuser.me/api/portraits/men/32.jpg'
+      },
+      'facebook': <String, String>{
+        'name': 'Elif Kaya',
+        'avatar': 'https://randomuser.me/api/portraits/women/44.jpg'
+      },
+      'phone': <String, String>{
+        'name': 'Kral Şakir',
+        'avatar': 'https://randomuser.me/api/portraits/men/75.jpg'
+      },
+      'password': <String, String>{
+        'name': 'Mert Demir',
+        'avatar': 'https://randomuser.me/api/portraits/men/15.jpg'
+      },
+      'apple': <String, String>{
+        'name': 'Deniz Arslan',
+        'avatar': 'https://randomuser.me/api/portraits/women/65.jpg'
+      },
     };
     final Map<String, String> data = demoUsers[method]!;
     return LoginUser(
@@ -242,7 +270,8 @@ class _LoginPageState extends State<LoginPage> {
       widget.onLoginComplete!(user);
       return;
     }
-    Navigator.of(context).push<void>(MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()));
+    Navigator.of(context)
+        .push<void>(MaterialPageRoute<void>(builder: (_) => const CompleteProfileGenderPage()));
   }
 
   void _showPhoneLoginSheet(BuildContext context) {
@@ -250,7 +279,8 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _PhoneLoginSheet(onMockLogin: () => _simulateLogin(context, _demoUser('phone'))),
+      builder: (_) =>
+          _PhoneLoginSheet(onMockLogin: () => _simulateLogin(context, _demoUser('phone'))),
     );
   }
 
@@ -259,13 +289,18 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _PasswordLoginSheet(onMockLogin: () => _simulateLogin(context, _demoUser('password'))),
+      builder: (_) =>
+          _PasswordLoginSheet(onMockLogin: () => _simulateLogin(context, _demoUser('password'))),
     );
   }
 }
 
 class _SocialLoginGroup extends StatelessWidget {
-  const _SocialLoginGroup({required this.enabled, required this.onPhonePressed, required this.onGoogleLogin, required this.onFacebookLogin});
+  const _SocialLoginGroup(
+      {required this.enabled,
+      required this.onPhonePressed,
+      required this.onGoogleLogin,
+      required this.onFacebookLogin});
   final bool enabled;
   final VoidCallback onPhonePressed;
   final VoidCallback onGoogleLogin;
@@ -273,27 +308,27 @@ class _SocialLoginGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: <Widget>[
-      _SocialButton(
-        asset: 'ic_login_google.png',
-        label: 'Google ile Giriş',
-        onPressed: enabled ? onGoogleLogin : null,
-      ),
-      const SizedBox(height: 16),
-      _SocialButton(
-        asset: 'ic_login_facebook.png',
-        label: 'Facebook ile Giriş',
-        onPressed: enabled ? onFacebookLogin : null,
-      ),
-      const SizedBox(height: 16),
-      _SocialButton(
-        label: 'Kolay Giriş',
-        icon: Icons.phone,
-        onPressed: enabled ? onPhonePressed : null,
-      ),
-    ],
-  );
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _SocialButton(
+            asset: 'ic_login_google.png',
+            label: 'Google ile Giriş',
+            onPressed: enabled ? onGoogleLogin : null,
+          ),
+          const SizedBox(height: 16),
+          _SocialButton(
+            asset: 'ic_login_facebook.png',
+            label: 'Facebook ile Giriş',
+            onPressed: enabled ? onFacebookLogin : null,
+          ),
+          const SizedBox(height: 16),
+          _SocialButton(
+            label: 'Kolay Giriş',
+            icon: Icons.phone,
+            onPressed: enabled ? onPhonePressed : null,
+          ),
+        ],
+      );
 }
 
 class _PhoneLoginSheet extends StatefulWidget {
@@ -345,73 +380,78 @@ class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  alignment: Alignment.centerLeft,
-                  icon: const Icon(Icons.chevron_left, color: Color(0xFF4A4A4A), size: 28),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Telefon Giriş / Kayıt',
-                  style: TextStyle(fontSize: 26, color: Color(0xFF252525), fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Kayıtlı değilseniz, doğrulama SMS'i otomatik gönderilir.",
-                  style: TextStyle(fontSize: 13, color: Color(0xFF777777)),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  height: 60,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF999999)),
-                    borderRadius: BorderRadius.circular(32),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.centerLeft,
+                    icon: const Icon(Icons.chevron_left, color: Color(0xFF4A4A4A), size: 28),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  child: Row(
-                    children: <Widget>[
-                      const SizedBox(width: 22),
-                      const Text('+90', style: TextStyle(fontSize: 16, color: Color(0xFF999999))),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 14),
-                        child: Text('|', style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 22)),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _phoneController,
-                          focusNode: _phoneFocusNode,
-                          maxLength: 10,
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                          textInputAction: TextInputAction.done,
-                          onChanged: (_) => setState(() {}),
-                          decoration: const InputDecoration(
-                            hintText: 'Telefon numarası',
-                            hintStyle: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
-                            border: InputBorder.none,
-                            counterText: '',
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Telefon Giriş / Kayıt',
+                    style: TextStyle(
+                        fontSize: 26, color: Color(0xFF252525), fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Kayıtlı değilseniz, doğrulama SMS'i otomatik gönderilir.",
+                    style: TextStyle(fontSize: 13, color: Color(0xFF777777)),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF999999)),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        const SizedBox(width: 22),
+                        const Text('+90', style: TextStyle(fontSize: 16, color: Color(0xFF999999))),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14),
+                          child:
+                              Text('|', style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 22)),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: _phoneController,
+                            focusNode: _phoneFocusNode,
+                            maxLength: 10,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            textInputAction: TextInputAction.done,
+                            onChanged: (_) => setState(() {}),
+                            decoration: const InputDecoration(
+                              hintText: 'Telefon numarası',
+                              hintStyle: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
+                              border: InputBorder.none,
+                              counterText: '',
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: GestureDetector(
-                    onTap: canContinue
-                        ? () {
-                            Navigator.pop(context);
-                            widget.onMockLogin();
-                          }
-                        : null,
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
-                      child: const Icon(Icons.arrow_forward, color: Colors.white, size: 32),
+                      ],
                     ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: GestureDetector(
+                      onTap: canContinue
+                          ? () {
+                              Navigator.pop(context);
+                              widget.onMockLogin();
+                            }
+                          : null,
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor:
+                            canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
+                        child: const Icon(Icons.arrow_forward, color: Colors.white, size: 32),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -420,7 +460,6 @@ class _PhoneLoginSheetState extends State<_PhoneLoginSheet> {
       ),
     );
   }
-
 }
 
 class _PasswordLoginSheet extends StatefulWidget {
@@ -457,7 +496,8 @@ class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bool canContinue = _accountController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+    final bool canContinue =
+        _accountController.text.isNotEmpty && _passwordController.text.isNotEmpty;
     return AnimatedPadding(
       duration: const Duration(milliseconds: 180),
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -483,7 +523,8 @@ class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
                   const SizedBox(height: 4),
                   const Text(
                     'Hesap / Şifre ile Giriş',
-                    style: TextStyle(fontSize: 26, color: Color(0xFF252525), fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 26, color: Color(0xFF252525), fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -517,7 +558,8 @@ class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
                           : null,
                       child: CircleAvatar(
                         radius: 30,
-                        backgroundColor: canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
+                        backgroundColor:
+                            canContinue ? const Color(0xFF14C9D0) : const Color(0xFFD0D0D0),
                         child: const Icon(Icons.arrow_forward, color: Colors.white, size: 32),
                       ),
                     ),
@@ -530,7 +572,6 @@ class _PasswordLoginSheetState extends State<_PasswordLoginSheet> {
       ),
     );
   }
-
 }
 
 class _PasswordField extends StatelessWidget {
@@ -552,40 +593,40 @@ class _PasswordField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 60,
-    decoration: BoxDecoration(
-      border: Border.all(color: const Color(0xFF999999)),
-      borderRadius: BorderRadius.circular(32),
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 22),
-    child: SizedBox.expand(
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        textAlignVertical: TextAlignVertical.center,
-        textInputAction: TextInputAction.next,
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          isDense: true,
-          // Without a suffix icon Flutter's InputDecorator uses a shorter
-          // intrinsic height, so give the account field the same vertical
-          // center as the password field.
-          contentPadding: EdgeInsets.only(top: obscureText ? 0 : 16),
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
-          border: InputBorder.none,
-          suffixIcon: obscureText
-              ? const SizedBox(
-                  width: 48,
-                  child: Center(child: Icon(Icons.lock_outline, color: Color(0xFFAAAAAA))),
-                )
-              : null,
+        height: 60,
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFF999999)),
+          borderRadius: BorderRadius.circular(32),
         ),
-      ),
-    ),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 22),
+        child: SizedBox.expand(
+          child: TextField(
+            controller: controller,
+            focusNode: focusNode,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            textAlignVertical: TextAlignVertical.center,
+            textInputAction: TextInputAction.next,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              isDense: true,
+              // Without a suffix icon Flutter's InputDecorator uses a shorter
+              // intrinsic height, so give the account field the same vertical
+              // center as the password field.
+              contentPadding: EdgeInsets.only(top: obscureText ? 0 : 16),
+              hintText: hintText,
+              hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
+              border: InputBorder.none,
+              suffixIcon: obscureText
+                  ? const SizedBox(
+                      width: 48,
+                      child: Center(child: Icon(Icons.lock_outline, color: Color(0xFFAAAAAA))),
+                    )
+                  : null,
+            ),
+          ),
+        ),
+      );
 }
 
 class _TermsAgreement extends StatelessWidget {
@@ -595,33 +636,34 @@ class _TermsAgreement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 1, right: 5),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: accepted ? Colors.white : Colors.transparent,
-              border: Border.all(color: Colors.white, width: 1.5),
+        onTap: onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 1, right: 5),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: accepted ? Colors.white : Colors.transparent,
+                  border: Border.all(color: Colors.white, width: 1.5),
+                ),
+                child:
+                    accepted ? const Icon(Icons.check, size: 12, color: Color(0xFF14C9D0)) : null,
+              ),
             ),
-            child: accepted ? const Icon(Icons.check, size: 12, color: Color(0xFF14C9D0)) : null,
-          ),
+            Text(
+              'By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
+            ),
+          ],
         ),
-        Text(
-          'By signing up or logging in,you accept our\nTerms of service and Privacy Policy.',
-          textAlign: TextAlign.left,
-          style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12, height: 1.35),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 class _SocialButton extends StatelessWidget {
@@ -633,36 +675,40 @@ class _SocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 24),
-    child: SizedBox(
-      height: 60,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: onPressed == null ? Colors.white.withOpacity(.38) : Colors.white,
-          foregroundColor: const Color(0xFF1F2529),
-          elevation: 0,
-          shape: const StadiumBorder(),
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          height: 60,
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: onPressed == null ? Colors.white.withOpacity(.38) : Colors.white,
+              foregroundColor: const Color(0xFF1F2529),
+              elevation: 0,
+              shape: const StadiumBorder(),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+            ),
+            child: Row(
+              children: <Widget>[
+                if (icon != null)
+                  Icon(icon, size: 22, color: const Color(0xFF5794F2))
+                else
+                  Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
+                Expanded(
+                    child: Text(label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
+                const SizedBox(width: 22),
+              ],
+            ),
+          ),
         ),
-        child: Row(
-          children: <Widget>[
-            if (icon != null)
-              Icon(icon, size: 22, color: const Color(0xFF5794F2))
-            else
-              Image.asset('assets/images/login_social/$asset', width: 22, height: 22),
-            Expanded(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700))),
-            const SizedBox(width: 22),
-          ],
-        ),
-      ),
-    ),
-  );
+      );
 }
 
 class _SmallLoginButton extends StatelessWidget {
-  const _SmallLoginButton({required this.icon, required this.label, required this.enabled, required this.onPressed});
+  const _SmallLoginButton(
+      {required this.icon, required this.label, required this.enabled, required this.onPressed});
   final IconData icon;
   final String label;
   final bool enabled;
@@ -670,21 +716,26 @@ class _SmallLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: 58,
-    child: Column(
-      children: <Widget>[
-        InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(30),
-          child: CircleAvatar(
-            radius: 27,
-            backgroundColor: Colors.white.withOpacity(enabled ? .18 : .08),
-            child: Icon(icon, size: 22, color: Colors.white.withOpacity(enabled ? .95 : .45)),
-          ),
+        width: 58,
+        child: Column(
+          children: <Widget>[
+            InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(30),
+              child: CircleAvatar(
+                radius: 27,
+                backgroundColor: Colors.white.withOpacity(enabled ? .18 : .08),
+                child: Icon(icon, size: 22, color: Colors.white.withOpacity(enabled ? .95 : .45)),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white.withOpacity(enabled ? .9 : .45),
+                    fontSize: 10,
+                    height: 1.1)),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(label, textAlign: TextAlign.center, style: TextStyle(color: Colors.white.withOpacity(enabled ? .9 : .45), fontSize: 10, height: 1.1)),
-      ],
-    ),
-  );
+      );
 }

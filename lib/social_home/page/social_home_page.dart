@@ -47,6 +47,7 @@ class _SocialHomePageState extends State<SocialHomePage> {
                       width: 180,
                       height: 180,
                       child: WelcomeLottieAnimation(
+                        asset: 'assets/lottie/welcome.json',
                         onCompleted: () => setState(() => _showWelcomeAnimation = false),
                       ),
                     ),

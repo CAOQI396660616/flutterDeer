@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class WelcomeLottieAnimation extends StatefulWidget {
-  const WelcomeLottieAnimation({super.key, required this.onCompleted});
+  const WelcomeLottieAnimation({super.key, required this.asset, this.onCompleted});
 
-  final VoidCallback onCompleted;
+  final String asset;
+  final VoidCallback? onCompleted;
 
   @override
   State<WelcomeLottieAnimation> createState() => _WelcomeLottieAnimationState();
@@ -20,7 +21,7 @@ class _WelcomeLottieAnimationState extends State<WelcomeLottieAnimation>
   void initState() {
     super.initState();
     _controller.addStatusListener((AnimationStatus status) {
-      if (status == AnimationStatus.completed) widget.onCompleted();
+      if (status == AnimationStatus.completed) widget.onCompleted?.call();
     });
   }
 
@@ -32,7 +33,7 @@ class _WelcomeLottieAnimationState extends State<WelcomeLottieAnimation>
 
   @override
   Widget build(BuildContext context) => Lottie.asset(
-        'assets/lottie/login.json',
+        widget.asset,
         controller: _controller,
         repeat: false,
         onLoaded: (LottieComposition composition) {
