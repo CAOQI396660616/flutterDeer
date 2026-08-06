@@ -4,6 +4,7 @@ import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
+import 'package:flutter_deer/social_home/widgets/mp4_animation_player.dart';
 import 'package:flutter_deer/social_home/widgets/room_card.dart';
 
 class SocialHomePage extends StatefulWidget {
@@ -134,28 +135,28 @@ class _HomeBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Stack(children: <Widget>[
-          Container(
-              height: 166,
-              width: double.infinity,
-              color: const Color(0xFF2B3031),
-              alignment: Alignment.center,
-              child: const Text('Yeni kullanıcı animasyonu',
-                  style: TextStyle(color: Colors.white54, fontSize: 16))),
-          Positioned(
-              top: 10,
-              right: 10,
-              child: IconButton(
-                  onPressed: onClose, icon: const Icon(Icons.close, color: Colors.white70))),
-          const Positioned(
-              bottom: 12,
-              left: 0,
-              right: 0,
-              child: Text('Yeni kullanıcılar için hoş geldin sürprizi',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Color(0xFF14D8D4), fontSize: 13, fontWeight: FontWeight.w600))),
-        ]),
+        child: SizedBox(
+          height: 166,
+          width: double.infinity,
+          child: Stack(children: <Widget>[
+            Positioned.fill(
+              child: Mp4AnimationPlayer(asset: 'assets/mp4/level_max.mp4', onCompleted: onClose),
+            ),
+            Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                    onPressed: onClose, icon: const Icon(Icons.close, color: Colors.white70))),
+            const Positioned(
+                bottom: 12,
+                left: 0,
+                right: 0,
+                child: Text('Yeni kullanıcılar için hoş geldin sürprizi',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Color(0xFF14D8D4), fontSize: 13, fontWeight: FontWeight.w600))),
+          ]),
+        ),
       );
 }
 

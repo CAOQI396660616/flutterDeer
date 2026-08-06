@@ -45,7 +45,7 @@ class _HomeBottomBarState extends State<HomeBottomBar> {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 0,
+                bottom: 10,
                 height: 78,
                 child: Row(
                   children: List<Widget>.generate(
@@ -161,9 +161,14 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
                         ),
                 ),
                 const SizedBox(height: 2),
-                Text(_labels[widget.index],
-                    style: const TextStyle(
-                        color: Colors.white70, fontSize: 9, fontWeight: FontWeight.w400)),
+                Text(
+                  _labels[widget.index],
+                  style: TextStyle(
+                    color: widget.selected ? Colors.white : Colors.white.withOpacity(.2),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ),
