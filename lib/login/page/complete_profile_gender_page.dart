@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/page/complete_profile_ai_page.dart';
+import 'package:lottie/lottie.dart';
 
 class CompleteProfileGenderPage extends StatefulWidget {
   const CompleteProfileGenderPage({super.key, this.onBack, this.onNext});
@@ -150,41 +151,59 @@ class _GenderChoice extends StatelessWidget {
           scale: scale,
           duration: const Duration(milliseconds: 320),
           curve: Curves.easeOutBack,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 260),
-            width: 138,
-            height: 138,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: selected ? Colors.white : Colors.white.withOpacity(.18),
-              border: Border.all(
-                  color: selected ? Colors.white : Colors.white54, width: selected ? 2 : 1),
-              boxShadow: selected
-                  ? const <BoxShadow>[
-                      BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)
-                    ]
-                  : null,
-            ),
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(
-                  icon,
-                  size: selected ? 52 : 46,
-                  color: selected ? const Color(0xFF14AEB5) : Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 260),
+                width: 138,
+                height: 138,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: selected ? Colors.white24 : Colors.white.withOpacity(.12),
+                  border: Border.all(
+                      color: selected ? Colors.white : Colors.white54, width: selected ? 2 : 1),
+                  boxShadow: selected
+                      ? const <BoxShadow>[
+                          BoxShadow(color: Color(0x55000000), blurRadius: 18, spreadRadius: 2)
+                        ]
+                      : null,
                 ),
-                const SizedBox(height: 10),
-                AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 180),
-                  style: TextStyle(
-                      color: selected ? const Color(0xFF14AEB5) : Colors.white,
-                      fontSize: selected ? 19 : 18,
-                      fontWeight: FontWeight.w600),
-                  child: Text(label),
+                clipBehavior: Clip.antiAlias,
+                child: Lottie.asset(
+                  isMale ? 'assets/lottie/man.json' : 'assets/lottie/woman.json',
+                  fit: BoxFit.contain,
+                  repeat: true,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 6),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: selected ? Colors.white24 : Colors.white.withOpacity(.12),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: Colors.white38),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(icon,
+                        size: selected ? 28 : 25,
+                        color: selected ? const Color(0xFF14AEB5) : Colors.white),
+                    const SizedBox(width: 7),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 180),
+                      style: TextStyle(
+                          color: selected ? const Color(0xFF14AEB5) : Colors.white,
+                          fontSize: selected ? 17 : 16,
+                          fontWeight: FontWeight.w600),
+                      child: Text(label),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -4,15 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_deer/demo/demo_page.dart';
 import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
-import 'package:flutter_deer/res/constant.dart';
 import 'package:flutter_deer/routers/fluro_navigator.dart';
 import 'package:flutter_deer/routers/routers.dart';
 import 'package:flutter_deer/util/app_navigator.dart';
 import 'package:flutter_deer/util/device_utils.dart';
-import 'package:flutter_deer/util/image_utils.dart';
 import 'package:flutter_deer/util/theme_utils.dart';
 import 'package:flutter_deer/widgets/load_image.dart';
-import 'package:flutter_swiper_null_safety_flutter3/flutter_swiper_null_safety_flutter3.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sp_util/sp_util.dart';
@@ -25,8 +22,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  int _status = 0;
-  final List<String> _guideList = ['app_start_1', 'app_start_2', 'app_start_3'];
   StreamSubscription<dynamic>? _subscription;
 
   @override
@@ -37,14 +32,6 @@ class _SplashPageState extends State<SplashPage> {
       /// 两种方法各有优劣
       await SpUtil.getInstance();
       await Device.initDeviceInfo();
-      if (SpUtil.getBool(Constant.keyGuide, defValue: true)!) {
-        /// 预先缓存图片，避免直接使用时因为首次加载造成闪动
-        void precacheImages(String image) {
-          precacheImage(ImageUtils.getAssetImage(image, format: ImageFormat.webp), context);
-        }
-
-        _guideList.forEach(precacheImages);
-      }
       _initSplash();
     });
 
@@ -65,20 +52,9 @@ class _SplashPageState extends State<SplashPage> {
     super.dispose();
   }
 
-  void _initGuide() {
-    setState(() {
-      _status = 1;
-    });
-  }
-
   void _initSplash() {
     _subscription = Stream.value(1).delay(const Duration(milliseconds: 1500)).listen((_) {
-      if (SpUtil.getBool(Constant.keyGuide, defValue: true)! || Constant.isDriverTest) {
-        SpUtil.putBool(Constant.keyGuide, false);
-        _initGuide();
-      } else {
-        _goLogin();
-      }
+      _goLogin();
     });
   }
 
@@ -92,36 +68,15 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Material(
         color: context.backgroundColor,
-        child: _status == 0
-            ? const Center(
-                child: SizedBox(
-                  width: 180.0,
-                  height: 180.0,
-                  child: LoadAssetImage(
-                    'splash_logo',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              )
-            : Swiper(
-                key: const Key('swiper'),
-                itemCount: _guideList.length,
-                loop: false,
-                itemBuilder: (_, index) {
-                  return LoadAssetImage(
-                    _guideList[index],
-                    key: Key(_guideList[index]),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    format: ImageFormat.webp,
-                  );
-                },
-                onTap: (index) {
-                  if (index == _guideList.length - 1) {
-                    _goLogin();
-                  }
-                },
-              ));
+        child: const Center(
+          child: SizedBox(
+            width: 180.0,
+            height: 180.0,
+            child: LoadAssetImage(
+              'splash_logo',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ));
   }
 }

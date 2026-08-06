@@ -75,12 +75,13 @@ class _HomeBottomBarState extends State<HomeBottomBar> {
   void _handleTap(int index) {
     if (index == widget.currentIndex && _pendingIndex == null) return;
     setState(() => _pendingIndex = index);
+    // 先立即切换页面，Lottie 只负责播放点击反馈，不阻塞 Tab 内容切换。
+    widget.onTap(index);
   }
 
   void _completeTap(int index) {
     if (!mounted || _pendingIndex != index) return;
     setState(() => _pendingIndex = null);
-    widget.onTap(index);
   }
 }
 

@@ -276,13 +276,16 @@ class $AssetsSocialHomeGen {
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
+  final LottieGenImage boy = const LottieGenImage('assets/lottie/boy.json');
   final String bunnyNewMouth = 'assets/lottie/bunny_new_mouth.json';
   final LottieGenImage genderChoice = const LottieGenImage('assets/lottie/gender_choice.json');
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
   final String login = 'assets/lottie/login.json';
+  final LottieGenImage man = const LottieGenImage('assets/lottie/man.json');
   final String tabMain = 'assets/lottie/tab_main.json';
   final LottieGenImage wave = const LottieGenImage('assets/lottie/wave.json');
   final String welcome = 'assets/lottie/welcome.json';
+  final LottieGenImage woman = const LottieGenImage('assets/lottie/woman.json');
 }
 
 class $AssetsMp4Gen {

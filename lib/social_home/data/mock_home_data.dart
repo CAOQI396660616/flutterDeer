@@ -1,6 +1,8 @@
 import 'package:flutter_deer/social_home/models/room_model.dart';
 
 class MockHomeData {
+  static const List<String> familyCategories = <String>['Yeni', 'Takip'];
+
   static const List<String> categories = <String>[
     'All',
     'Çay Sohbet Odaları',

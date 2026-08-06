@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/social_home/data/mock_home_data.dart';
@@ -16,6 +18,9 @@ class SocialHomePage extends StatefulWidget {
 }
 
 class _SocialHomePageState extends State<SocialHomePage> {
+  // 调整这里的数值即可改变首页背景毛玻璃强度，数值越大越模糊。
+  static const double _backgroundBlurSigma = 6;
+
   int _bottomIndex = 0;
   bool _showWelcomeAnimation = true;
 
@@ -56,7 +61,18 @@ class _SocialHomePageState extends State<SocialHomePage> {
             body: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                Image.asset('assets/images/social_home/bg_main_page.jpg', fit: BoxFit.cover),
+                Positioned.fill(
+                  child: ImageFiltered(
+                    imageFilter: ImageFilter.blur(
+                      sigmaX: _backgroundBlurSigma,
+                      sigmaY: _backgroundBlurSigma,
+                    ),
+                    child: Image.asset(
+                      'assets/images/social_home/bg_main_page.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
                 SafeArea(
                   child:
                       KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
@@ -121,42 +137,90 @@ class _RoomsHomeTab extends StatefulWidget {
 
 class _RoomsHomeTabState extends State<_RoomsHomeTab> {
   int _topTab = 1;
-  int _categoryIndex = 0;
+  int _pageIndex = 2;
+  late final PageController _topPageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _topPageController = PageController(initialPage: _pageIndex);
+  }
+
+  @override
+  void dispose() {
+    _topPageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final String category = MockHomeData.categories[_categoryIndex];
-    final List<RoomModel> rooms = category == 'All'
-        ? MockHomeData.rooms
-        : MockHomeData.rooms.where((RoomModel room) => room.category == category).toList();
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
-            sliver: SliverToBoxAdapter(
-                child: HomeTopBar(
-                    selected: _topTab, onChanged: (int value) => setState(() => _topTab = value)))),
-        SliverToBoxAdapter(
-            child: _CategoryBar(
-                selected: _categoryIndex,
-                onChanged: (int value) => setState(() => _categoryIndex = value))),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 24),
-          sliver: SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) => RoomCard(
-                    room: rooms[index], onTap: () => _showRoomPreview(context, rooms[index])),
-                childCount: rooms.length),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 16,
-                childAspectRatio: .91),
+    final bool isFamily = _pageIndex < 2;
+    final int subTabIndex = isFamily ? _pageIndex : _pageIndex - 2;
+    final List<String> subTabs = isFamily ? MockHomeData.familyCategories : MockHomeData.categories;
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+          child: HomeTopBar(
+            selected: _topTab,
+            onChanged: (int value) {
+              final int targetPage = value == 0 ? 0 : 2;
+              _topPageController.animateToPage(targetPage,
+                  duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic);
+            },
+          ),
+        ),
+        _CategoryBar(
+          labels: subTabs,
+          selected: subTabIndex,
+          onChanged: (int value) => _topPageController.animateToPage(isFamily ? value : value + 2,
+              duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic),
+        ),
+        Expanded(
+          child: PageView(
+            controller: _topPageController,
+            onPageChanged: (int value) => setState(() {
+              _pageIndex = value;
+              _topTab = value < 2 ? 0 : 1;
+            }),
+            children: List<Widget>.generate(5, (int index) => _buildPage(index)),
           ),
         ),
       ],
     );
   }
+
+  Widget _buildPage(int pageIndex) {
+    if (pageIndex < 2) {
+      return Center(
+          child: Text(MockHomeData.familyCategories[pageIndex],
+              style: const TextStyle(color: Colors.white70, fontSize: 20)));
+    }
+    final String category = MockHomeData.categories[pageIndex - 2];
+    final List<RoomModel> rooms = category == 'All'
+        ? MockHomeData.rooms
+        : MockHomeData.rooms.where((RoomModel room) => room.category == category).toList();
+    return _buildRoomsGrid(rooms);
+  }
+
+  Widget _buildRoomsGrid(List<RoomModel> rooms) => CustomScrollView(
+        slivers: <Widget>[
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 24),
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) => RoomCard(
+                      room: rooms[index], onTap: () => _showRoomPreview(context, rooms[index])),
+                  childCount: rooms.length),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: .91),
+            ),
+          ),
+        ],
+      );
 
   void _showRoomPreview(BuildContext context, RoomModel room) {
     showModalBottomSheet<void>(
@@ -184,7 +248,8 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
 }
 
 class _CategoryBar extends StatelessWidget {
-  const _CategoryBar({required this.selected, required this.onChanged});
+  const _CategoryBar({required this.labels, required this.selected, required this.onChanged});
+  final List<String> labels;
   final int selected;
   final ValueChanged<int> onChanged;
 
@@ -194,12 +259,12 @@ class _CategoryBar extends StatelessWidget {
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           scrollDirection: Axis.horizontal,
-          itemCount: MockHomeData.categories.length,
+          itemCount: labels.length,
           separatorBuilder: (_, __) => const SizedBox(width: 22),
           itemBuilder: (_, int index) => GestureDetector(
             onTap: () => onChanged(index),
             child: Center(
-                child: Text(MockHomeData.categories[index],
+                child: Text(labels[index],
                     style: TextStyle(
                         color: selected == index ? const Color(0xFF14D8D4) : Colors.white60,
                         fontSize: 14,
