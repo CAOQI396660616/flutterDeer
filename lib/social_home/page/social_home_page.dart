@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_deer/social_home/data/mock_home_data.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
@@ -19,51 +20,78 @@ class _SocialHomePageState extends State<SocialHomePage> {
   bool _showWelcomeAnimation = true;
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarDividerColor: Colors.black,
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final int bottomIndex = _bottomIndex.clamp(0, 3);
-    return Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        Scaffold(
-          extendBody: true,
-          backgroundColor: Colors.transparent,
-          body: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Image.asset('assets/images/social_home/bg_main_page.jpg', fit: BoxFit.cover),
-              SafeArea(
-                child:
-                    KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
-              ),
-            ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.black,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarDividerColor: Colors.black,
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Scaffold(
+            extendBody: true,
+            backgroundColor: Colors.transparent,
+            body: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                Image.asset('assets/images/social_home/bg_main_page.jpg', fit: BoxFit.cover),
+                SafeArea(
+                  child:
+                      KeyedSubtree(key: ValueKey<int>(bottomIndex), child: _buildBody(bottomIndex)),
+                ),
+              ],
+            ),
+            bottomNavigationBar: HomeBottomBar(
+                currentIndex: bottomIndex,
+                onTap: (int index) => setState(() => _bottomIndex = index.clamp(0, 3))),
           ),
-          bottomNavigationBar: HomeBottomBar(
-              currentIndex: bottomIndex,
-              onTap: (int index) => setState(() => _bottomIndex = index.clamp(0, 3))),
-        ),
-        if (_showWelcomeAnimation)
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  const ModalBarrier(color: Colors.transparent, dismissible: false),
-                  Center(
-                    child: SizedBox(
-                      width: 180,
-                      height: 180,
-                      child: WelcomeLottieAnimation(
-                        asset: 'assets/lottie/welcome.json',
-                        onCompleted: () => setState(() => _showWelcomeAnimation = false),
+          if (_showWelcomeAnimation)
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    const ModalBarrier(color: Colors.transparent, dismissible: false),
+                    Center(
+                      child: SizedBox(
+                        width: 180,
+                        height: 180,
+                        child: WelcomeLottieAnimation(
+                          asset: 'assets/lottie/welcome.json',
+                          onCompleted: () => setState(() => _showWelcomeAnimation = false),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
