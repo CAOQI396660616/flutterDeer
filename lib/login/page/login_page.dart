@@ -250,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildMockAvatar() {
     final String avatarUrl =
-        _currentUser?.avatar ?? UserAssets.avatars[0];
+        _currentUser?.avatar ?? UserAssets.avatar001;
     return RemoteAvatar(imageUrl: avatarUrl);
   }
 
@@ -258,23 +258,23 @@ class _LoginPageState extends State<LoginPage> {
     const Map<String, Map<String, String>> demoUsers = <String, Map<String, String>>{
       'google': <String, String>{
         'name': 'Emre Yılmaz',
-        'avatar': UserAssets.avatars[0]
+        'avatar': UserAssets.avatar001
       },
       'facebook': <String, String>{
         'name': 'Elif Kaya',
-        'avatar': UserAssets.avatars[1]
+        'avatar': UserAssets.avatar002
       },
       'phone': <String, String>{
         'name': 'Kral Şakir',
-        'avatar': UserAssets.avatars[2]
+        'avatar': UserAssets.avatar003
       },
       'password': <String, String>{
         'name': 'Mert Demir',
-        'avatar': UserAssets.avatars[3]
+        'avatar': UserAssets.avatar004
       },
       'apple': <String, String>{
         'name': 'Deniz Arslan',
-        'avatar': UserAssets.avatars[4]
+        'avatar': UserAssets.avatar005
       },
     };
     final Map<String, String> data = demoUsers[method]!;

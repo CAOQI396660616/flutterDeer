@@ -10,7 +10,7 @@ class MockHomeData {
         title: 'Yeni Arkadaşlarla Tanış',
         category: 'Yeni',
         onlineCount: 86,
-        coverAsset: UserAssets.avatars[0],
+        coverAsset: UserAssets.avatar001,
         hostName: 'Mina',
         location: 'Istanbul'),
     RoomModel(
@@ -18,7 +18,7 @@ class MockHomeData {
         title: 'Akşam Muhabbeti',
         category: 'Yeni',
         onlineCount: 64,
-        coverAsset: UserAssets.avatars[1],
+        coverAsset: UserAssets.avatar002,
         hostName: 'Lina',
         location: 'Ankara'),
     RoomModel(
@@ -26,7 +26,7 @@ class MockHomeData {
         title: 'Günün Sohbet Odası',
         category: 'Takip',
         onlineCount: 52,
-        coverAsset: UserAssets.avatars[2],
+        coverAsset: UserAssets.avatar003,
         hostName: 'Aylin',
         location: 'Izmir'),
     RoomModel(
@@ -34,7 +34,7 @@ class MockHomeData {
         title: 'Dostlarla Keyifli Vakit',
         category: 'Takip',
         onlineCount: 41,
-        coverAsset: UserAssets.avatars[3],
+        coverAsset: UserAssets.avatar004,
         hostName: 'Ece',
         location: 'Bursa'),
   ];
@@ -51,7 +51,7 @@ class MockHomeData {
         title: 'Akşam Çayı Sohbeti',
         category: 'Çay Sohbet Odaları',
         onlineCount: 128,
-        coverAsset: UserAssets.avatars[0],
+        coverAsset: UserAssets.avatar001,
         hostName: 'Mina',
         location: 'Istanbul'),
     RoomModel(
@@ -59,7 +59,7 @@ class MockHomeData {
         title: 'Türkçe Müzik Keyfi',
         category: 'Türk Müzik & Şarkı Odaları',
         onlineCount: 96,
-        coverAsset: UserAssets.avatars[1],
+        coverAsset: UserAssets.avatar002,
         hostName: 'Lina',
         location: 'Ankara'),
     RoomModel(
@@ -67,7 +67,7 @@ class MockHomeData {
         title: 'Yeni Arkadaşlar',
         category: 'Çay Sohbet Odaları',
         onlineCount: 74,
-        coverAsset: UserAssets.avatars[2],
+        coverAsset: UserAssets.avatar003,
         hostName: 'Aylin',
         location: 'Izmir'),
     RoomModel(
@@ -75,7 +75,7 @@ class MockHomeData {
         title: 'Şarkı İstekleri',
         category: 'Türk Müzik & Şarkı Odaları',
         onlineCount: 63,
-        coverAsset: UserAssets.avatars[3],
+        coverAsset: UserAssets.avatar004,
         hostName: 'Ece',
         location: 'Bursa'),
     RoomModel(
@@ -83,7 +83,7 @@ class MockHomeData {
         title: 'Gecenin Muhabbeti',
         category: 'Çay Sohbet Odaları',
         onlineCount: 51,
-        coverAsset: UserAssets.avatars[4],
+        coverAsset: UserAssets.avatar005,
         hostName: 'Derya',
         location: 'Antalya'),
     RoomModel(
@@ -91,7 +91,7 @@ class MockHomeData {
         title: 'Nostalji Şarkıları',
         category: 'Türk Müzik & Şarkı Odaları',
         onlineCount: 42,
-        coverAsset: UserAssets.avatars[5],
+        coverAsset: UserAssets.avatar006,
         hostName: 'Elif',
         location: 'Adana'),
   ];

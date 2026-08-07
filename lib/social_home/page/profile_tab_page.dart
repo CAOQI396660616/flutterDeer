@@ -50,7 +50,7 @@ class _ProfileTabPageState extends State<ProfileTabPage> {
   Widget build(BuildContext context) {
     final user = LoginUserStore.currentUser;
     final String nickname = user?.nickname ?? 'Emre Yılmaz';
-    final String avatar = user?.avatar ?? UserAssets.avatars[1];
+    final String avatar = user?.avatar ?? UserAssets.avatar002;
     return NestedScrollView(
       headerSliverBuilder: (BuildContext headerContext, __) => <Widget>[
         SliverToBoxAdapter(child: _ProfileHeader(nickname: nickname, avatar: avatar)),

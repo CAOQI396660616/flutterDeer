@@ -162,26 +162,26 @@ class _SquareFeedPage extends StatefulWidget {
   static const List<_SquarePost> _posts = <_SquarePost>[
     _SquarePost(
       author: 'Onlyle',
-      avatar: UserAssets.avatars[6],
+      avatar: UserAssets.avatar007,
       time: '8m ago',
       text: 'A good day starts with a little sunshine.',
-      image: UserAssets.avatars[7],
+      image: UserAssets.avatar008,
       likes: '1',
     ),
     _SquarePost(
       author: 'Early Bird',
-      avatar: UserAssets.avatars[8],
+      avatar: UserAssets.avatar009,
       time: '11m ago',
       text: 'Would you like the first milk tea of autumn?',
-      image: UserAssets.avatars[9],
+      image: UserAssets.avatar010,
       likes: '38',
     ),
     _SquarePost(
       author: 'Deer Diary',
-      avatar: UserAssets.avatars[2],
+      avatar: UserAssets.avatar003,
       time: '20m ago',
       text: 'Share a little happiness with someone you like.',
-      image: UserAssets.avatars[3],
+      image: UserAssets.avatar004,
       likes: '26',
     ),
   ];
@@ -297,9 +297,9 @@ class _SquareRoomRecommendation extends StatelessWidget {
   const _SquareRoomRecommendation();
 
   static const List<_SquareRoom> _rooms = <_SquareRoom>[
-    _SquareRoom('Love & Care', UserAssets.avatars[0], 'Together', '128'),
-    _SquareRoom('In Your Eyes', UserAssets.avatars[1], 'VVV Host', '96'),
-    _SquareRoom('Sweet Party', UserAssets.avatars[4], 'Summer Event', '76'),
+    _SquareRoom('Love & Care', UserAssets.avatar001, 'Together', '128'),
+    _SquareRoom('In Your Eyes', UserAssets.avatar002, 'VVV Host', '96'),
+    _SquareRoom('Sweet Party', UserAssets.avatar005, 'Summer Event', '76'),
   ];
 
   @override

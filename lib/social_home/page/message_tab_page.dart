@@ -246,12 +246,12 @@ class _ChatContentState extends State<_ChatContent> {
       'Sana küçük bir sürpriz gönderdim.',
     ];
     const List<String> avatars = <String>[
-      UserAssets.avatars[0],
-      UserAssets.avatars[1],
-      UserAssets.avatars[2],
-      UserAssets.avatars[3],
-      UserAssets.avatars[4],
-      UserAssets.avatars[5],
+      UserAssets.avatar001,
+      UserAssets.avatar002,
+      UserAssets.avatar003,
+      UserAssets.avatar004,
+      UserAssets.avatar005,
+      UserAssets.avatar006,
     ];
     return List<_ChatMessageData>.generate(count, (int index) {
       final int dataIndex = (start + index) % names.length;
