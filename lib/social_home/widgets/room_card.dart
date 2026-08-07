@@ -204,12 +204,15 @@ class _RoomStatus extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(10)),
         child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Lottie.asset(
-            'assets/lottie/fire.json',
-            width: 13,
-            height: 13,
-            fit: BoxFit.contain,
-            repeat: true,
+          Transform.translate(
+            offset: const Offset(0, -3),
+            child: Lottie.asset(
+              'assets/lottie/fire.json',
+              width: 13,
+              height: 13,
+              fit: BoxFit.contain,
+              repeat: true,
+            ),
           ),
           const SizedBox(width: 2),
           Text('$count', style: const TextStyle(color: Colors.white70, fontSize: 9))
