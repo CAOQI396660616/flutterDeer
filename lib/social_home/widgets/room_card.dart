@@ -49,7 +49,7 @@ class RoomCard extends StatelessWidget {
                       right: 9,
                       child: Row(
                         children: <Widget>[
-                          _HostBadge(name: room.hostName, coverAsset: room.coverAsset),
+                          _HostBadge(name: room.hostName),
                           const Spacer(),
                           _RoomStatus(count: room.onlineCount),
                         ],
@@ -159,36 +159,53 @@ class _RoomTypeTagData {
 }
 
 class _HostBadge extends StatelessWidget {
-  const _HostBadge({required this.name, required this.coverAsset});
+  const _HostBadge({required this.name});
   final String name;
-  final String coverAsset;
 
   @override
-  Widget build(BuildContext context) => Flexible(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              width: 19,
-              height: 19,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white70),
-                image: DecorationImage(image: AssetImage(coverAsset)),
+  Widget build(BuildContext context) {
+    final int seed = name.codeUnits.fold<int>(0, (int sum, int code) => sum + code);
+    final List<String> avatars = List<String>.generate(
+      3,
+      (int index) => UserAssets.avatars[(seed + index) % UserAssets.avatars.length],
+    );
+    return Flexible(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(
+            width: 46,
+            height: 20,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: List<Widget>.generate(
+                avatars.length,
+                (int index) => Positioned(
+                  left: index * 12,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white70),
+                      image: DecorationImage(image: AssetImage(avatars[index]), fit: BoxFit.cover),
+                    ),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 10)),
-            ),
-            const SizedBox(width: 4),
-            Image.asset(UserAssets.svipTag, width: 28, height: 16, fit: BoxFit.contain),
-          ],
-        ),
-      );
+          ),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.white, fontSize: 10)),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _RoomStatus extends StatelessWidget {

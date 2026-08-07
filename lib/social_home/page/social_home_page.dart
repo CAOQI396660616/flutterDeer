@@ -348,7 +348,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+          padding: const EdgeInsets.fromLTRB(20, 18, 16, 12),
           child: HomeTopBar(
             selected: _topTab,
             indicatorProgress: (_pagePosition - 1).clamp(0.0, 1.0),

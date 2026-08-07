@@ -102,7 +102,7 @@ class _SquareTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+        padding: const EdgeInsets.fromLTRB(20, 18, 16, 0),
         child: Row(
           children: <Widget>[
             HomeBrushTabBar(

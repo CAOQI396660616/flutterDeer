@@ -48,7 +48,7 @@ class _MessageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 0, 16, 20),
         child: Row(
           children: <Widget>[
             AnimatedBuilder(
@@ -67,7 +67,7 @@ class _MessageHeader extends StatelessWidget {
             ),
             const Spacer(),
             HomeActionButton(icon: Icons.card_giftcard_outlined, label: 'Hediyeler', onTap: () {}),
-            const SizedBox(width: 10),
+            const SizedBox(width: 16),
             HomeActionButton(
                 icon: Icons.person_add_alt_1_outlined, label: 'Arkadaş ekle', onTap: () {}),
           ],

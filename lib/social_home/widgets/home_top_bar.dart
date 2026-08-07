@@ -30,7 +30,7 @@ class HomeTopBar extends StatelessWidget {
               icon: Icons.search,
               label: 'Ara',
               onTap: onSearchTap),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           HomeActionButton(
               icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
         ],
@@ -133,7 +133,7 @@ class HomeActionButton extends StatelessWidget {
               child: CircleAvatar(
                 radius: 16,
                 backgroundColor: Colors.white.withOpacity(.10),
-                child: Icon(icon, color: Colors.white70, size: baseIconSize),
+                child: Icon(icon, color: Colors.white70, size: baseIconSize * .8),
               ),
             ),
           ),
