@@ -66,33 +66,11 @@ class _MessageHeader extends StatelessWidget {
               },
             ),
             const Spacer(),
-            _HeaderAction(icon: Icons.card_giftcard_outlined, onTap: () {}),
+            HomeActionButton(icon: Icons.card_giftcard_outlined, label: 'Hediyeler', onTap: () {}),
             const SizedBox(width: 10),
-            _HeaderAction(icon: Icons.person_add_alt_1_outlined, onTap: () {}),
+            HomeActionButton(
+                icon: Icons.person_add_alt_1_outlined, label: 'Arkadaş ekle', onTap: () {}),
           ],
-        ),
-      );
-}
-
-class _HeaderAction extends StatelessWidget {
-  const _HeaderAction({required this.icon, required this.onTap});
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: SizedBox(
-          width: 48,
-          height: 48,
-          child: Center(
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white.withOpacity(.10),
-              child: Icon(icon, color: Colors.white70, size: 24),
-            ),
-          ),
         ),
       );
 }
@@ -320,7 +298,7 @@ class _MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 120,
+        height: 72,
         child: Row(children: <Widget>[
           Container(
             width: 60,

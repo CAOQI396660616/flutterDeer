@@ -25,13 +25,14 @@ class HomeTopBar extends StatelessWidget {
             onChanged: onChanged,
           ),
           const Spacer(),
-          _CircleAction(
+          HomeActionButton(
               key: const Key('home_search_action'),
               icon: Icons.search,
               label: 'Ara',
               onTap: onSearchTap),
           const SizedBox(width: 12),
-          _CircleAction(icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
+          HomeActionButton(
+              icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
         ],
       );
 }
@@ -104,6 +105,42 @@ class HomeBrushTabBar extends StatelessWidget {
   }
 }
 
+/// Ana sayfanın dört modülünde kullanılan ortak üst aksiyon butonu.
+class HomeActionButton extends StatelessWidget {
+  const HomeActionButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.baseIconSize = 24,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final double baseIconSize;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+        message: label,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Center(
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.white.withOpacity(.10),
+                child: Icon(icon, color: Colors.white70, size: baseIconSize),
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
 class _TopTab extends StatelessWidget {
   const _TopTab({required this.label, required this.selected, required this.onTap});
   final String label;
@@ -150,31 +187,4 @@ class _TopTabIndicatorPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _TopTabIndicatorPainter oldDelegate) => false;
-}
-
-class _CircleAction extends StatelessWidget {
-  const _CircleAction({super.key, required this.icon, required this.label, required this.onTap});
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Tooltip(
-        message: label,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(24),
-          child: SizedBox(
-            width: 48,
-            height: 48,
-            child: Center(
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white.withOpacity(.1),
-                child: Icon(icon, color: Colors.white70, size: 24),
-              ),
-            ),
-          ),
-        ),
-      );
 }

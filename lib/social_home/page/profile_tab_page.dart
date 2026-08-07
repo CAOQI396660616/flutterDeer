@@ -106,14 +106,14 @@ class _ProfileHeader extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                _ProfileAction(
+                HomeActionButton(
                   icon: Icons.edit_outlined,
                   label: 'Düzenle',
                   onTap: () => Navigator.of(context).push<void>(
                     MaterialPageRoute<void>(builder: (_) => const ProfileEditPage()),
                   ),
                 ),
-                _ProfileAction(
+                HomeActionButton(
                   icon: Icons.settings_outlined,
                   label: 'Ayarlar',
                   onTap: () => Navigator.of(context).push<void>(
@@ -198,25 +198,6 @@ class _ProfileHeader extends StatelessWidget {
                   style: TextStyle(color: Colors.white70, fontSize: 14)),
             ]),
           ],
-        ),
-      );
-}
-
-class _ProfileAction extends StatelessWidget {
-  const _ProfileAction({required this.icon, required this.label, required this.onTap});
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Tooltip(
-        message: label,
-        child: IconButton(
-          onPressed: onTap,
-          icon: Icon(icon, color: Colors.white70, size: 20),
-          splashRadius: 22,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints.tightFor(width: 38, height: 38),
         ),
       );
 }

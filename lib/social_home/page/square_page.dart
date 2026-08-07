@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// Square page: parent tabs, child tabs, and brush indicator share Ana Sayfa's flow.
@@ -113,15 +113,11 @@ class _SquareTopBar extends StatelessWidget {
               onChanged: onChanged,
             ),
             const Spacer(),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0x99212A39),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(8),
-                child: Icon(Icons.notifications_none, color: Colors.white, size: 22),
-              ),
+            HomeActionButton(
+              icon: Icons.notifications_none,
+              label: 'Bildirimler',
+              onTap: () {},
+              baseIconSize: 22,
             ),
           ],
         ),
