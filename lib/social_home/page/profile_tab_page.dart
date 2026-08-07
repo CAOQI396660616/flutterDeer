@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
+import 'package:flutter_deer/social_home/page/profile_edit_page.dart';
+import 'package:flutter_deer/social_home/page/profile_settings_page.dart';
 
 /// First-stage Profil UI: profile area, pinned tabs, and local mock content.
 class ProfileTabPage extends StatefulWidget {
@@ -55,61 +56,95 @@ class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 18),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Row(children: <Widget>[
-            Container(
-              width: 82,
-              height: 82,
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: const <BoxShadow>[BoxShadow(color: Colors.black38, blurRadius: 12)],
-              ),
-              child: ClipOval(child: RemoteAvatar(imageUrl: avatar)),
-            ),
-            const SizedBox(width: 22),
-            const Expanded(
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                _ProfileStat(value: '0', label: 'Takip'),
-                _ProfileStat(value: '0', label: 'Takipçi'),
-                _ProfileStat(value: '6', label: 'Son ziyaret'),
+        child: Stack(
+          children: <Widget>[
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Row(children: <Widget>[
+                Container(
+                  width: 82,
+                  height: 82,
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    boxShadow: const <BoxShadow>[BoxShadow(color: Colors.black38, blurRadius: 12)],
+                  ),
+                  child: ClipOval(child: RemoteAvatar(imageUrl: avatar)),
+                ),
+                const SizedBox(width: 22),
+                const Expanded(
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                    _ProfileStat(value: '0', label: 'Takip'),
+                    _ProfileStat(value: '0', label: 'Takipçi'),
+                    _ProfileStat(value: '6', label: 'Son ziyaret'),
+                  ]),
+                ),
+              ]),
+              const SizedBox(height: 14),
+              Row(children: <Widget>[
+                Text(nickname,
+                    style: const TextStyle(
+                        color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600)),
+                const SizedBox(width: 8),
+                _Tag(text: '25', color: const Color(0xFF19D7D8)),
+              ]),
+              const SizedBox(height: 6),
+              const Text('ID: 177173883   IP konumu: Guangdong',
+                  style: TextStyle(color: Colors.white60, fontSize: 12)),
+              const SizedBox(height: 10),
+              const Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
+                _Tag(text: 'SVIP', color: Color(0xFFDBE7FF)),
+                _Tag(text: 'Sıradan', color: Color(0xFF71777C)),
+                _Tag(text: 'Küçük Çaylak', color: Color(0xFF9A9FA4)),
+                _Tag(text: '1', color: Color(0xFF7DCB31)),
+                _Tag(text: 'Yeni Bronz', color: Color(0xFF6F9C83)),
+              ]),
+              const SizedBox(height: 14),
+              const Text('Profiline bir imza ekleyerek daha fazla ilgi çekebilirsin',
+                  style: TextStyle(color: Colors.white70, fontSize: 14)),
+            ]),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Row(children: <Widget>[
+                _ProfileAction(
+                  icon: Icons.edit_outlined,
+                  label: 'Düzenle',
+                  onTap: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(builder: (_) => const ProfileEditPage()),
+                  ),
+                ),
+                _ProfileAction(
+                  icon: Icons.settings_outlined,
+                  label: 'Ayarlar',
+                  onTap: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(builder: (_) => const ProfileSettingsPage()),
+                  ),
+                ),
               ]),
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.edit_outlined, color: Colors.white70, size: 20),
-          ]),
-          const SizedBox(height: 14),
-          Row(children: <Widget>[
-            Text(nickname, style: const TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600)),
-            const SizedBox(width: 8),
-            _Tag(text: '25', color: const Color(0xFF19D7D8)),
-          ]),
-          const SizedBox(height: 6),
-          const Text('ID: 177173883   IP konumu: Guangdong',
-              style: TextStyle(color: Colors.white60, fontSize: 12)),
-          const SizedBox(height: 10),
-          const Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
-            _Tag(text: 'SVIP', color: Color(0xFFDBE7FF)),
-            _Tag(text: 'Sıradan', color: Color(0xFF71777C)),
-            _Tag(text: 'Küçük Çaylak', color: Color(0xFF9A9FA4)),
-            _Tag(text: '1', color: Color(0xFF7DCB31)),
-            _Tag(text: 'Yeni Bronz', color: Color(0xFF6F9C83)),
-          ]),
-          const SizedBox(height: 14),
-          const Text('Profiline bir imza ekleyerek daha fazla ilgi çekebilirsin',
-              style: TextStyle(color: Colors.white70, fontSize: 14)),
-          const SizedBox(height: 10),
-          OutlinedButton.icon(
-            onPressed: () {
-              LoginUserStore.clear();
-              Navigator.of(context).pushNamedAndRemoveUntil(LoginRouter.loginPage, (_) => false);
-            },
-            icon: const Icon(Icons.logout, size: 16),
-            label: const Text('Çıkış yap'),
-            style: OutlinedButton.styleFrom(foregroundColor: Colors.white70),
-          ),
-        ]),
+          ],
+        ),
+      );
+
+}
+
+class _ProfileAction extends StatelessWidget {
+  const _ProfileAction({required this.icon, required this.label, required this.onTap});
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+        message: label,
+        child: IconButton(
+          onPressed: onTap,
+          icon: Icon(icon, color: Colors.white70, size: 20),
+          splashRadius: 22,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints.tightFor(width: 38, height: 38),
+        ),
       );
 }
 
