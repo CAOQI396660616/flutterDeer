@@ -107,47 +107,63 @@ class NewcomerRewardDialog extends StatelessWidget {
                                   children: <Widget>[
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
-                                      children: _rewards
-                                          .take(3)
-                                          .map((reward) => SizedBox(
-                                                width: itemWidth,
-                                                child: _RewardTile(reward: reward),
-                                              ))
-                                          .toList(),
+                                      children: <Widget>[
+                                        SizedBox(
+                                            width: itemWidth,
+                                            child: _RewardTile(reward: _rewards[0])),
+                                        const SizedBox(width: 12),
+                                        SizedBox(
+                                            width: itemWidth,
+                                            child: _RewardTile(reward: _rewards[1])),
+                                        const SizedBox(width: 12),
+                                        SizedBox(
+                                            width: itemWidth,
+                                            child: _RewardTile(reward: _rewards[2])),
+                                      ],
                                     ),
                                     const SizedBox(height: 12),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
-                                      children: _rewards
-                                          .skip(3)
-                                          .map((reward) => SizedBox(
-                                                width: itemWidth,
-                                                child: _RewardTile(reward: reward),
-                                              ))
-                                          .toList(),
+                                      children: <Widget>[
+                                        SizedBox(
+                                            width: itemWidth,
+                                            child: _RewardTile(reward: _rewards[3])),
+                                        const SizedBox(width: 12),
+                                        SizedBox(
+                                            width: itemWidth,
+                                            child: _RewardTile(reward: _rewards[4])),
+                                      ],
                                     ),
                                   ],
                                 );
                               },
                             ),
                             const SizedBox(height: 18),
-                            SizedBox(
-                              width: 126,
-                              height: 38,
-                              child: OutlinedButton(
+                          ],
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: SizedBox(
+                            width: 31,
+                            height: 31,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(.16),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white24),
+                              ),
+                              child: IconButton(
                                 key: const Key('newcomer_reward_close'),
+                                padding: EdgeInsets.zero,
                                 onPressed: () => Navigator.of(context).pop(),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.white70,
-                                  side: const BorderSide(color: Colors.white38),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                ),
-                                child: const Text('Close'),
+                                color: Colors.white70,
+                                iconSize: 16,
+                                icon: const Icon(Icons.close),
+                                tooltip: 'Close',
                               ),
                             ),
-                            const SizedBox(height: 18),
-                          ],
+                          ),
                         ),
                       ],
                     ),

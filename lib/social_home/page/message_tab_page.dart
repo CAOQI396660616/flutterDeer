@@ -10,8 +10,7 @@ class MessageTabPage extends StatefulWidget {
   State<MessageTabPage> createState() => _MessageTabPageState();
 }
 
-class _MessageTabPageState extends State<MessageTabPage>
-    with SingleTickerProviderStateMixin {
+class _MessageTabPageState extends State<MessageTabPage> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -163,8 +162,8 @@ class _PermissionNotice extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 28),
         color: const Color(0xCC171A3D),
-        child: Row(
-          children: const <Widget>[
+        child: const Row(
+          children: <Widget>[
             Icon(Icons.notifications_none, color: Color(0xFFAF9BFF), size: 21),
             SizedBox(width: 12),
             Expanded(
@@ -201,7 +200,9 @@ class _ProfileBanner extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('还没心动?', style: TextStyle(color: Color(0xFFBFE7FF), fontSize: 17, fontWeight: FontWeight.w700)),
+                  Text('还没心动?',
+                      style: TextStyle(
+                          color: Color(0xFFBFE7FF), fontSize: 17, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
                   Text('完善资料瞬间提高回复率哦~', style: TextStyle(color: Colors.white70, fontSize: 11)),
                 ],
@@ -210,8 +211,11 @@ class _ProfileBanner extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(right: 16),
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-              decoration: BoxDecoration(color: const Color(0xFF3EE5E4), borderRadius: BorderRadius.circular(18)),
-              child: const Text('去完善', style: TextStyle(color: Color(0xFF183A49), fontSize: 12, fontWeight: FontWeight.w700)),
+              decoration: BoxDecoration(
+                  color: const Color(0xFF3EE5E4), borderRadius: BorderRadius.circular(18)),
+              child: const Text('去完善',
+                  style: TextStyle(
+                      color: Color(0xFF183A49), fontSize: 12, fontWeight: FontWeight.w700)),
             ),
           ],
         ),
@@ -230,10 +234,12 @@ class _EventBanner extends StatelessWidget {
           gradient: const LinearGradient(colors: <Color>[Color(0xFF13264C), Color(0xFF242048)]),
           border: Border.all(color: const Color(0xFF38477D)),
         ),
-        child: Row(children: const <Widget>[
+        child: const Row(children: <Widget>[
           Icon(Icons.auto_awesome, color: Color(0xFF78D7FF), size: 36),
           SizedBox(width: 14),
-          Text('我的宝藏纪', style: TextStyle(color: Color(0xFFA0EAF1), fontSize: 20, fontWeight: FontWeight.w600)),
+          Text('我的宝藏纪',
+              style:
+                  TextStyle(color: Color(0xFFA0EAF1), fontSize: 20, fontWeight: FontWeight.w600)),
           Spacer(),
           Icon(Icons.stars_rounded, color: Color(0xFF8D80B8), size: 42),
         ]),
@@ -241,7 +247,12 @@ class _EventBanner extends StatelessWidget {
 }
 
 class _MessageItem extends StatelessWidget {
-  const _MessageItem({required this.icon, required this.iconColor, required this.title, required this.time, required this.preview});
+  const _MessageItem(
+      {required this.icon,
+      required this.iconColor,
+      required this.title,
+      required this.time,
+      required this.preview});
   final IconData icon;
   final Color iconColor;
   final String title;
@@ -260,16 +271,29 @@ class _MessageItem extends StatelessWidget {
             child: Icon(icon, color: iconColor, size: 34),
           ),
           Expanded(
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Row(children: <Widget>[
-                Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600))),
-                Text(time, style: const TextStyle(color: Colors.white38, fontSize: 11)),
-              ]),
-              const SizedBox(height: 9),
-              Text(preview, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            ]),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(children: <Widget>[
+                    Expanded(
+                        child: Text(title,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600))),
+                    Text(time, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                  ]),
+                  const SizedBox(height: 9),
+                  Text(preview,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                ]),
           ),
-          Container(width: 9, height: 9, margin: const EdgeInsets.only(left: 12, right: 14), decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFFF2A5C))),
+          Container(
+              width: 9,
+              height: 9,
+              margin: const EdgeInsets.only(left: 12, right: 14),
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFFF2A5C))),
         ]),
       );
 }
@@ -278,13 +302,34 @@ class _FriendContent extends StatelessWidget {
   const _FriendContent();
 
   static const List<String> _names = <String>[
-    '星河入梦', '小鹿乱撞', '奶糖不甜', '云朵收藏家', '晚风轻轻', '桃气少女', '海盐汽水',
-    '月亮邮差', '橘子汽水', '南风知我意', '一颗小太阳', '椰奶冻', '银河漫游', '甜心兔兔',
-    '春日限定', '晚安小鱼', '薄荷微凉', '七分甜', '山野有雾', '晴天娃娃',
+    '星河入梦',
+    '小鹿乱撞',
+    '奶糖不甜',
+    '云朵收藏家',
+    '晚风轻轻',
+    '桃气少女',
+    '海盐汽水',
+    '月亮邮差',
+    '橘子汽水',
+    '南风知我意',
+    '一颗小太阳',
+    '椰奶冻',
+    '银河漫游',
+    '甜心兔兔',
+    '春日限定',
+    '晚安小鱼',
+    '薄荷微凉',
+    '七分甜',
+    '山野有雾',
+    '晴天娃娃',
   ];
   static const List<String> _avatars = <String>[
-    'room_woman_44.jpg', 'room_woman_47.jpg', 'room_woman_49.jpg', 'room_woman_65.jpg',
-    'room_woman_68.jpg', 'room_woman_75.jpg',
+    'room_woman_44.jpg',
+    'room_woman_47.jpg',
+    'room_woman_49.jpg',
+    'room_woman_65.jpg',
+    'room_woman_68.jpg',
+    'room_woman_75.jpg',
   ];
 
   @override
@@ -310,10 +355,16 @@ class _FriendItem extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(
         height: 72,
         child: Row(children: <Widget>[
-          ClipOval(child: Image.asset('assets/images/social_home/$avatar', width: 48, height: 48, fit: BoxFit.cover)),
+          ClipOval(
+              child: Image.asset('assets/images/social_home/$avatar',
+                  width: 48, height: 48, fit: BoxFit.cover)),
           const SizedBox(width: 14),
-          Expanded(child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500))),
-          Icon(isMale ? Icons.male : Icons.female, color: isMale ? const Color(0xFF59BFFF) : const Color(0xFFFF83B6), size: 17),
+          Expanded(
+              child: Text(name,
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500))),
+          Icon(isMale ? Icons.male : Icons.female,
+              color: isMale ? const Color(0xFF59BFFF) : const Color(0xFFFF83B6), size: 17),
           const SizedBox(width: 8),
         ]),
       );
