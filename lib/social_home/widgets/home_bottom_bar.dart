@@ -110,7 +110,7 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
     'assets/images/social_home/icon_tab_3_a.png',
     'assets/images/social_home/icon_tab_4_a.png',
   ];
-  static const List<String> _labels = <String>['Ana Sayfa', 'Meydan', 'Sohbet', 'Profil'];
+  static const List<String> _labels = <String>['Ana Sayfa', 'Meydan', '聊天', 'Profil'];
 
   late final AnimationController _controller = AnimationController(vsync: this);
   bool _compositionLoaded = false;

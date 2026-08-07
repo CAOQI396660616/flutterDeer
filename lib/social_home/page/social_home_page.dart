@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_deer/social_home/data/mock_home_data.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
+import 'package:flutter_deer/social_home/page/message_tab_page.dart';
 import 'package:flutter_deer/social_home/page/square_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
@@ -199,6 +200,9 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
       }
       if (bottomIndex == 3) {
         return const ProfileTabPage();
+      }
+      if (bottomIndex == 2) {
+        return const MessageTabPage();
       }
       return Center(
           child: Text(HomeBottomBarLabels.labelFor(bottomIndex),

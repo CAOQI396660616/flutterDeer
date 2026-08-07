@@ -3,7 +3,7 @@ import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
 
-/// Profil 的第一阶段 UI：资料区 + 吸顶 Tab + 本地假数据内容。
+/// First-stage Profil UI: profile area, pinned tabs, and local mock content.
 class ProfileTabPage extends StatefulWidget {
   const ProfileTabPage({super.key});
 
@@ -29,7 +29,7 @@ class _ProfileTabPageState extends State<ProfileTabPage> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final user = LoginUserStore.currentUser;
-    final String nickname = user?.nickname ?? '遥遥风';
+    final String nickname = user?.nickname ?? 'Emre Yılmaz';
     final String avatar = user?.avatar ?? 'https://randomuser.me/api/portraits/women/44.jpg';
     return NestedScrollView(
       headerSliverBuilder: (_, __) => <Widget>[
@@ -71,9 +71,9 @@ class _ProfileHeader extends StatelessWidget {
             const SizedBox(width: 22),
             const Expanded(
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                _ProfileStat(value: '0', label: '关注'),
-                _ProfileStat(value: '0', label: '粉丝'),
-                _ProfileStat(value: '6', label: '最近访问'),
+                _ProfileStat(value: '0', label: 'Takip'),
+                _ProfileStat(value: '0', label: 'Takipçi'),
+                _ProfileStat(value: '6', label: 'Son ziyaret'),
               ]),
             ),
             const SizedBox(width: 8),
@@ -86,17 +86,19 @@ class _ProfileHeader extends StatelessWidget {
             _Tag(text: '25', color: const Color(0xFF19D7D8)),
           ]),
           const SizedBox(height: 6),
-          const Text('ID: 177173883   IP属地: 广东', style: TextStyle(color: Colors.white60, fontSize: 12)),
+          const Text('ID: 177173883   IP konumu: Guangdong',
+              style: TextStyle(color: Colors.white60, fontSize: 12)),
           const SizedBox(height: 10),
           const Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
             _Tag(text: 'SVIP', color: Color(0xFFDBE7FF)),
-            _Tag(text: '平民', color: Color(0xFF71777C)),
-            _Tag(text: '小小萌新', color: Color(0xFF9A9FA4)),
+            _Tag(text: 'Sıradan', color: Color(0xFF71777C)),
+            _Tag(text: 'Küçük Çaylak', color: Color(0xFF9A9FA4)),
             _Tag(text: '1', color: Color(0xFF7DCB31)),
-            _Tag(text: '新手青铜', color: Color(0xFF6F9C83)),
+            _Tag(text: 'Yeni Bronz', color: Color(0xFF6F9C83)),
           ]),
           const SizedBox(height: 14),
-          const Text('填写个性签名更容易获得别人的关注哦', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Profiline bir imza ekleyerek daha fazla ilgi çekebilirsin',
+              style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 10),
           OutlinedButton.icon(
             onPressed: () {
@@ -142,18 +144,23 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 48;
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Container(
-        color: const Color(0xE6141820),
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        child: TabBar(
-          controller: controller,
-          tabs: const <Widget>[Tab(text: '动态'), Tab(text: '资料')],
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white54,
-          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          indicator: const _BrushIndicatorDecoration(),
-          indicatorSize: TabBarIndicatorSize.label,
-          dividerColor: Colors.transparent,
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 18),
+          child: SizedBox(
+            width: 150,
+            child: TabBar(
+              controller: controller,
+              tabs: const <Widget>[Tab(text: 'Aktiviteler'), Tab(text: 'Bilgiler')],
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white54,
+              labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              indicator: const _BrushIndicatorDecoration(),
+              indicatorSize: TabBarIndicatorSize.label,
+              dividerColor: Colors.transparent,
+            ),
+          ),
         ),
       );
   @override
@@ -190,8 +197,14 @@ class _DynamicContent extends StatelessWidget {
   const _DynamicContent();
   @override
   Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(20), children: const <Widget>[
-        _ContentCard(icon: Icons.emoji_emotions_outlined, title: '欢迎来到我的动态空间', body: '这里暂时还没有动态，分享你的第一条内容吧。'),
-        _ContentCard(icon: Icons.auto_awesome, title: '新手任务已完成', body: '获得了 1 个新人徽章。'),
+        _ContentCard(
+            icon: Icons.emoji_emotions_outlined,
+            title: 'Aktivitelerime hoş geldin',
+            body: 'Henüz aktivite yok. İlk paylaşımını yapabilirsin.'),
+        _ContentCard(
+            icon: Icons.auto_awesome,
+            title: 'Yeni başlayan görevi tamamlandı',
+            body: '1 yeni başlangıç rozeti kazandın.'),
       ]);
 }
 
@@ -199,9 +212,12 @@ class _ProfileContent extends StatelessWidget {
   const _ProfileContent();
   @override
   Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(20), children: const <Widget>[
-        Text('个人资料', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+        Text('Profil bilgileri', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
         SizedBox(height: 14),
-        _ContentCard(icon: Icons.location_on_outlined, title: '广东', body: '地区信息暂未完善'),
+        _ContentCard(
+            icon: Icons.location_on_outlined,
+            title: 'Guangdong',
+            body: 'Konum bilgisi henüz tamamlanmadı'),
       ]);
 }
 
