@@ -16,16 +16,20 @@ class NewcomerRewardDialog extends StatelessWidget {
   const NewcomerRewardDialog({super.key});
 
   static const List<_RewardItem> _rewards = <_RewardItem>[
-    _RewardItem(title: '新人勋章', badge: '7Days', icon: Icons.workspace_premium_outlined),
-    _RewardItem(title: '新人头像框', badge: '7Days', icon: Icons.account_circle_outlined),
-    _RewardItem(title: '郁金香', badge: 'x10', icon: Icons.local_florist_outlined),
-    _RewardItem(title: '财富卡\n+1000', badge: '永久', icon: Icons.credit_card_outlined),
-    _RewardItem(title: '进场横幅', badge: '永久', icon: Icons.flag_outlined),
+    _RewardItem(
+        name: 'Medal', badge: '7D', quantity: 'x1', icon: Icons.workspace_premium_outlined),
+    _RewardItem(
+        name: 'Frame', badge: '7D', quantity: 'x1', icon: Icons.account_circle_outlined),
+    _RewardItem(name: 'Tulip', badge: '7D', quantity: 'x10', icon: Icons.local_florist_outlined),
+    _RewardItem(
+        name: 'Coins', badge: '∞', quantity: 'x1000', icon: Icons.monetization_on_outlined),
+    _RewardItem(name: 'Banner', badge: '∞', quantity: 'x1', icon: Icons.flag_outlined),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final double width = ((MediaQuery.sizeOf(context).width - 48).clamp(300.0, 470.0)) as double;
+    final double width =
+        ((MediaQuery.sizeOf(context).width - 48).clamp(300.0, 470.0)) as double;
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
       backgroundColor: Colors.white,
@@ -55,14 +59,14 @@ class NewcomerRewardDialog extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 26),
+              const SizedBox(height: 22),
               LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  final double itemWidth = (constraints.maxWidth - 24) / 3;
+                  final double itemWidth = (constraints.maxWidth - 12) / 2;
                   return Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 12,
-                    runSpacing: 18,
+                    runSpacing: 12,
                     children: _rewards
                         .map((reward) => SizedBox(
                               width: itemWidth,
@@ -72,7 +76,7 @@ class NewcomerRewardDialog extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
               SizedBox(
                 width: 190,
                 height: 56,
@@ -96,9 +100,11 @@ class NewcomerRewardDialog extends StatelessWidget {
 }
 
 class _RewardItem {
-  const _RewardItem({required this.title, required this.badge, required this.icon});
-  final String title;
+  const _RewardItem(
+      {required this.name, required this.badge, required this.quantity, required this.icon});
+  final String name;
   final String badge;
+  final String quantity;
   final IconData icon;
 }
 
@@ -107,42 +113,76 @@ class _RewardTile extends StatelessWidget {
   final _RewardItem reward;
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: <Widget>[
-          Stack(
-            clipBehavior: Clip.none,
+  Widget build(BuildContext context) => ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          height: 136,
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFF3A9BFF), width: 2),
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[Color(0xFF123D98), Color(0xFF08256F)],
+            ),
+          ),
+          child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Container(
-                height: 106,
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF98A0A5), width: 1.2),
-                  color: const Color(0xFFF9FAFA),
-                ),
-                child: Center(
-                  child: Icon(reward.icon, size: 42, color: const Color(0xFF6E747A)),
+              Icon(reward.icon, size: 58, color: const Color(0xFFFFE58A)),
+              Positioned(
+                bottom: 36,
+                child: Text(reward.name,
+                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+              ),
+              Positioned(
+                bottom: 8,
+                child: Text(reward.quantity,
+                    style: const TextStyle(
+                        color: Color(0xFFB8F4FF),
+                        fontSize: 23,
+                        fontWeight: FontWeight.w500)),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: ClipPath(
+                  clipper: _RewardBadgeClipper(),
+                  child: Container(
+                    width: 52,
+                    height: 34,
+                    color: const Color(0xFF8DEEFF),
+                    alignment: Alignment.topRight,
+                    padding: const EdgeInsets.only(top: 3, right: 7),
+                    child: Text(reward.badge,
+                        style: const TextStyle(
+                            color: Color(0xFF092B78),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600)),
+                  ),
                 ),
               ),
               Positioned(
-                top: -14,
-                child: DecoratedBox(
-                  decoration: const ShapeDecoration(
-                    color: Color(0xFF45484C),
-                    shape: StadiumBorder(),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
-                    child: Text(reward.badge,
-                        style: const TextStyle(color: Colors.white, fontSize: 12)),
-                  ),
-                ),
+                bottom: 0,
+                right: 8,
+                child: Container(width: 58, height: 4, color: const Color(0xFF8DEEFF)),
               ),
             ],
           ),
-          const SizedBox(height: 7),
-          Text(reward.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Color(0xFF18202A), fontSize: 15, height: 1.15)),
-        ],
+        ),
       );
+}
+
+class _RewardBadgeClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) => Path()
+    ..moveTo(0, 0)
+    ..lineTo(size.width, 0)
+    ..lineTo(size.width, size.height)
+    ..lineTo(0, size.height)
+    ..lineTo(size.width * .22, size.height * .5)
+    ..close();
+
+  @override
+  bool shouldReclip(covariant _RewardBadgeClipper oldClipper) => false;
 }
