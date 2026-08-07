@@ -253,8 +253,10 @@ class $AssetsStatisticGen {
 class $AssetsSocialHomeGen {
   const $AssetsSocialHomeGen();
 
+  final $AssetsRewardsGen rewards = const $AssetsRewardsGen();
   final AssetGenImage bgMainPage =
       const AssetGenImage('assets/images/social_home/bg_main_page.jpg');
+  final AssetGenImage bgNewUser = const AssetGenImage('assets/images/social_home/bg_new_user.jpg');
   final AssetGenImage iconTab1A = const AssetGenImage('assets/images/social_home/icon_tab_1_a.png');
   final AssetGenImage iconTab2A = const AssetGenImage('assets/images/social_home/icon_tab_2_a.png');
   final AssetGenImage iconTab3A = const AssetGenImage('assets/images/social_home/icon_tab_3_a.png');
@@ -271,6 +273,23 @@ class $AssetsSocialHomeGen {
       const AssetGenImage('assets/images/social_home/room_woman_68.jpg');
   final AssetGenImage roomWoman75 =
       const AssetGenImage('assets/images/social_home/room_woman_75.jpg');
+}
+
+class $AssetsRewardsGen {
+  const $AssetsRewardsGen();
+
+  final AssetGenImage bgGiftFlowSvip4 =
+      const AssetGenImage('assets/images/social_home/rewards/bg_gift_flow_svip4.webp');
+  final AssetGenImage bgInvite2BtOff =
+      const AssetGenImage('assets/images/social_home/rewards/bg_invite_2_bt_off.png');
+  final AssetGenImage icPacketOpenSuccessCoin =
+      const AssetGenImage('assets/images/social_home/rewards/ic_packet_open_success_coin.webp');
+  final AssetGenImage icRoomTop31 =
+      const AssetGenImage('assets/images/social_home/rewards/ic_room_top_3_1.png');
+  final AssetGenImage icStayMain =
+      const AssetGenImage('assets/images/social_home/rewards/ic_stay_main.webp');
+  final AssetGenImage icTaskGift1 =
+      const AssetGenImage('assets/images/social_home/rewards/ic_task_gift_1.png');
 }
 
 class $AssetsLottieGen {

@@ -80,55 +80,75 @@ class NewcomerRewardDialog extends StatelessWidget {
                 ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: width),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 24, 18, 14),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                    padding: const EdgeInsets.fromLTRB(18, 24, 18, 0),
+                    child: Stack(
                       children: <Widget>[
-                    const Text(
-                      'New Gift',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 21,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Text(
-                      'Rewards credited',
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
-                    ),
-                    const SizedBox(height: 18),
-                    LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) {
-                        final double itemWidth = (constraints.maxWidth - 24) / 3;
-                        return Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 12,
-                          runSpacing: 12,
-                          children: _rewards
-                              .map((reward) => SizedBox(
-                                    width: itemWidth,
-                                    child: _RewardTile(reward: reward),
-                                  ))
-                              .toList(),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 14),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(.16),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: IconButton(
-                        key: const Key('newcomer_reward_close'),
-                        onPressed: () => Navigator.of(context).pop(),
-                        color: Colors.white70,
-                        icon: const Icon(Icons.close),
-                        tooltip: 'Close',
-                      ),
-                    ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Text(
+                              'New Gift',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 21,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            const Text(
+                              'Rewards credited',
+                              style: TextStyle(color: Colors.white70, fontSize: 12),
+                            ),
+                            const SizedBox(height: 18),
+                            LayoutBuilder(
+                              builder: (BuildContext context, BoxConstraints constraints) {
+                                final double itemWidth = (constraints.maxWidth - 24) / 3;
+                                return Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: _rewards
+                                          .take(3)
+                                          .map((reward) => SizedBox(
+                                                width: itemWidth,
+                                                child: _RewardTile(reward: reward),
+                                              ))
+                                          .toList(),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: _rewards
+                                          .skip(3)
+                                          .map((reward) => SizedBox(
+                                                width: itemWidth,
+                                                child: _RewardTile(reward: reward),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 18),
+                            SizedBox(
+                              width: 126,
+                              height: 38,
+                              child: OutlinedButton(
+                                key: const Key('newcomer_reward_close'),
+                                onPressed: () => Navigator.of(context).pop(),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white70,
+                                  side: const BorderSide(color: Colors.white38),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                ),
+                                child: const Text('Close'),
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                          ],
+                        ),
                       ],
                     ),
                   ),
