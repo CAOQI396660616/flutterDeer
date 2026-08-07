@@ -41,20 +41,7 @@ class RoomCard extends StatelessWidget {
                     Positioned(
                       top: 9,
                       right: 9,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: const Color(0xCCDCE7E7),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text('Canlı',
-                              style: TextStyle(
-                                  color: Color(0xFF198B8A),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600)),
-                        ),
-                      ),
+                      child: _RoomTypeTag(room: room),
                     ),
                     Positioned(
                       bottom: 8,
@@ -116,6 +103,60 @@ class RoomCard extends StatelessWidget {
           ),
         ),
       );
+}
+
+class _RoomTypeTag extends StatelessWidget {
+  const _RoomTypeTag({required this.room});
+  final RoomModel room;
+
+  @override
+  Widget build(BuildContext context) {
+    final _RoomTypeTagData tag = _tagForRoom(room);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(12),
+          bottomLeft: Radius.circular(9),
+          topLeft: Radius.circular(4),
+          bottomRight: Radius.circular(4),
+        ),
+        gradient: LinearGradient(colors: tag.colors),
+      ),
+      child: Text(tag.label,
+          style: TextStyle(
+              color: tag.textColor, fontSize: 10, fontWeight: FontWeight.w700)),
+    );
+  }
+
+  _RoomTypeTagData _tagForRoom(RoomModel room) {
+    final int value = room.id.codeUnits.fold<int>(0, (int sum, int code) => sum + code);
+    return switch (value % 4) {
+      0 => const _RoomTypeTagData(
+          label: 'Canlı',
+          colors: <Color>[Color(0xFFFFE68A), Color(0xFFFF9D5C)],
+          textColor: Color(0xFF6E2B25)),
+      1 => const _RoomTypeTagData(
+          label: 'Oyun',
+          colors: <Color>[Color(0xFF9BE7FF), Color(0xFF62A9FF)],
+          textColor: Color(0xFF153B70)),
+      2 => const _RoomTypeTagData(
+          label: 'Sesli',
+          colors: <Color>[Color(0xFFD7B4FF), Color(0xFF9C72F2)],
+          textColor: Color(0xFF3E1D70)),
+      _ => const _RoomTypeTagData(
+          label: 'Müzik',
+          colors: <Color>[Color(0xFFFFB8D8), Color(0xFFFF7B9E)],
+          textColor: Color(0xFF6C203D)),
+    };
+  }
+}
+
+class _RoomTypeTagData {
+  const _RoomTypeTagData({required this.label, required this.colors, required this.textColor});
+  final String label;
+  final List<Color> colors;
+  final Color textColor;
 }
 
 class _HostBadge extends StatelessWidget {
