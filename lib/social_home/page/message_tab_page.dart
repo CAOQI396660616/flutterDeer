@@ -45,7 +45,7 @@ class _MessageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -104,76 +104,143 @@ class _MessageIndicatorPainter extends BoxPainter {
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     final Size size = configuration.size ?? Size.zero;
     final Paint paint = Paint()
-      ..color = const Color(0xFF20E0DE)
+      ..shader = const LinearGradient(
+        colors: <Color>[Color(0xFFFFD54F), Color(0xFFFF7A00)],
+      ).createShader(offset & size)
       ..strokeWidth = 3.5
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     final Path path = Path()
-      ..moveTo(offset.dx + 3, offset.dy + size.height - 6)
-      ..quadraticBezierTo(offset.dx + size.width * .35, offset.dy + size.height - 14,
-          offset.dx + size.width * .62, offset.dy + size.height - 7)
-      ..quadraticBezierTo(offset.dx + size.width * .82, offset.dy + size.height,
-          offset.dx + size.width - 3, offset.dy + size.height - 8);
+      ..moveTo(offset.dx + 3, offset.dy + size.height * .62)
+      ..quadraticBezierTo(offset.dx + size.width * .28, offset.dy + size.height * .15,
+          offset.dx + size.width * .55, offset.dy + size.height * .52)
+      ..quadraticBezierTo(offset.dx + size.width * .78, offset.dy + size.height * .82,
+          offset.dx + size.width - 2, offset.dy + size.height * .48);
     canvas.drawPath(path, paint);
   }
 }
 
-class _ChatContent extends StatelessWidget {
+class _ChatContent extends StatefulWidget {
   const _ChatContent();
 
   @override
-  Widget build(BuildContext context) => ListView(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 110),
-        children: const <Widget>[
-          _PermissionNotice(),
-          _ProfileBanner(),
-          _EventBanner(),
-          _MessageItem(
-            icon: Icons.notifications_none_rounded,
-            iconColor: Color(0xFF81F7FF),
-            title: '系统消息',
-            time: '3天前',
-            preview: '恭喜哟。。。晋升上神贵族，成功炼化5颗彩...',
-          ),
-          _MessageItem(
-            icon: Icons.star_border_rounded,
-            iconColor: Color(0xFFFFE3A2),
-            title: '活动信息',
-            time: '07-31',
-            preview: '🎁礼物乐园钻兑换重新升级 ⏰7.31-8.3 每...',
-          ),
-          _MessageItem(
-            icon: Icons.smart_toy_outlined,
-            iconColor: Color(0xFFB9E9FF),
-            title: '小天使AI',
-            time: '07-28',
-            preview: '宝！你居然找到我了，那我就给你留了彩蛋...',
-          ),
-        ],
-      );
+  State<_ChatContent> createState() => _ChatContentState();
 }
 
-class _PermissionNotice extends StatelessWidget {
-  const _PermissionNotice();
+class _ChatContentState extends State<_ChatContent> {
+  static const int _pageSize = 3;
+  final ScrollController _scrollController = ScrollController();
+  late List<_ChatMessageData> _messages;
+  bool _loadingMore = false;
+  int _page = 1;
 
   @override
-  Widget build(BuildContext context) => Container(
-        height: 46,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        color: const Color(0xCC171A3D),
-        child: const Row(
-          children: <Widget>[
-            Icon(Icons.notifications_none, color: Color(0xFFAF9BFF), size: 21),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text('开启通知权限，才不会错过重要消息推送哦',
-                  style: TextStyle(color: Colors.white70, fontSize: 12)),
-            ),
-            Text('前往开启', style: TextStyle(color: Color(0xFF25E0E0), fontSize: 12)),
-          ],
+  void initState() {
+    super.initState();
+    _messages = _fakeMessages(0, _pageSize);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        color: const Color(0xFF20E0DE),
+        onRefresh: _refresh,
+        child: ListView.builder(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 110),
+          itemCount: 1 + _messages.length + (_loadingMore ? 1 : 0),
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return const _ProfileBanner();
+            }
+            if (index == _messages.length + 1) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 22),
+                child: Center(
+                    child: SizedBox(
+                        width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))),
+              );
+            }
+            return _MessageItem(data: _messages[index - 1]);
+          },
         ),
       );
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refresh() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _page = 1;
+      _messages = _fakeMessages(0, _pageSize);
+    });
+  }
+
+  Future<void> _loadMore() async {
+    setState(() => _loadingMore = true);
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _messages = <_ChatMessageData>[..._messages, ..._fakeMessages(_page * _pageSize, _pageSize)];
+      _page++;
+      _loadingMore = false;
+    });
+  }
+
+  List<_ChatMessageData> _fakeMessages(int start, int count) {
+    const List<String> titles = <String>['系统消息', '活动信息', '小天使AI', '好友动态', '官方提醒'];
+    const List<String> previews = <String>[
+      '恭喜哟。。。晋升上神贵族，成功炼化5颗彩...',
+      '🎁礼物乐园钻兑换重新升级 ⏰7.31-8.3 每...',
+      '宝！你居然找到我了，那我就给你留了彩蛋...',
+      '你关注的好友发布了新的动态，快去看看吧...',
+      '新的活动已经开启，参与活动可以领取奖励哦...',
+    ];
+    const List<IconData> icons = <IconData>[
+      Icons.notifications_none_rounded,
+      Icons.star_border_rounded,
+      Icons.smart_toy_outlined,
+      Icons.favorite_border_rounded,
+      Icons.campaign_outlined,
+    ];
+    const List<Color> colors = <Color>[
+      Color(0xFF81F7FF),
+      Color(0xFFFFE3A2),
+      Color(0xFFB9E9FF),
+      Color(0xFFFF9DC4),
+      Color(0xFFFFD47C),
+    ];
+    return List<_ChatMessageData>.generate(count, (int index) {
+      final int dataIndex = (start + index) % titles.length;
+      return _ChatMessageData(
+        icon: icons[dataIndex],
+        iconColor: colors[dataIndex],
+        title: dataIndex == 0
+            ? titles[dataIndex]
+            : '${titles[dataIndex]} ${start + index ~/ titles.length + 1}',
+        time: dataIndex < 3 ? <String>['3天前', '07-31', '07-28'][dataIndex] : '刚刚',
+        preview: previews[dataIndex],
+      );
+    });
+  }
 }
 
 class _ProfileBanner extends StatelessWidget {
@@ -222,42 +289,9 @@ class _ProfileBanner extends StatelessWidget {
       );
 }
 
-class _EventBanner extends StatelessWidget {
-  const _EventBanner();
-
-  @override
-  Widget build(BuildContext context) => Container(
-        height: 88,
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: <Color>[Color(0xFF13264C), Color(0xFF242048)]),
-          border: Border.all(color: const Color(0xFF38477D)),
-        ),
-        child: const Row(children: <Widget>[
-          Icon(Icons.auto_awesome, color: Color(0xFF78D7FF), size: 36),
-          SizedBox(width: 14),
-          Text('我的宝藏纪',
-              style:
-                  TextStyle(color: Color(0xFFA0EAF1), fontSize: 20, fontWeight: FontWeight.w600)),
-          Spacer(),
-          Icon(Icons.stars_rounded, color: Color(0xFF8D80B8), size: 42),
-        ]),
-      );
-}
-
 class _MessageItem extends StatelessWidget {
-  const _MessageItem(
-      {required this.icon,
-      required this.iconColor,
-      required this.title,
-      required this.time,
-      required this.preview});
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String time;
-  final String preview;
+  const _MessageItem({required this.data});
+  final _ChatMessageData data;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -267,8 +301,9 @@ class _MessageItem extends StatelessWidget {
             width: 60,
             height: 60,
             margin: const EdgeInsets.only(left: 14, right: 16),
-            decoration: BoxDecoration(shape: BoxShape.circle, color: iconColor.withOpacity(.15)),
-            child: Icon(icon, color: iconColor, size: 34),
+            decoration:
+                BoxDecoration(shape: BoxShape.circle, color: data.iconColor.withOpacity(.15)),
+            child: Icon(data.icon, color: data.iconColor, size: 34),
           ),
           Expanded(
             child: Column(
@@ -277,13 +312,13 @@ class _MessageItem extends StatelessWidget {
                 children: <Widget>[
                   Row(children: <Widget>[
                     Expanded(
-                        child: Text(title,
+                        child: Text(data.title,
                             style: const TextStyle(
                                 color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600))),
-                    Text(time, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                    Text(data.time, style: const TextStyle(color: Colors.white38, fontSize: 11)),
                   ]),
                   const SizedBox(height: 9),
-                  Text(preview,
+                  Text(data.preview,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white70, fontSize: 12)),
@@ -296,6 +331,22 @@ class _MessageItem extends StatelessWidget {
               decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFFF2A5C))),
         ]),
       );
+}
+
+class _ChatMessageData {
+  const _ChatMessageData({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.time,
+    required this.preview,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String time;
+  final String preview;
 }
 
 class _FriendContent extends StatelessWidget {

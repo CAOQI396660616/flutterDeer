@@ -56,8 +56,29 @@ class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 18),
-        child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Align(
+              alignment: Alignment.centerRight,
+              child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                _ProfileAction(
+                  icon: Icons.edit_outlined,
+                  label: 'Düzenle',
+                  onTap: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(builder: (_) => const ProfileEditPage()),
+                  ),
+                ),
+                _ProfileAction(
+                  icon: Icons.settings_outlined,
+                  label: 'Ayarlar',
+                  onTap: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(builder: (_) => const ProfileSettingsPage()),
+                  ),
+                ),
+              ]),
+            ),
+            const SizedBox(height: 16),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Row(children: <Widget>[
                 Container(
@@ -103,30 +124,9 @@ class _ProfileHeader extends StatelessWidget {
               const Text('Profiline bir imza ekleyerek daha fazla ilgi çekebilirsin',
                   style: TextStyle(color: Colors.white70, fontSize: 14)),
             ]),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Row(children: <Widget>[
-                _ProfileAction(
-                  icon: Icons.edit_outlined,
-                  label: 'Düzenle',
-                  onTap: () => Navigator.of(context).push<void>(
-                    MaterialPageRoute<void>(builder: (_) => const ProfileEditPage()),
-                  ),
-                ),
-                _ProfileAction(
-                  icon: Icons.settings_outlined,
-                  label: 'Ayarlar',
-                  onTap: () => Navigator.of(context).push<void>(
-                    MaterialPageRoute<void>(builder: (_) => const ProfileSettingsPage()),
-                  ),
-                ),
-              ]),
-            ),
           ],
         ),
       );
-
 }
 
 class _ProfileAction extends StatelessWidget {
