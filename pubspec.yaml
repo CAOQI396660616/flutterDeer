@@ -54,11 +54,8 @@ dependencies:
   sprintf: ^7.0.0
   # 状态管理 https://github.com/rrousselGit/provider
   provider: ^6.1.2
-  # 扫码 https://github.com/juliuscanute/qr_code_scanner
-  qr_code_scanner:
-    git:
-      url: 'https://github.com/NeverOvO/qr_code_scanner.git'
-      ref: '3fe7b88'
+  # 扫码（兼容当前 Flutter Web）
+  qr_code_scanner_plus: ^2.2.0
   # App Shortcuts https://github.com/flutter/packages/tree/main/packages/quick_actions
   quick_actions: 1.1.0
   # 振动 https://github.com/benjamindean/flutter_vibration

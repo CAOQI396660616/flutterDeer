@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/data/user_assets.dart';
+import 'package:flutter_deer/social_home/models/room_model.dart';
 
 class RoomCard extends StatelessWidget {
   const RoomCard({super.key, required this.room, required this.onTap});
@@ -39,8 +39,8 @@ class RoomCard extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: 9,
-                      right: 9,
+                      top: 0,
+                      right: 0,
                       child: _RoomTypeTag(room: room),
                     ),
                     Positioned(
@@ -124,8 +124,7 @@ class _RoomTypeTag extends StatelessWidget {
         gradient: LinearGradient(colors: tag.colors),
       ),
       child: Text(tag.label,
-          style: TextStyle(
-              color: tag.textColor, fontSize: 10, fontWeight: FontWeight.w700)),
+          style: TextStyle(color: tag.textColor, fontSize: 10, fontWeight: FontWeight.w700)),
     );
   }
 

@@ -248,7 +248,7 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Container(
         height: 48,
-        color: const Color(0xE6141820),
+        color: const Color(0xCC2B245B),
         padding: const EdgeInsets.only(left: 18),
         alignment: Alignment.centerLeft,
         child: HomeBrushTabBar(

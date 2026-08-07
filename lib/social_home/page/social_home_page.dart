@@ -469,7 +469,7 @@ class _FakeRoomListPageState extends State<_FakeRoomListPage> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
-                    mainAxisSpacing: 6,
+                    mainAxisSpacing: 2.4,
                     childAspectRatio: .91),
               ),
             ),

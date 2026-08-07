@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// Mesaj ve arkadaş içeriği.
@@ -320,7 +320,7 @@ class _MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 99,
+        height: 120,
         child: Row(children: <Widget>[
           Container(
             width: 60,
