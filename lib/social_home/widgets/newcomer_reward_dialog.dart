@@ -59,17 +59,31 @@ class NewcomerRewardDialog extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: const Color(0xB3101820),
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: Colors.white24),
             ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: width),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 24, 18, 14),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
+            child: Stack(
+              children: <Widget>[
+                const Positioned.fill(
+                  child: Image(
+                    image: AssetImage('assets/images/social_home/bg_new_user.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned.fill(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                    child: Container(color: const Color(0xB3101820)),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: width),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 24, 18, 14),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
                     const Text(
                       '新人礼包',
                       style: TextStyle(
@@ -125,9 +139,11 @@ class NewcomerRewardDialog extends StatelessWidget {
                         tooltip: '关闭',
                       ),
                     ),
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
