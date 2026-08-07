@@ -114,11 +114,16 @@ class _TopTab extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
         child: Center(
-          child: Text(label,
-              style: TextStyle(
-                  color: selected ? Colors.white : Colors.white60,
-                  fontSize: 22,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
+          child: Text(
+            label,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+                color: selected ? Colors.white : Colors.white60,
+                fontSize: 22,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400),
+          ),
         ),
       );
 }
@@ -160,10 +165,17 @@ class _CircleAction extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(24),
-          child: CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.white.withOpacity(.1),
-              child: Icon(icon, color: Colors.white70, size: 20)),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Center(
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white.withOpacity(.1),
+                child: Icon(icon, color: Colors.white70, size: 24),
+              ),
+            ),
+          ),
         ),
       );
 }

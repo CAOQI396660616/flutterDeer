@@ -46,7 +46,7 @@ class _MessageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: Row(
           children: <Widget>[
             AnimatedBuilder(
@@ -55,7 +55,7 @@ class _MessageHeader extends StatelessWidget {
                 final double page = controller.animation?.value ?? controller.index.toDouble();
                 final int selected = page.round().clamp(0, 1);
                 return HomeBrushTabBar(
-                  labels: const <String>['Sohbet', 'Arkadaşlar'],
+                  labels: const <String>['Sohbet', 'Arkadaş'],
                   selected: selected,
                   indicatorProgress: page.clamp(0.0, 1.0),
                   onChanged: controller.animateTo,
@@ -77,15 +77,18 @@ class _HeaderAction extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.white.withOpacity(.10),
-        shape: const CircleBorder(),
-        child: InkWell(
-          onTap: onTap,
-          customBorder: const CircleBorder(),
-          child: Padding(
-            padding: const EdgeInsets.all(11),
-            child: Icon(icon, color: Colors.white70, size: 21),
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Center(
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white.withOpacity(.10),
+              child: Icon(icon, color: Colors.white70, size: 24),
+            ),
           ),
         ),
       );
