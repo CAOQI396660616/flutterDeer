@@ -63,7 +63,7 @@ class HomeBrushTabBar extends StatelessWidget {
         ((secondCenter - firstCenter) * indicatorProgress.clamp(0.0, 1.0)) -
         (indicatorWidth / 2);
     return SizedBox(
-      width: 150,
+      width: tabWidths[0] + tabGap + tabWidths[1],
       height: 38,
       child: Stack(
         clipBehavior: Clip.none,
@@ -118,7 +118,6 @@ class _TopTab extends StatelessWidget {
             label,
             maxLines: 1,
             softWrap: false,
-            overflow: TextOverflow.ellipsis,
             style: TextStyle(
                 color: selected ? Colors.white : Colors.white60,
                 fontSize: 22,

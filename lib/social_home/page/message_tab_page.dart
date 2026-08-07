@@ -55,9 +55,10 @@ class _MessageHeader extends StatelessWidget {
                 final double page = controller.animation?.value ?? controller.index.toDouble();
                 final int selected = page.round().clamp(0, 1);
                 return HomeBrushTabBar(
-                  labels: const <String>['Sohbet', 'Arkadaş'],
+                  labels: const <String>['Sohbet', 'Arkadaşlar'],
                   selected: selected,
                   indicatorProgress: page.clamp(0.0, 1.0),
+                  tabWidths: const <double>[75, 110],
                   onChanged: controller.animateTo,
                 );
               },
