@@ -48,7 +48,7 @@ class _MessageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 16, 20),
+        padding: const EdgeInsets.fromLTRB(20, 18, 16, 20),
         child: Row(
           children: <Widget>[
             AnimatedBuilder(
