@@ -12,19 +12,35 @@ class ProfileTabPage extends StatefulWidget {
   State<ProfileTabPage> createState() => _ProfileTabPageState();
 }
 
-class _ProfileTabPageState extends State<ProfileTabPage> with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
+class _ProfileTabPageState extends State<ProfileTabPage> {
+  late final PageController _pageController;
+  int _pageIndex = 0;
+  double _pagePosition = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _pageController = PageController();
+    _pageController.addListener(_handlePageScroll);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _pageController
+      ..removeListener(_handlePageScroll)
+      ..dispose();
     super.dispose();
+  }
+
+  void _handlePageScroll() {
+    if (!_pageController.hasClients || !_pageController.position.haveDimensions || !mounted) {
+      return;
+    }
+    final double position = _pageController.page ?? _pageIndex.toDouble();
+    if ((position - _pagePosition).abs() < .001) {
+      return;
+    }
+    setState(() => _pagePosition = position);
   }
 
   @override
@@ -37,13 +53,28 @@ class _ProfileTabPageState extends State<ProfileTabPage> with SingleTickerProvid
         SliverToBoxAdapter(child: _ProfileHeader(nickname: nickname, avatar: avatar)),
         SliverPersistentHeader(
           pinned: true,
-          delegate: _ProfileTabHeaderDelegate(controller: _tabController),
+          delegate: _ProfileTabHeaderDelegate(
+              selected: _pageIndex,
+              pagePosition: _pagePosition,
+              onChanged: _animateToPage),
         ),
       ],
-      body: TabBarView(
-        controller: _tabController,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (int value) => setState(() {
+          _pageIndex = value;
+          _pagePosition = value.toDouble();
+        }),
         children: const <Widget>[_DynamicContent(), _ProfileContent()],
       ),
+    );
+  }
+
+  void _animateToPage(int value) {
+    _pageController.animateToPage(
+      value,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
     );
   }
 }
@@ -174,8 +205,14 @@ class _Tag extends StatelessWidget {
 }
 
 class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _ProfileTabHeaderDelegate({required this.controller});
-  final TabController controller;
+  _ProfileTabHeaderDelegate({
+    required this.selected,
+    required this.pagePosition,
+    required this.onChanged,
+  });
+  final int selected;
+  final double pagePosition;
+  final ValueChanged<int> onChanged;
   @override
   double get minExtent => 48;
   @override
@@ -184,25 +221,35 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => SizedBox(
         height: 48,
         child: Padding(
-          padding: EdgeInsets.only(left: 18),
-          child: _ProfileTabs(controller: controller),
+          padding: const EdgeInsets.only(left: 18),
+          child: _ProfileTabs(
+            selected: selected,
+            pagePosition: pagePosition,
+            onChanged: onChanged,
+          ),
         ),
       );
   @override
-  bool shouldRebuild(covariant _ProfileTabHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant _ProfileTabHeaderDelegate oldDelegate) =>
+      oldDelegate.selected != selected ||
+      oldDelegate.pagePosition != pagePosition ||
+      oldDelegate.onChanged != onChanged;
 }
 
 class _ProfileTabs extends StatelessWidget {
-  const _ProfileTabs({required this.controller});
-  final TabController controller;
+  const _ProfileTabs({
+    required this.selected,
+    required this.pagePosition,
+    required this.onChanged,
+  });
+  final int selected;
+  final double pagePosition;
+  final ValueChanged<int> onChanged;
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-        animation: controller,
-        builder: (BuildContext context, Widget? child) {
-          final double position = controller.animation?.value ?? controller.index.toDouble();
-          final double progress = position.clamp(0.0, 1.0);
-          return SizedBox(
+  Widget build(BuildContext context) {
+    final double progress = pagePosition.clamp(0.0, 1.0);
+    return SizedBox(
             width: 150,
             height: 38,
             child: Stack(
@@ -222,9 +269,8 @@ class _ProfileTabs extends StatelessWidget {
                     width: 55,
                     child: _ProfileTabLabel(
                       label: 'Aktiv',
-                      selected: controller.index == 0,
-                      onTap: () => controller.animateTo(0,
-                          duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic),
+                      selected: selected == 0,
+                      onTap: () => onChanged(0),
                     ),
                   ),
                   const SizedBox(width: 22),
@@ -232,17 +278,15 @@ class _ProfileTabs extends StatelessWidget {
                     width: 73,
                     child: _ProfileTabLabel(
                       label: 'Bilgi',
-                      selected: controller.index == 1,
-                      onTap: () => controller.animateTo(1,
-                          duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic),
+                      selected: selected == 1,
+                      onTap: () => onChanged(1),
                     ),
                   ),
                 ]),
               ],
             ),
           );
-        },
-      );
+  }
 }
 
 class _ProfileTabLabel extends StatelessWidget {

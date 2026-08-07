@@ -18,36 +18,11 @@ class HomeTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: <Widget>[
-          SizedBox(
-            width: 150,
-            height: 38,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                Positioned(
-                  left: 14 + (indicatorProgress * 87),
-                  bottom: 8,
-                  width: 27,
-                  height: 8,
-                  child: const IgnorePointer(
-                    child: CustomPaint(painter: _TopTabIndicatorPainter()),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                        width: 55,
-                        child: _TopTab(
-                            label: 'Aile', selected: selected == 0, onTap: () => onChanged(0))),
-                    const SizedBox(width: 22),
-                    SizedBox(
-                        width: 73,
-                        child: _TopTab(
-                            label: 'Odalar', selected: selected == 1, onTap: () => onChanged(1))),
-                  ],
-                ),
-              ],
-            ),
+          HomeBrushTabBar(
+            labels: const <String>['Aile', 'Odalar'],
+            selected: selected,
+            indicatorProgress: indicatorProgress,
+            onChanged: onChanged,
           ),
           const Spacer(),
           _CircleAction(
@@ -58,6 +33,63 @@ class HomeTopBar extends StatelessWidget {
           const SizedBox(width: 12),
           _CircleAction(icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
         ],
+      );
+}
+
+/// 首页和消息页共用的双 Tab 布局，保证文字、间距和笔刷指示器一致。
+class HomeBrushTabBar extends StatelessWidget {
+  const HomeBrushTabBar({
+    super.key,
+    required this.labels,
+    required this.selected,
+    required this.indicatorProgress,
+    required this.onChanged,
+  });
+
+  final List<String> labels;
+  final int selected;
+  final double indicatorProgress;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: 150,
+        height: 38,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            Positioned(
+              left: 14 + (indicatorProgress * 87),
+              bottom: 8,
+              width: 27,
+              height: 8,
+              child: const IgnorePointer(
+                child: CustomPaint(painter: _TopTabIndicatorPainter()),
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                SizedBox(
+                  width: 55,
+                  child: _TopTab(
+                    label: labels[0],
+                    selected: selected == 0,
+                    onTap: () => onChanged(0),
+                  ),
+                ),
+                const SizedBox(width: 22),
+                SizedBox(
+                  width: 73,
+                  child: _TopTab(
+                    label: labels[1],
+                    selected: selected == 1,
+                    onTap: () => onChanged(1),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       );
 }
 

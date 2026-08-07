@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// 首页“聊天”入口的消息与好友内容。
 ///
@@ -49,48 +50,15 @@ class _MessageHeader extends StatelessWidget {
         child: Row(
           children: <Widget>[
             AnimatedBuilder(
-              animation: controller,
+              animation: controller.animation!,
               builder: (BuildContext context, Widget? child) {
                 final double page = controller.animation?.value ?? controller.index.toDouble();
                 final int selected = page.round().clamp(0, 1);
-                return SizedBox(
-                  width: 150,
-                  height: 38,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: <Widget>[
-                      Positioned(
-                        left: 14 + (page.clamp(0.0, 1.0) * 87),
-                        bottom: 8,
-                        width: 27,
-                        height: 8,
-                        child: const IgnorePointer(
-                          child: CustomPaint(painter: _MessageTabIndicatorPainter()),
-                        ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 55,
-                            child: _MessageTopTab(
-                              label: '聊天',
-                              selected: selected == 0,
-                              onTap: () => controller.animateTo(0),
-                            ),
-                          ),
-                          const SizedBox(width: 22),
-                          SizedBox(
-                            width: 73,
-                            child: _MessageTopTab(
-                              label: '好友',
-                              selected: selected == 1,
-                              onTap: () => controller.animateTo(1),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                return HomeBrushTabBar(
+                  labels: const <String>['聊天', '好友'],
+                  selected: selected,
+                  indicatorProgress: page.clamp(0.0, 1.0),
+                  onChanged: controller.animateTo,
                 );
               },
             ),
@@ -99,28 +67,6 @@ class _MessageHeader extends StatelessWidget {
             const SizedBox(width: 10),
             _HeaderAction(icon: Icons.person_add_alt_1_outlined, onTap: () {}),
           ],
-        ),
-      );
-}
-
-class _MessageTopTab extends StatelessWidget {
-  const _MessageTopTab({required this.label, required this.selected, required this.onTap});
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? Colors.white : Colors.white60,
-              fontSize: 22,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
         ),
       );
 }
@@ -143,29 +89,6 @@ class _HeaderAction extends StatelessWidget {
           ),
         ),
       );
-}
-
-class _MessageTabIndicatorPainter extends CustomPainter {
-  const _MessageTabIndicatorPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..shader = const LinearGradient(
-        colors: <Color>[Color(0xFFFFD54F), Color(0xFFFF7A00)],
-      ).createShader(Offset.zero & size)
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 3.5
-      ..style = PaintingStyle.stroke;
-    final Path path = Path()
-      ..moveTo(3, size.height * .62)
-      ..quadraticBezierTo(size.width * .28, size.height * .15, size.width * .55, size.height * .52)
-      ..quadraticBezierTo(size.width * .78, size.height * .82, size.width - 2, size.height * .48);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MessageTabIndicatorPainter oldDelegate) => false;
 }
 
 class _ChatContent extends StatefulWidget {
