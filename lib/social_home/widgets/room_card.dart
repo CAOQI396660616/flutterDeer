@@ -195,13 +195,6 @@ class _HostBadge extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 4),
-          Flexible(
-            child: Text(name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.white, fontSize: 10)),
-          ),
         ],
       ),
     );

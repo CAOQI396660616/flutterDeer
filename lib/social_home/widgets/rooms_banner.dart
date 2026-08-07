@@ -120,16 +120,11 @@ class _RoomsBannerPlaceholder extends StatelessWidget {
   const _RoomsBannerPlaceholder();
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-        color: const Color(0xFF1B1746),
-        child: Center(
-          child: Image.asset(
-            'assets/images/login_social/ic_placeholder_room_cover.png',
-            width: 72,
-            height: 72,
-            fit: BoxFit.contain,
-          ),
-        ),
+  Widget build(BuildContext context) => Image.asset(
+        'assets/images/login_social/ic_placeholder_room_cover.png',
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
       );
 }
 
