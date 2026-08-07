@@ -198,21 +198,21 @@ class _RoomStatus extends StatelessWidget {
   final int count;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-          child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Lottie.asset(
-              'assets/lottie/fire.json',
-              width: 16,
-              height: 16,
-              fit: BoxFit.contain,
-              repeat: true,
-            ),
-            const SizedBox(width: 3),
-            Text('$count', style: const TextStyle(color: Colors.white70, fontSize: 11))
-          ]),
-        ),
+  Widget build(BuildContext context) => Container(
+        height: 18,
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(10)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Lottie.asset(
+            'assets/lottie/fire.json',
+            width: 13,
+            height: 13,
+            fit: BoxFit.contain,
+            repeat: true,
+          ),
+          const SizedBox(width: 2),
+          Text('$count', style: const TextStyle(color: Colors.white70, fontSize: 9))
+        ]),
       );
 }
