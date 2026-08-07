@@ -75,7 +75,7 @@ class _HomeBottomBarState extends State<HomeBottomBar> {
   void _handleTap(int index) {
     if (index == widget.currentIndex && _pendingIndex == null) return;
     setState(() => _pendingIndex = index);
-    // 先立即切换页面，Lottie 只负责播放点击反馈，不阻塞 Tab 内容切换。
+    // Sayfayı hemen değiştir; Lottie yalnızca dokunma geri bildirimi verir.
     widget.onTap(index);
   }
 
@@ -110,7 +110,7 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
     'assets/images/social_home/icon_tab_3_a.png',
     'assets/images/social_home/icon_tab_4_a.png',
   ];
-  static const List<String> _labels = <String>['Ana Sayfa', 'Meydan', '聊天', 'Profil'];
+  static const List<String> _labels = <String>['Ana Sayfa', 'Meydan', 'Sohbet', 'Profil'];
 
   late final AnimationController _controller = AnimationController(vsync: this);
   bool _compositionLoaded = false;

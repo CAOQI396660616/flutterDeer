@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
-/// 首页“聊天”入口的消息与好友内容。
+/// Mesaj ve arkadaş içeriği.
 ///
-/// 当前先使用本地假数据，后续接入接口时只需替换列表数据即可。
+/// Şimdilik yerel sahte veri kullanılır.
 class MessageTabPage extends StatefulWidget {
   const MessageTabPage({super.key});
 
@@ -55,7 +55,7 @@ class _MessageHeader extends StatelessWidget {
                 final double page = controller.animation?.value ?? controller.index.toDouble();
                 final int selected = page.round().clamp(0, 1);
                 return HomeBrushTabBar(
-                  labels: const <String>['聊天', '好友'],
+                  labels: const <String>['Sohbet', 'Arkadaşlar'],
                   selected: selected,
                   indicatorProgress: page.clamp(0.0, 1.0),
                   onChanged: controller.animateTo,
@@ -177,13 +177,19 @@ class _ChatContentState extends State<_ChatContent> {
   }
 
   List<_ChatMessageData> _fakeMessages(int start, int count) {
-    const List<String> titles = <String>['系统消息', '活动信息', '小天使AI', '好友动态', '官方提醒'];
+    const List<String> titles = <String>[
+      'Sistem Mesajı',
+      'Etkinlikler',
+      'Küçük Melek AI',
+      'Arkadaş Güncellemeleri',
+      'Resmî Duyuru',
+    ];
     const List<String> previews = <String>[
-      '恭喜哟。。。晋升上神贵族，成功炼化5颗彩...',
-      '🎁礼物乐园钻兑换重新升级 ⏰7.31-8.3 每...',
-      '宝！你居然找到我了，那我就给你留了彩蛋...',
-      '你关注的好友发布了新的动态，快去看看吧...',
-      '新的活动已经开启，参与活动可以领取奖励哦...',
+      'Tebrikler! Yeni VIP seviyen hayırlı olsun...',
+      '🎁 Hediye bahçesi yenilendi ⏰ 31.07-03.08...',
+      'Beni buldun! Sana özel bir sürpriz bıraktım...',
+      'Takip ettiğin arkadaş yeni bir paylaşım yaptı...',
+      'Yeni etkinlik başladı, ödülleri kaçırma!',
     ];
     const List<IconData> icons = <IconData>[
       Icons.notifications_none_rounded,
@@ -207,7 +213,7 @@ class _ChatContentState extends State<_ChatContent> {
         title: dataIndex == 0
             ? titles[dataIndex]
             : '${titles[dataIndex]} ${start + index ~/ titles.length + 1}',
-        time: dataIndex < 3 ? <String>['3天前', '07-31', '07-28'][dataIndex] : '刚刚',
+        time: dataIndex < 3 ? <String>['3 gün önce', '07-31', '07-28'][dataIndex] : 'Şimdi',
         preview: previews[dataIndex],
       );
     });
@@ -238,11 +244,12 @@ class _ProfileBanner extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('还没心动?',
+                  Text('Henüz kalbin kıpırdamadı mı?',
                       style: TextStyle(
                           color: Color(0xFFBFE7FF), fontSize: 17, fontWeight: FontWeight.w700)),
                   SizedBox(height: 5),
-                  Text('完善资料瞬间提高回复率哦~', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  Text('Profilini tamamla, yanıtların artsın~',
+                      style: TextStyle(color: Colors.white70, fontSize: 11)),
                 ],
               ),
             ),
@@ -251,7 +258,7 @@ class _ProfileBanner extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
               decoration: BoxDecoration(
                   color: const Color(0xFF3EE5E4), borderRadius: BorderRadius.circular(18)),
-              child: const Text('去完善',
+              child: const Text('Tamamla',
                   style: TextStyle(
                       color: Color(0xFF183A49), fontSize: 12, fontWeight: FontWeight.w700)),
             ),
@@ -324,26 +331,26 @@ class _FriendContent extends StatelessWidget {
   const _FriendContent();
 
   static const List<String> _names = <String>[
-    '星河入梦',
-    '小鹿乱撞',
-    '奶糖不甜',
-    '云朵收藏家',
-    '晚风轻轻',
-    '桃气少女',
-    '海盐汽水',
-    '月亮邮差',
-    '橘子汽水',
-    '南风知我意',
-    '一颗小太阳',
-    '椰奶冻',
-    '银河漫游',
-    '甜心兔兔',
-    '春日限定',
-    '晚安小鱼',
-    '薄荷微凉',
-    '七分甜',
-    '山野有雾',
-    '晴天娃娃',
+    'Yıldız Rüyası',
+    'Tatlı Geyik',
+    'Süt Şekeri',
+    'Bulut Koleksiyoncusu',
+    'Akşam Esintisi',
+    'Şeftali Kızı',
+    'Deniz Sodası',
+    'Ay Postacısı',
+    'Portakal Gazozu',
+    'Güney Rüzgârı',
+    'Küçük Güneş',
+    'Hindistan Cevizi',
+    'Galaksi Gezisi',
+    'Tatlı Tavşan',
+    'Bahar Özel',
+    'İyi Geceler Balık',
+    'Serin Nane',
+    'Yedi Ölçü Tatlı',
+    'Sisli Dağ',
+    'Güneş Bebek',
   ];
   static const List<String> _avatars = <String>[
     'room_woman_44.jpg',

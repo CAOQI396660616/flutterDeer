@@ -21,7 +21,7 @@ class SocialHomePage extends StatefulWidget {
 }
 
 class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObserver {
-  // 调整这里的数值即可改变首页背景毛玻璃强度，数值越大越模糊。
+  // Ana sayfa arka plan bulanıklığı.
   static const double _backgroundBlurSigma = 6;
 
   int _bottomIndex = 0;
@@ -270,7 +270,7 @@ class _HomeBanner extends StatelessWidget {
                     const SizedBox(width: 10),
                     const Expanded(
                       child: Text(
-                        '新人专享福利，完善资料提高曝光',
+                        'Yeni üye fırsatı · Profilini tamamla',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -285,7 +285,7 @@ class _HomeBanner extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Text(
-                        '去看看',
+                        'Görüntüle',
                         style: TextStyle(
                             color: Color(0xFF183A49), fontSize: 11, fontWeight: FontWeight.w700),
                       ),

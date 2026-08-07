@@ -47,7 +47,7 @@ class RoomCard extends StatelessWidget {
                         ),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text('直播',
+                          child: Text('Canlı',
                               style: TextStyle(
                                   color: Color(0xFF198B8A),
                                   fontSize: 10,

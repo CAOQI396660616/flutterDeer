@@ -36,7 +36,7 @@ class HomeTopBar extends StatelessWidget {
       );
 }
 
-/// 首页和消息页共用的双 Tab 布局，保证文字、间距和笔刷指示器一致。
+/// Ortak fırça sekmesi düzeni.
 class HomeBrushTabBar extends StatelessWidget {
   const HomeBrushTabBar({
     super.key,

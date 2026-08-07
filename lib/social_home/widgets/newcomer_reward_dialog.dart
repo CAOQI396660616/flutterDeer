@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-/// 新人礼包展示弹框。
+/// Yeni üye ödüllerini gösteren pencere.
 ///
-/// 当前阶段只负责展示和关闭，奖励领取状态、接口调用留待后续业务接入。
+/// Şimdilik yalnızca gösterim ve kapatma yapılır.
 Future<void> showNewcomerRewardDialog(BuildContext context) {
   return showDialog<void>(
     context: context,
@@ -47,8 +47,7 @@ class NewcomerRewardDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width =
-        ((MediaQuery.sizeOf(context).width - 48).clamp(300.0, 470.0)) as double;
+    final double width = (MediaQuery.sizeOf(context).width - 48).clamp(300.0, 470.0);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
       backgroundColor: Colors.transparent,
@@ -180,10 +179,7 @@ class NewcomerRewardDialog extends StatelessWidget {
 
 class _RewardItem {
   const _RewardItem(
-      {required this.name,
-      required this.badge,
-      required this.quantity,
-      required this.imagePath});
+      {required this.name, required this.badge, required this.quantity, required this.imagePath});
   final String name;
   final String badge;
   final String quantity;
@@ -245,23 +241,21 @@ class _RewardTile extends StatelessWidget {
                 top: 0,
                 right: 0,
                 child: Container(
-                    width: 38,
-                    height: 17,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(14),
-                        bottomLeft: Radius.circular(9),
-                      ),
-                      gradient: LinearGradient(
-                        colors: <Color>[Color(0xFFFFD36A), Color(0xFFFF7A5C)],
-                      ),
+                  width: 38,
+                  height: 17,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(14),
+                      bottomLeft: Radius.circular(9),
                     ),
-                    alignment: Alignment.center,
-                    child: Text(reward.badge,
-                        style: const TextStyle(
-                            color: Color(0xFF6E1D27),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600)),
+                    gradient: LinearGradient(
+                      colors: <Color>[Color(0xFFFFD36A), Color(0xFFFF7A5C)],
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(reward.badge,
+                      style: const TextStyle(
+                          color: Color(0xFF6E1D27), fontSize: 10, fontWeight: FontWeight.w600)),
                 ),
               ),
             ],
