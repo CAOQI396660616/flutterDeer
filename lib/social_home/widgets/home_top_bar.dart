@@ -30,7 +30,7 @@ class HomeTopBar extends StatelessWidget {
               icon: Icons.search,
               label: 'Ara',
               onTap: onSearchTap),
-          const SizedBox(width: 16),
+          const SizedBox(width: 0),
           HomeActionButton(
               icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
         ],

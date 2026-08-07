@@ -67,7 +67,7 @@ class _MessageHeader extends StatelessWidget {
             ),
             const Spacer(),
             HomeActionButton(icon: Icons.card_giftcard_outlined, label: 'Hediyeler', onTap: () {}),
-            const SizedBox(width: 16),
+            const SizedBox(width: 0),
             HomeActionButton(
                 icon: Icons.person_add_alt_1_outlined, label: 'Arkadaş ekle', onTap: () {}),
           ],

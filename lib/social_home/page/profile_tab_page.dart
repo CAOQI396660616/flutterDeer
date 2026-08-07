@@ -113,7 +113,7 @@ class _ProfileHeader extends StatelessWidget {
                     MaterialPageRoute<void>(builder: (_) => const ProfileEditPage()),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 0),
                 HomeActionButton(
                   icon: Icons.settings_outlined,
                   label: 'Ayarlar',

@@ -317,7 +317,7 @@ class $AssetsLottieGen {
 
   final LottieGenImage boy = const LottieGenImage('assets/lottie/boy.json');
   final String bunnyNewMouth = 'assets/lottie/bunny_new_mouth.json';
-  final LottieGenImage fire = const LottieGenImage('assets/lottie/fire.json');
+  final String fire = 'assets/lottie/fire.json';
   final LottieGenImage genderChoice = const LottieGenImage('assets/lottie/gender_choice.json');
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
   final String login = 'assets/lottie/login.json';
