@@ -7,6 +7,7 @@ import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
+import 'package:flutter_deer/social_home/widgets/newcomer_reward_dialog.dart';
 import 'package:flutter_deer/social_home/widgets/room_card.dart';
 import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
 
@@ -23,6 +24,7 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
 
   int _bottomIndex = 0;
   bool _showWelcomeAnimation = true;
+  bool _hasShownAutomaticReward = false;
   bool _hasProcessedInitialResume = false;
 
   @override
@@ -148,8 +150,7 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
                                           .clamp(180.0, 220.0),
                                       child: WelcomeLottieAnimation(
                                         asset: 'assets/lottie/welcome.json',
-                                        onCompleted: () =>
-                                            setState(() => _showWelcomeAnimation = false),
+                                        onCompleted: _onWelcomeAnimationCompleted,
                                       ),
                                     ),
                                   ),
@@ -199,8 +200,28 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
           child: Text(HomeBottomBarLabels.labelFor(bottomIndex),
               style: const TextStyle(color: Colors.white70, fontSize: 20)));
     }
-    return _RoomsHomeTab(onWelcomeTap: () => setState(() => _showWelcomeAnimation = true));
+    return _RoomsHomeTab(
+      onWelcomeTap: () => setState(() => _showWelcomeAnimation = true),
+      onSearchTap: _showNewcomerReward,
+    );
   }
+
+  void _onWelcomeAnimationCompleted() {
+    if (!mounted) {
+      return;
+    }
+    setState(() => _showWelcomeAnimation = false);
+    if (!_hasShownAutomaticReward) {
+      _hasShownAutomaticReward = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showNewcomerReward();
+        }
+      });
+    }
+  }
+
+  void _showNewcomerReward() => showNewcomerRewardDialog(context);
 }
 
 class HomeBottomBarLabels {
@@ -209,8 +230,9 @@ class HomeBottomBarLabels {
 }
 
 class _RoomsHomeTab extends StatefulWidget {
-  const _RoomsHomeTab({required this.onWelcomeTap});
+  const _RoomsHomeTab({required this.onWelcomeTap, required this.onSearchTap});
   final VoidCallback onWelcomeTap;
+  final VoidCallback onSearchTap;
 
   @override
   State<_RoomsHomeTab> createState() => _RoomsHomeTabState();
@@ -259,6 +281,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
             selected: _topTab,
             indicatorProgress: (_pagePosition - 1).clamp(0.0, 1.0),
             onWelcomeTap: widget.onWelcomeTap,
+            onSearchTap: widget.onSearchTap,
             onChanged: (int value) {
               final int targetPage = value == 0 ? 0 : 2;
               _topPageController.animateToPage(targetPage,

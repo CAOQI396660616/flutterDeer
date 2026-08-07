@@ -6,11 +6,13 @@ class HomeTopBar extends StatelessWidget {
       required this.selected,
       required this.indicatorProgress,
       required this.onWelcomeTap,
+      required this.onSearchTap,
       required this.onChanged});
 
   final int selected;
   final double indicatorProgress;
   final VoidCallback onWelcomeTap;
+  final VoidCallback onSearchTap;
   final ValueChanged<int> onChanged;
 
   @override
@@ -48,7 +50,11 @@ class HomeTopBar extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          _CircleAction(icon: Icons.search, label: 'Ara', onTap: () {}),
+          _CircleAction(
+              key: const Key('home_search_action'),
+              icon: Icons.search,
+              label: 'Ara',
+              onTap: onSearchTap),
           const SizedBox(width: 12),
           _CircleAction(icon: Icons.leaderboard_outlined, label: 'Sıralama', onTap: onWelcomeTap),
         ],
@@ -100,7 +106,7 @@ class _TopTabIndicatorPainter extends CustomPainter {
 }
 
 class _CircleAction extends StatelessWidget {
-  const _CircleAction({required this.icon, required this.label, required this.onTap});
+  const _CircleAction({super.key, required this.icon, required this.label, required this.onTap});
   final IconData icon;
   final String label;
   final VoidCallback onTap;

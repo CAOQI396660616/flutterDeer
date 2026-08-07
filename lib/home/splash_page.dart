@@ -52,7 +52,11 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _initSplash() {
-    _goLogin();
+    Future<void>.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _goLogin();
+      }
+    });
   }
 
   void _goLogin() {
