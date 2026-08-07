@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
+import 'package:lottie/lottie.dart';
 
 class RoomCard extends StatelessWidget {
   const RoomCard({super.key, required this.room, required this.onTap});
@@ -50,7 +51,7 @@ class RoomCard extends StatelessWidget {
                     ),
                     Positioned(
                       bottom: 8,
-                      right: 10,
+                      right: 3,
                       child: _RoomStatus(count: room.onlineCount),
                     ),
                   ],
@@ -202,7 +203,13 @@ class _RoomStatus extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
           child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            const Icon(Icons.people_alt_outlined, color: Colors.white70, size: 13),
+            Lottie.asset(
+              'assets/lottie/fire.json',
+              width: 16,
+              height: 16,
+              fit: BoxFit.contain,
+              repeat: true,
+            ),
             const SizedBox(width: 3),
             Text('$count', style: const TextStyle(color: Colors.white70, fontSize: 11))
           ]),
