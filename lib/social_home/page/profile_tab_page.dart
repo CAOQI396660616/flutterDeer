@@ -151,20 +151,47 @@ class _ProfileHeader extends StatelessWidget {
                     style: const TextStyle(
                         color: Colors.white, fontSize: 23, fontWeight: FontWeight.w600)),
                 const SizedBox(width: 8),
-                const _Tag(text: '25', color: Color(0xFF19D7D8)),
+                const _ProfileBadge(
+                  text: '25',
+                  colors: <Color>[Color(0xFF36E8E6), Color(0xFF19BFC8)],
+                  textColor: Color(0xFF103D4A),
+                ),
               ]),
               const SizedBox(height: 6),
               const Text('ID: 177173883   IP konumu: Guangdong',
                   style: TextStyle(color: Colors.white60, fontSize: 12)),
               const SizedBox(height: 10),
               const Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
-                _ImageTag(asset: UserAssets.svipTag, width: 34),
-                _ImageTag(asset: UserAssets.storeTag, width: 38),
-                _Tag(text: 'SVIP 用户', color: Color(0xFFDBE7FF)),
-                _Tag(text: 'Sıradan', color: Color(0xFF71777C)),
-                _Tag(text: 'Küçük Çaylak', color: Color(0xFF9A9FA4)),
-                _Tag(text: '1', color: Color(0xFF7DCB31)),
-                _Tag(text: 'Yeni Bronz', color: Color(0xFF6F9C83)),
+                _ProfileBadge(
+                  text: 'SV1',
+                  colors: <Color>[Color(0xFFFFE68A), Color(0xFFFF9D5C)],
+                  textColor: Color(0xFF6E2B25),
+                ),
+                _ProfileBadge(
+                  text: 'V1',
+                  colors: <Color>[Color(0xFFFFD36E), Color(0xFFFF8B4D)],
+                  textColor: Color(0xFF6E2B25),
+                ),
+                _ProfileBadge(
+                  text: 'SVIP',
+                  colors: <Color>[Color(0xFF9BE7FF), Color(0xFF62A9FF)],
+                  textColor: Color(0xFF153B70),
+                ),
+                _ProfileBadge(
+                  text: 'Sıradan',
+                  colors: <Color>[Color(0xFFD7B4FF), Color(0xFF9C72F2)],
+                  textColor: Color(0xFF3E1D70),
+                ),
+                _ProfileBadge(
+                  text: 'Küçük Çaylak',
+                  colors: <Color>[Color(0xFFE3E7F0), Color(0xFFAAB4C7)],
+                  textColor: Color(0xFF39445A),
+                ),
+                _ProfileBadge(
+                  text: 'Yeni Bronz',
+                  colors: <Color>[Color(0xFFFFB8D8), Color(0xFFFF7B9E)],
+                  textColor: Color(0xFF6C203D),
+                ),
               ]),
               const SizedBox(height: 14),
               const Text('Profiline bir imza ekleyerek daha fazla ilgi çekebilirsin',
@@ -205,30 +232,21 @@ class _ProfileStat extends StatelessWidget {
       ]);
 }
 
-class _Tag extends StatelessWidget {
-  const _Tag({required this.text, required this.color});
+class _ProfileBadge extends StatelessWidget {
+  const _ProfileBadge({required this.text, required this.colors, required this.textColor});
   final String text;
-  final Color color;
+  final List<Color> colors;
+  final Color textColor;
+
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-        decoration:
-            BoxDecoration(color: color.withOpacity(.85), borderRadius: BorderRadius.circular(9)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(9),
+          gradient: LinearGradient(colors: colors),
+        ),
         child: Text(text,
-            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
-      );
-}
-
-class _ImageTag extends StatelessWidget {
-  const _ImageTag({required this.asset, required this.width});
-  final String asset;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        width: width,
-        height: 18,
-        child: Image.asset(asset, fit: BoxFit.contain),
+            style: TextStyle(color: textColor, fontSize: 10, fontWeight: FontWeight.w700)),
       );
 }
 
@@ -357,9 +375,7 @@ class _ProfilePagedContentState extends State<_ProfilePagedContent> {
                           padding: const EdgeInsets.only(bottom: 14),
                           child: Text(widget.title!,
                               style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600)),
+                                  color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
                         );
                       }
                       final int contentIndex = index - (widget.title == null ? 0 : 1);
