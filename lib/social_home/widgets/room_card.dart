@@ -205,7 +205,7 @@ class _RoomStatus extends StatelessWidget {
         decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(10)),
         child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
           Transform.translate(
-            offset: const Offset(0, -3),
+            offset: const Offset(0, -2),
             child: Lottie.asset(
               'assets/lottie/fire.json',
               width: 13,
@@ -215,7 +215,13 @@ class _RoomStatus extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 2),
-          Text('$count', style: const TextStyle(color: Colors.white70, fontSize: 9))
+          Transform.translate(
+            offset: const Offset(0, 1),
+            child: Text(
+              '$count',
+              style: const TextStyle(color: Colors.white70, fontSize: 9, height: 1),
+            ),
+          )
         ]),
       );
 }
