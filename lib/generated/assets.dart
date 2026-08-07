@@ -254,6 +254,7 @@ class $AssetsSocialHomeGen {
   const $AssetsSocialHomeGen();
 
   final $AssetsRewardsGen rewards = const $AssetsRewardsGen();
+  final $AssetsUserDataGen userData = const $AssetsUserDataGen();
   final AssetGenImage bgMainPage =
       const AssetGenImage('assets/images/social_home/bg_main_page.jpg');
   final AssetGenImage bgNewUser = const AssetGenImage('assets/images/social_home/bg_new_user.jpg');
@@ -273,6 +274,25 @@ class $AssetsSocialHomeGen {
       const AssetGenImage('assets/images/social_home/room_woman_68.jpg');
   final AssetGenImage roomWoman75 =
       const AssetGenImage('assets/images/social_home/room_woman_75.jpg');
+}
+
+class $AssetsUserDataGen {
+  const $AssetsUserDataGen();
+
+  final AssetGenImage a001 = const AssetGenImage('assets/images/social_home/user_data/001.webp');
+  final AssetGenImage a002 = const AssetGenImage('assets/images/social_home/user_data/002.webp');
+  final AssetGenImage a003 = const AssetGenImage('assets/images/social_home/user_data/003.webp');
+  final AssetGenImage a004 = const AssetGenImage('assets/images/social_home/user_data/004.webp');
+  final AssetGenImage a005 = const AssetGenImage('assets/images/social_home/user_data/005.webp');
+  final AssetGenImage a006 = const AssetGenImage('assets/images/social_home/user_data/006.webp');
+  final AssetGenImage a007 = const AssetGenImage('assets/images/social_home/user_data/007.webp');
+  final AssetGenImage a008 = const AssetGenImage('assets/images/social_home/user_data/008.webp');
+  final AssetGenImage a009 = const AssetGenImage('assets/images/social_home/user_data/009.webp');
+  final AssetGenImage a010 = const AssetGenImage('assets/images/social_home/user_data/010.webp');
+  final AssetGenImage icStoreTagV1 =
+      const AssetGenImage('assets/images/social_home/user_data/ic_store_tag_v1.webp');
+  final AssetGenImage icSvip1 =
+      const AssetGenImage('assets/images/social_home/user_data/ic_svip1.webp');
 }
 
 class $AssetsRewardsGen {
@@ -297,6 +317,7 @@ class $AssetsLottieGen {
 
   final LottieGenImage boy = const LottieGenImage('assets/lottie/boy.json');
   final String bunnyNewMouth = 'assets/lottie/bunny_new_mouth.json';
+  final LottieGenImage fire = const LottieGenImage('assets/lottie/fire.json');
   final LottieGenImage genderChoice = const LottieGenImage('assets/lottie/gender_choice.json');
   final LottieGenImage loading = const LottieGenImage('assets/lottie/loading.json');
   final String login = 'assets/lottie/login.json';

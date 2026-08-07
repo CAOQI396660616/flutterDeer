@@ -46,14 +46,12 @@ class RoomCard extends StatelessWidget {
                     Positioned(
                       bottom: 8,
                       left: 9,
-                      right: 9,
-                      child: Row(
-                        children: <Widget>[
-                          _HostBadge(name: room.hostName),
-                          const Spacer(),
-                          _RoomStatus(count: room.onlineCount),
-                        ],
-                      ),
+                      child: _HostBadge(name: room.hostName),
+                    ),
+                    Positioned(
+                      bottom: 8,
+                      right: 10,
+                      child: _RoomStatus(count: room.onlineCount),
                     ),
                   ],
                 ),
@@ -169,33 +167,26 @@ class _HostBadge extends StatelessWidget {
       3,
       (int index) => UserAssets.avatars[(seed + index) % UserAssets.avatars.length],
     );
-    return Flexible(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(
-            width: 46,
-            height: 20,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: List<Widget>.generate(
-                avatars.length,
-                (int index) => Positioned(
-                  left: index * 12,
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white70),
-                      image: DecorationImage(image: AssetImage(avatars[index]), fit: BoxFit.cover),
-                    ),
-                  ),
-                ),
+    return SizedBox(
+      width: 46,
+      height: 20,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: List<Widget>.generate(
+          avatars.length,
+          (int index) => Positioned(
+            left: index * 12,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white70),
+                image: DecorationImage(image: AssetImage(avatars[index]), fit: BoxFit.cover),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -514,7 +514,7 @@ class _FriendItem extends StatelessWidget {
         height: 72,
         child: Row(children: <Widget>[
           ClipOval(
-              child: Image.asset('assets/images/social_home/$avatar',
+              child: Image.asset('${UserAssets.directory}/$avatar',
                   width: 48, height: 48, fit: BoxFit.cover)),
           const SizedBox(width: 14),
           Expanded(

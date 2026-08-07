@@ -314,30 +314,17 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
   int _topTab = 0;
   int _pageIndex = 0;
   late final PageController _topPageController;
-  double _pagePosition = 0;
 
   @override
   void initState() {
     super.initState();
     _topPageController = PageController(initialPage: _pageIndex);
-    _topPageController.addListener(_handlePageScroll);
   }
 
   @override
   void dispose() {
     _topPageController.dispose();
     super.dispose();
-  }
-
-  void _handlePageScroll() {
-    if (!_topPageController.hasClients || !_topPageController.position.haveDimensions) {
-      return;
-    }
-    final double position = _topPageController.page ?? _pageIndex.toDouble();
-    if ((position - _pagePosition).abs() < .001 || !mounted) {
-      return;
-    }
-    setState(() => _pagePosition = position);
   }
 
   @override
@@ -349,15 +336,27 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 16, 12),
-          child: HomeTopBar(
-            selected: _topTab,
-            indicatorProgress: (_pagePosition - 1).clamp(0.0, 1.0),
-            onWelcomeTap: widget.onWelcomeTap,
-            onSearchTap: widget.onSearchTap,
-            onChanged: (int value) {
-              final int targetPage = value == 0 ? 0 : 2;
-              _topPageController.animateToPage(targetPage,
-                  duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic);
+          child: AnimatedBuilder(
+            animation: _topPageController,
+            builder: (BuildContext context, Widget? child) {
+              final double page = _topPageController.hasClients
+                  ? (_topPageController.page ?? _pageIndex.toDouble())
+                  : _pageIndex.toDouble();
+              return HomeTopBar(
+                selected: _topTab,
+                indicatorProgress: (page - 1).clamp(0.0, 1.0),
+                onWelcomeTap: widget.onWelcomeTap,
+                onSearchTap: widget.onSearchTap,
+                onChanged: (int value) {
+                  final int targetPage = value == 0 ? 0 : 2;
+                  if (_topPageController.page?.round() == targetPage) {
+                    return;
+                  }
+                  setState(() => _topTab = value);
+                  _topPageController.animateToPage(targetPage,
+                      duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic);
+                },
+              );
             },
           ),
         ),
