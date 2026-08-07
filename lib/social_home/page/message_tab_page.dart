@@ -104,6 +104,30 @@ class _ChatContent extends StatefulWidget {
 }
 
 class _ChatContentState extends State<_ChatContent> {
+  static const List<_ChatMessageData> _fixedMessages = <_ChatMessageData>[
+    _ChatMessageData(
+      icon: Icons.notifications_none_rounded,
+      iconColor: Color(0xFF81F7FF),
+      title: 'Sistem Mesajı',
+      time: '3 gün önce',
+      preview: 'Tebrikler! Yeni VIP seviyen hayırlı olsun...',
+    ),
+    _ChatMessageData(
+      icon: Icons.star_border_rounded,
+      iconColor: Color(0xFFFFE3A2),
+      title: 'Etkinlikler',
+      time: '07-31',
+      preview: '🎁 Hediye bahçesi yenilendi ⏰ 31.07-03.08...',
+    ),
+    _ChatMessageData(
+      icon: Icons.smart_toy_outlined,
+      iconColor: Color(0xFFB9E9FF),
+      title: 'Küçük Melek AI',
+      time: '07-28',
+      preview: 'Beni buldun! Sana özel bir sürpriz bıraktım...',
+    ),
+  ];
+
   final ScrollController _scrollController = ScrollController();
   late final MockPagedData<_ChatMessageData> _pager;
   late List<_ChatMessageData> _messages;
@@ -134,12 +158,17 @@ class _ChatContentState extends State<_ChatContent> {
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 110),
-          itemCount: 1 + _messages.length + (_loadingMore || _noMore ? 1 : 0),
+          itemCount:
+              1 + _fixedMessages.length + _messages.length + (_loadingMore || _noMore ? 1 : 0),
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
               return const _ProfileBanner();
             }
-            if (index == _messages.length + 1 && (_loadingMore || _noMore)) {
+            if (index <= _fixedMessages.length) {
+              return _MessageItem(data: _fixedMessages[index - 1]);
+            }
+            final int dynamicIndex = index - 1 - _fixedMessages.length;
+            if (dynamicIndex == _messages.length && (_loadingMore || _noMore)) {
               return Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 22),
                 child: Center(
@@ -151,7 +180,7 @@ class _ChatContentState extends State<_ChatContent> {
                 ),
               );
             }
-            return _MessageItem(data: _messages[index - 1]);
+            return _MessageItem(data: _messages[dynamicIndex]);
           },
         ),
       );
@@ -191,43 +220,46 @@ class _ChatContentState extends State<_ChatContent> {
   }
 
   List<_ChatMessageData> _fakeMessages(int start, int count) {
-    const List<String> titles = <String>[
-      'Sistem Mesajı',
-      'Etkinlikler',
-      'Küçük Melek AI',
-      'Arkadaş Güncellemeleri',
-      'Resmî Duyuru',
+    const List<String> names = <String>[
+      'Elif',
+      'Mert',
+      'Derya',
+      'Aylin',
+      'Lina',
+      'Ece',
+      'Deniz',
+      'Selin',
+      'Bora',
+      'Zeynep',
     ];
     const List<String> previews = <String>[
-      'Tebrikler! Yeni VIP seviyen hayırlı olsun...',
-      '🎁 Hediye bahçesi yenilendi ⏰ 31.07-03.08...',
-      'Beni buldun! Sana özel bir sürpriz bıraktım...',
-      'Takip ettiğin arkadaş yeni bir paylaşım yaptı...',
-      'Yeni etkinlik başladı, ödülleri kaçırma!',
+      'Bugün nasılsın? Biraz sohbet edelim mi?',
+      'Paylaşımını gördüm, gerçekten çok güzel olmuş.',
+      'Akşam odada buluşalım mı?',
+      'Yeni bir şarkı keşfettim, sana da göndereyim.',
+      'Uzun zamandır görünmüyorsun, her şey yolunda mı?',
+      'Profilindeki fotoğraf çok güzelmiş 😊',
+      'Müsait olunca bana yazabilirsin.',
+      'Bugünkü etkinliğe katılacak mısın?',
+      'Tanıştığımıza memnun oldum!',
+      'Sana küçük bir sürpriz gönderdim.',
     ];
-    const List<IconData> icons = <IconData>[
-      Icons.notifications_none_rounded,
-      Icons.star_border_rounded,
-      Icons.smart_toy_outlined,
-      Icons.favorite_border_rounded,
-      Icons.campaign_outlined,
-    ];
-    const List<Color> colors = <Color>[
-      Color(0xFF81F7FF),
-      Color(0xFFFFE3A2),
-      Color(0xFFB9E9FF),
-      Color(0xFFFF9DC4),
-      Color(0xFFFFD47C),
+    const List<String> avatars = <String>[
+      'assets/images/social_home/room_woman_44.jpg',
+      'assets/images/social_home/room_woman_47.jpg',
+      'assets/images/social_home/room_woman_49.jpg',
+      'assets/images/social_home/room_woman_65.jpg',
+      'assets/images/social_home/room_woman_68.jpg',
+      'assets/images/social_home/room_woman_75.jpg',
     ];
     return List<_ChatMessageData>.generate(count, (int index) {
-      final int dataIndex = (start + index) % titles.length;
+      final int dataIndex = (start + index) % names.length;
       return _ChatMessageData(
-        icon: icons[dataIndex],
-        iconColor: colors[dataIndex],
-        title: dataIndex == 0
-            ? titles[dataIndex]
-            : '${titles[dataIndex]} ${start + index ~/ titles.length + 1}',
-        time: dataIndex < 3 ? <String>['3 gün önce', '07-31', '07-28'][dataIndex] : 'Şimdi',
+        icon: Icons.person_outline,
+        iconColor: Colors.white70,
+        avatarAsset: avatars[(start + index) % avatars.length],
+        title: names[dataIndex],
+        time: dataIndex.isEven ? 'Şimdi' : '${dataIndex + 1} dk önce',
         preview: previews[dataIndex],
       );
     });
@@ -293,9 +325,13 @@ class _MessageItem extends StatelessWidget {
             width: 60,
             height: 60,
             margin: const EdgeInsets.only(left: 14, right: 16),
-            decoration:
-                BoxDecoration(shape: BoxShape.circle, color: data.iconColor.withOpacity(.15)),
-            child: Icon(data.icon, color: data.iconColor, size: 34),
+            decoration: data.avatarAsset == null
+                ? BoxDecoration(shape: BoxShape.circle, color: data.iconColor.withOpacity(.15))
+                : null,
+            clipBehavior: Clip.antiAlias,
+            child: data.avatarAsset == null
+                ? Icon(data.icon, color: data.iconColor, size: 34)
+                : Image.asset(data.avatarAsset!, fit: BoxFit.cover),
           ),
           Expanded(
             child: Column(
@@ -332,6 +368,7 @@ class _ChatMessageData {
     required this.title,
     required this.time,
     required this.preview,
+    this.avatarAsset,
   });
 
   final IconData icon;
@@ -339,6 +376,7 @@ class _ChatMessageData {
   final String title;
   final String time;
   final String preview;
+  final String? avatarAsset;
 }
 
 class _FriendContent extends StatefulWidget {

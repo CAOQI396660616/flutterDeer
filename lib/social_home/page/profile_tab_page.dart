@@ -51,21 +51,33 @@ class _ProfileTabPageState extends State<ProfileTabPage> {
     final String nickname = user?.nickname ?? 'Emre Yılmaz';
     final String avatar = user?.avatar ?? 'https://randomuser.me/api/portraits/women/44.jpg';
     return NestedScrollView(
-      headerSliverBuilder: (_, __) => <Widget>[
+      headerSliverBuilder: (BuildContext headerContext, __) => <Widget>[
         SliverToBoxAdapter(child: _ProfileHeader(nickname: nickname, avatar: avatar)),
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _ProfileTabHeaderDelegate(
-              selected: _pageIndex, pagePosition: _pagePosition, onChanged: _animateToPage),
+        SliverOverlapAbsorber(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(headerContext),
+          sliver: SliverPersistentHeader(
+            pinned: true,
+            delegate: _ProfileTabHeaderDelegate(
+                selected: _pageIndex, pagePosition: _pagePosition, onChanged: _animateToPage),
+          ),
         ),
       ],
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (int value) => setState(() {
-          _pageIndex = value;
-          _pagePosition = value.toDouble();
-        }),
-        children: const <Widget>[_DynamicContent(), _ProfileContent()],
+      body: Builder(
+        builder: (BuildContext bodyContext) {
+          final SliverOverlapAbsorberHandle overlapHandle =
+              NestedScrollView.sliverOverlapAbsorberHandleFor(bodyContext);
+          return PageView(
+            controller: _pageController,
+            onPageChanged: (int value) => setState(() {
+              _pageIndex = value;
+              _pagePosition = value.toDouble();
+            }),
+            children: <Widget>[
+              _DynamicContent(handle: overlapHandle),
+              _ProfileContent(handle: overlapHandle),
+            ],
+          );
+        },
       ),
     );
   }
@@ -238,10 +250,12 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class _DynamicContent extends StatelessWidget {
-  const _DynamicContent();
+  const _DynamicContent({required this.handle});
+  final SliverOverlapAbsorberHandle handle;
 
   @override
-  Widget build(BuildContext context) => const _ProfilePagedContent(
+  Widget build(BuildContext context) => _ProfilePagedContent(
+        handle: handle,
         items: <_ProfileListItem>[
           _ProfileListItem(
               icon: Icons.emoji_emotions_outlined,
@@ -256,10 +270,12 @@ class _DynamicContent extends StatelessWidget {
 }
 
 class _ProfileContent extends StatelessWidget {
-  const _ProfileContent();
+  const _ProfileContent({required this.handle});
+  final SliverOverlapAbsorberHandle handle;
 
   @override
-  Widget build(BuildContext context) => const _ProfilePagedContent(
+  Widget build(BuildContext context) => _ProfilePagedContent(
+        handle: handle,
         title: 'Profil bilgileri',
         items: <_ProfileListItem>[
           _ProfileListItem(
@@ -271,7 +287,8 @@ class _ProfileContent extends StatelessWidget {
 }
 
 class _ProfilePagedContent extends StatefulWidget {
-  const _ProfilePagedContent({this.title, required this.items});
+  const _ProfilePagedContent({required this.handle, this.title, required this.items});
+  final SliverOverlapAbsorberHandle handle;
   final String? title;
   final List<_ProfileListItem> items;
 
@@ -280,7 +297,6 @@ class _ProfilePagedContent extends StatefulWidget {
 }
 
 class _ProfilePagedContentState extends State<_ProfilePagedContent> {
-  final ScrollController _scrollController = ScrollController();
   late final MockPagedData<_ProfileListItem> _pager;
   late List<_ProfileListItem> _items;
   bool _loadingMore = false;
@@ -291,60 +307,73 @@ class _ProfilePagedContentState extends State<_ProfilePagedContent> {
     super.initState();
     _pager = MockPagedData<_ProfileListItem>(pageFactory: _fakeItems);
     _items = _pager.firstPage();
-    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => RefreshIndicator(
-        color: const Color(0xFF20E0DE),
-        onRefresh: _refresh,
-        child: ListView.builder(
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
-          itemCount:
-              (widget.title == null ? 0 : 1) + _items.length + (_loadingMore || _noMore ? 1 : 0),
-          itemBuilder: (_, int index) {
-            if (widget.title != null && index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 14),
-                child: Text(widget.title!,
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
-              );
-            }
-            final int contentIndex = index - (widget.title == null ? 0 : 1);
-            if (contentIndex == _items.length) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 22),
-                child: Center(
-                  child: _loadingMore
-                      ? const SizedBox(
-                          width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Text('Daha fazla veri yok',
-                          style: TextStyle(color: Colors.white38, fontSize: 12)),
+  Widget build(BuildContext context) => NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          if (notification.metrics.extentAfter < 220 && !_loadingMore && !_noMore) {
+            _loadMore();
+          }
+          return false;
+        },
+        child: RefreshIndicator(
+          color: const Color(0xFF20E0DE),
+          onRefresh: _refresh,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: <Widget>[
+              SliverOverlapInjector(
+                handle: widget.handle,
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, int index) {
+                      if (widget.title != null && index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 14),
+                          child: Text(widget.title!,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600)),
+                        );
+                      }
+                      final int contentIndex = index - (widget.title == null ? 0 : 1);
+                      if (contentIndex == _items.length) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 22),
+                          child: Center(
+                            child: _loadingMore
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(strokeWidth: 2))
+                                : const Text('Daha fazla veri yok',
+                                    style: TextStyle(color: Colors.white38, fontSize: 12)),
+                          ),
+                        );
+                      }
+                      final _ProfileListItem item = _items[contentIndex];
+                      return _ContentCard(icon: item.icon, title: item.title, body: item.body);
+                    },
+                    childCount: (widget.title == null ? 0 : 1) +
+                        _items.length +
+                        (_loadingMore || _noMore ? 1 : 0),
+                  ),
                 ),
-              );
-            }
-            final _ProfileListItem item = _items[contentIndex];
-            return _ContentCard(icon: item.icon, title: item.title, body: item.body);
-          },
+              ),
+            ],
+          ),
         ),
       );
-
-  void _onScroll() {
-    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
-      _loadMore();
-    }
-  }
 
   Future<void> _refresh() async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
