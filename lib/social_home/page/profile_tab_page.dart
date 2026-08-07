@@ -181,55 +181,110 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 48;
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Container(
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => SizedBox(
         height: 48,
-        color: const Color(0xE6141820),
-        padding: const EdgeInsets.only(left: 18),
-        alignment: Alignment.centerLeft,
-        child: TabBar(
-          controller: controller,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          tabs: const <Widget>[Tab(text: 'Aktiviteler'), Tab(text: 'Bilgiler')],
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white54,
-          labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          unselectedLabelStyle: const TextStyle(fontSize: 18),
-          labelPadding: const EdgeInsets.symmetric(horizontal: 14),
-          indicator: const _BrushIndicatorDecoration(),
-          indicatorSize: TabBarIndicatorSize.label,
-          dividerColor: Colors.transparent,
+        child: Padding(
+          padding: EdgeInsets.only(left: 18),
+          child: _ProfileTabs(controller: controller),
         ),
       );
   @override
   bool shouldRebuild(covariant _ProfileTabHeaderDelegate oldDelegate) => false;
 }
 
-class _BrushIndicatorDecoration extends Decoration {
-  const _BrushIndicatorDecoration();
+class _ProfileTabs extends StatelessWidget {
+  const _ProfileTabs({required this.controller});
+  final TabController controller;
+
   @override
-  BoxPainter createBoxPainter([VoidCallback? onChanged]) => _BrushIndicatorPainter();
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: controller,
+        builder: (BuildContext context, Widget? child) {
+          final double position = controller.animation?.value ?? controller.index.toDouble();
+          final double progress = position.clamp(0.0, 1.0);
+          return SizedBox(
+            width: 150,
+            height: 38,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                Positioned(
+                  left: 14 + (progress * 87),
+                  bottom: 8,
+                  width: 27,
+                  height: 8,
+                  child: const IgnorePointer(
+                    child: CustomPaint(painter: _ProfileTabIndicatorPainter()),
+                  ),
+                ),
+                Row(children: <Widget>[
+                  SizedBox(
+                    width: 55,
+                    child: _ProfileTabLabel(
+                      label: 'Aktiv',
+                      selected: controller.index == 0,
+                      onTap: () => controller.animateTo(0,
+                          duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic),
+                    ),
+                  ),
+                  const SizedBox(width: 22),
+                  SizedBox(
+                    width: 73,
+                    child: _ProfileTabLabel(
+                      label: 'Bilgi',
+                      selected: controller.index == 1,
+                      onTap: () => controller.animateTo(1,
+                          duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic),
+                    ),
+                  ),
+                ]),
+              ],
+            ),
+          );
+        },
+      );
 }
 
-class _BrushIndicatorPainter extends BoxPainter {
+class _ProfileTabLabel extends StatelessWidget {
+  const _ProfileTabLabel({required this.label, required this.selected, required this.onTap});
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
   @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    final Size size = configuration.size ?? Size.zero;
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: Center(
+          child: Text(label,
+              style: TextStyle(
+                  color: selected ? Colors.white : Colors.white60,
+                  fontSize: 22,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
+        ),
+      );
+}
+
+class _ProfileTabIndicatorPainter extends CustomPainter {
+  const _ProfileTabIndicatorPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..shader = const LinearGradient(
         colors: <Color>[Color(0xFFFFD54F), Color(0xFFFF7A00)],
-      ).createShader(offset & size)
+      ).createShader(Offset.zero & size)
       ..strokeWidth = 3.5
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     final Path path = Path()
-      ..moveTo(offset.dx + 3, offset.dy + size.height * .62)
-      ..quadraticBezierTo(offset.dx + size.width * .28, offset.dy + size.height * .15,
-          offset.dx + size.width * .55, offset.dy + size.height * .52)
-      ..quadraticBezierTo(offset.dx + size.width * .78, offset.dy + size.height * .82,
-          offset.dx + size.width - 2, offset.dy + size.height * .48);
+      ..moveTo(3, size.height * .62)
+      ..quadraticBezierTo(size.width * .28, size.height * .15, size.width * .55, size.height * .52)
+      ..quadraticBezierTo(size.width * .78, size.height * .82, size.width - 2, size.height * .48);
     canvas.drawPath(path, paint);
   }
+
+  @override
+  bool shouldRepaint(covariant _ProfileTabIndicatorPainter oldDelegate) => false;
 }
 
 class _DynamicContent extends StatelessWidget {
