@@ -10,6 +10,9 @@ class RemoteAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget placeholder = Image.asset(placeholderAsset, fit: BoxFit.cover);
+    if (imageUrl.startsWith('assets/')) {
+      return Image.asset(imageUrl, fit: BoxFit.cover, errorBuilder: (_, __, ___) => placeholder);
+    }
     return Image.network(
       imageUrl,
       fit: BoxFit.cover,

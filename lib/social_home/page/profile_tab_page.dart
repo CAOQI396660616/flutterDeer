@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
 import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/page/profile_edit_page.dart';
 import 'package:flutter_deer/social_home/page/profile_settings_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
@@ -49,7 +50,7 @@ class _ProfileTabPageState extends State<ProfileTabPage> {
   Widget build(BuildContext context) {
     final user = LoginUserStore.currentUser;
     final String nickname = user?.nickname ?? 'Emre Yılmaz';
-    final String avatar = user?.avatar ?? 'https://randomuser.me/api/portraits/women/44.jpg';
+    final String avatar = user?.avatar ?? UserAssets.avatars[1];
     return NestedScrollView(
       headerSliverBuilder: (BuildContext headerContext, __) => <Widget>[
         SliverToBoxAdapter(child: _ProfileHeader(nickname: nickname, avatar: avatar)),
@@ -157,7 +158,9 @@ class _ProfileHeader extends StatelessWidget {
                   style: TextStyle(color: Colors.white60, fontSize: 12)),
               const SizedBox(height: 10),
               const Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
-                _Tag(text: 'SVIP', color: Color(0xFFDBE7FF)),
+                _ImageTag(asset: UserAssets.svipTag, width: 34),
+                _ImageTag(asset: UserAssets.storeTag, width: 38),
+                _Tag(text: 'SVIP 用户', color: Color(0xFFDBE7FF)),
                 _Tag(text: 'Sıradan', color: Color(0xFF71777C)),
                 _Tag(text: 'Küçük Çaylak', color: Color(0xFF9A9FA4)),
                 _Tag(text: '1', color: Color(0xFF7DCB31)),
@@ -213,6 +216,19 @@ class _Tag extends StatelessWidget {
             BoxDecoration(color: color.withOpacity(.85), borderRadius: BorderRadius.circular(9)),
         child: Text(text,
             style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+      );
+}
+
+class _ImageTag extends StatelessWidget {
+  const _ImageTag({required this.asset, required this.width});
+  final String asset;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: width,
+        height: 18,
+        child: Image.asset(asset, fit: BoxFit.contain),
       );
 }
 

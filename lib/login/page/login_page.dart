@@ -8,6 +8,7 @@ import 'package:flutter_deer/login/page/complete_profile_gender_page.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
 import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:lottie/lottie.dart';
 
 /// Hiplay social sign-in page.
@@ -249,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildMockAvatar() {
     final String avatarUrl =
-        _currentUser?.avatar ?? 'https://randomuser.me/api/portraits/men/32.jpg';
+        _currentUser?.avatar ?? UserAssets.avatars[0];
     return RemoteAvatar(imageUrl: avatarUrl);
   }
 
@@ -257,23 +258,23 @@ class _LoginPageState extends State<LoginPage> {
     const Map<String, Map<String, String>> demoUsers = <String, Map<String, String>>{
       'google': <String, String>{
         'name': 'Emre Yılmaz',
-        'avatar': 'https://randomuser.me/api/portraits/men/32.jpg'
+        'avatar': UserAssets.avatars[0]
       },
       'facebook': <String, String>{
         'name': 'Elif Kaya',
-        'avatar': 'https://randomuser.me/api/portraits/women/44.jpg'
+        'avatar': UserAssets.avatars[1]
       },
       'phone': <String, String>{
         'name': 'Kral Şakir',
-        'avatar': 'https://randomuser.me/api/portraits/men/75.jpg'
+        'avatar': UserAssets.avatars[2]
       },
       'password': <String, String>{
         'name': 'Mert Demir',
-        'avatar': 'https://randomuser.me/api/portraits/men/15.jpg'
+        'avatar': UserAssets.avatars[3]
       },
       'apple': <String, String>{
         'name': 'Deniz Arslan',
-        'avatar': 'https://randomuser.me/api/portraits/women/65.jpg'
+        'avatar': UserAssets.avatars[4]
       },
     };
     final Map<String, String> data = demoUsers[method]!;

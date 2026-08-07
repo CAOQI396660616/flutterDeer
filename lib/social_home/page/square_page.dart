@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
@@ -161,26 +162,26 @@ class _SquareFeedPage extends StatefulWidget {
   static const List<_SquarePost> _posts = <_SquarePost>[
     _SquarePost(
       author: 'Onlyle',
-      avatar: 'assets/images/social_home/room_woman_65.jpg',
+      avatar: UserAssets.avatars[6],
       time: '8m ago',
       text: 'A good day starts with a little sunshine.',
-      image: 'assets/images/social_home/room_woman_68.jpg',
+      image: UserAssets.avatars[7],
       likes: '1',
     ),
     _SquarePost(
       author: 'Early Bird',
-      avatar: 'assets/images/social_home/room_woman_75.jpg',
+      avatar: UserAssets.avatars[8],
       time: '11m ago',
       text: 'Would you like the first milk tea of autumn?',
-      image: 'assets/images/social_home/room_woman_44.jpg',
+      image: UserAssets.avatars[9],
       likes: '38',
     ),
     _SquarePost(
       author: 'Deer Diary',
-      avatar: 'assets/images/social_home/room_woman_49.jpg',
+      avatar: UserAssets.avatars[2],
       time: '20m ago',
       text: 'Share a little happiness with someone you like.',
-      image: 'assets/images/social_home/room_woman_47.jpg',
+      image: UserAssets.avatars[3],
       likes: '26',
     ),
   ];
@@ -296,9 +297,9 @@ class _SquareRoomRecommendation extends StatelessWidget {
   const _SquareRoomRecommendation();
 
   static const List<_SquareRoom> _rooms = <_SquareRoom>[
-    _SquareRoom('Love & Care', 'assets/images/social_home/room_woman_44.jpg', 'Together', '128'),
-    _SquareRoom('In Your Eyes', 'assets/images/social_home/room_woman_47.jpg', 'VVV Host', '96'),
-    _SquareRoom('Sweet Party', 'assets/images/social_home/room_woman_49.jpg', 'Summer Event', '76'),
+    _SquareRoom('Love & Care', UserAssets.avatars[0], 'Together', '128'),
+    _SquareRoom('In Your Eyes', UserAssets.avatars[1], 'VVV Host', '96'),
+    _SquareRoom('Sweet Party', UserAssets.avatars[4], 'Summer Event', '76'),
   ];
 
   @override

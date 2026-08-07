@@ -106,9 +106,29 @@ class _RoomsBannerSlide extends StatelessWidget {
   Widget build(BuildContext context) => Image.network(
         item.imageUrl,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.asset(
-          'assets/images/social_home/bg_main_page.jpg',
-          fit: BoxFit.cover,
+        loadingBuilder: (_, Widget child, ImageChunkEvent? loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          }
+          return const _RoomsBannerPlaceholder();
+        },
+        errorBuilder: (_, __, ___) => const _RoomsBannerPlaceholder(),
+      );
+}
+
+class _RoomsBannerPlaceholder extends StatelessWidget {
+  const _RoomsBannerPlaceholder();
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+        color: const Color(0xFF1B1746),
+        child: Center(
+          child: Image.asset(
+            'assets/images/splash_logo.png',
+            width: 72,
+            height: 72,
+            fit: BoxFit.contain,
+          ),
         ),
       );
 }

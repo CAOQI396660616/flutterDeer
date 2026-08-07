@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 
 class RoomCard extends StatelessWidget {
   const RoomCard({super.key, required this.room, required this.onTap});
@@ -143,6 +144,8 @@ class _HostBadge extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Colors.white, fontSize: 10)),
             ),
+            const SizedBox(width: 4),
+            Image.asset(UserAssets.svipTag, width: 28, height: 16, fit: BoxFit.contain),
           ],
         ),
       );

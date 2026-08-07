@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_deer/social_home/data/user_assets.dart';
 import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
@@ -245,12 +246,12 @@ class _ChatContentState extends State<_ChatContent> {
       'Sana küçük bir sürpriz gönderdim.',
     ];
     const List<String> avatars = <String>[
-      'assets/images/social_home/room_woman_44.jpg',
-      'assets/images/social_home/room_woman_47.jpg',
-      'assets/images/social_home/room_woman_49.jpg',
-      'assets/images/social_home/room_woman_65.jpg',
-      'assets/images/social_home/room_woman_68.jpg',
-      'assets/images/social_home/room_woman_75.jpg',
+      UserAssets.avatars[0],
+      UserAssets.avatars[1],
+      UserAssets.avatars[2],
+      UserAssets.avatars[3],
+      UserAssets.avatars[4],
+      UserAssets.avatars[5],
     ];
     return List<_ChatMessageData>.generate(count, (int index) {
       final int dataIndex = (start + index) % names.length;
@@ -325,9 +326,11 @@ class _MessageItem extends StatelessWidget {
             width: 60,
             height: 60,
             margin: const EdgeInsets.only(left: 14, right: 16),
-            decoration: data.avatarAsset == null
-                ? BoxDecoration(shape: BoxShape.circle, color: data.iconColor.withOpacity(.15))
-                : null,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color:
+                  data.avatarAsset == null ? data.iconColor.withOpacity(.15) : Colors.transparent,
+            ),
             clipBehavior: Clip.antiAlias,
             child: data.avatarAsset == null
                 ? Icon(data.icon, color: data.iconColor, size: 34)
@@ -416,12 +419,12 @@ class _FriendContentState extends State<_FriendContent> {
     'Güneş Bebek',
   ];
   static const List<String> _avatars = <String>[
-    'room_woman_44.jpg',
-    'room_woman_47.jpg',
-    'room_woman_49.jpg',
-    'room_woman_65.jpg',
-    'room_woman_68.jpg',
-    'room_woman_75.jpg',
+    '001.webp',
+    '002.webp',
+    '003.webp',
+    '004.webp',
+    '005.webp',
+    '006.webp',
   ];
 
   @override
