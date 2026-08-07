@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 /// 新人礼包展示弹框。
@@ -17,13 +19,30 @@ class NewcomerRewardDialog extends StatelessWidget {
 
   static const List<_RewardItem> _rewards = <_RewardItem>[
     _RewardItem(
-        name: 'Medal', badge: '7D', quantity: 'x1', icon: Icons.workspace_premium_outlined),
+        name: 'Medal',
+        badge: '7D',
+        quantity: 'x1',
+        imagePath: 'assets/images/social_home/rewards/ic_room_top_3_1.png'),
     _RewardItem(
-        name: 'Frame', badge: '7D', quantity: 'x1', icon: Icons.account_circle_outlined),
-    _RewardItem(name: 'Tulip', badge: '7D', quantity: 'x10', icon: Icons.local_florist_outlined),
+        name: 'Frame',
+        badge: '7D',
+        quantity: 'x1',
+        imagePath: 'assets/images/social_home/rewards/ic_stay_main.webp'),
     _RewardItem(
-        name: 'Coins', badge: '∞', quantity: 'x1000', icon: Icons.monetization_on_outlined),
-    _RewardItem(name: 'Banner', badge: '∞', quantity: 'x1', icon: Icons.flag_outlined),
+        name: 'Tulip',
+        badge: '7D',
+        quantity: 'x10',
+        imagePath: 'assets/images/social_home/rewards/ic_task_gift_1.png'),
+    _RewardItem(
+        name: 'Coins',
+        badge: '∞',
+        quantity: 'x1000',
+        imagePath: 'assets/images/social_home/rewards/ic_packet_open_success_coin.webp'),
+    _RewardItem(
+        name: 'Banner',
+        badge: '∞',
+        quantity: 'x1',
+        imagePath: 'assets/images/social_home/rewards/bg_gift_flow_svip4.webp'),
   ];
 
   @override
@@ -32,66 +51,84 @@ class NewcomerRewardDialog extends StatelessWidget {
         ((MediaQuery.sizeOf(context).width - 48).clamp(300.0, 470.0)) as double;
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: width),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 10, 18, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  key: const Key('newcomer_reward_close'),
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, size: 22),
-                  color: const Color(0xFF18202A),
-                  tooltip: '关闭',
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xB3101820),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white24),
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: width),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 24, 18, 14),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      '新人礼包',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        final double itemWidth = (constraints.maxWidth - 24) / 3;
+                        return Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: _rewards
+                              .map((reward) => SizedBox(
+                                    width: itemWidth,
+                                    child: _RewardTile(reward: reward),
+                                  ))
+                              .toList(),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: 190,
+                      height: 56,
+                      child: FilledButton(
+                        key: const Key('newcomer_reward_claim'),
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFF14D8D4),
+                          foregroundColor: const Color(0xFF10202A),
+                          shape: const StadiumBorder(),
+                        ),
+                        child: const Text('收下', style: TextStyle(fontSize: 22)),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(.16),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: IconButton(
+                        key: const Key('newcomer_reward_close'),
+                        onPressed: () => Navigator.of(context).pop(),
+                        color: Colors.white70,
+                        icon: const Icon(Icons.close),
+                        tooltip: '关闭',
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const Text(
-                '新人礼包',
-                style: TextStyle(
-                  color: Color(0xFF18202A),
-                  fontSize: 28,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 22),
-              LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  final double itemWidth = (constraints.maxWidth - 12) / 2;
-                  return Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: _rewards
-                        .map((reward) => SizedBox(
-                              width: itemWidth,
-                              child: _RewardTile(reward: reward),
-                            ))
-                        .toList(),
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: 190,
-                height: 56,
-                child: FilledButton(
-                  key: const Key('newcomer_reward_claim'),
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF14D8D4),
-                    foregroundColor: const Color(0xFF10202A),
-                    shape: const StadiumBorder(),
-                  ),
-                  child: const Text('收下', style: TextStyle(fontSize: 22)),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -101,11 +138,14 @@ class NewcomerRewardDialog extends StatelessWidget {
 
 class _RewardItem {
   const _RewardItem(
-      {required this.name, required this.badge, required this.quantity, required this.icon});
+      {required this.name,
+      required this.badge,
+      required this.quantity,
+      required this.imagePath});
   final String name;
   final String badge;
   final String quantity;
-  final IconData icon;
+  final String imagePath;
 }
 
 class _RewardTile extends StatelessWidget {
@@ -129,7 +169,12 @@ class _RewardTile extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Icon(reward.icon, size: 58, color: const Color(0xFFFFE58A)),
+              Image.asset(
+                reward.imagePath,
+                width: 78,
+                height: 62,
+                fit: BoxFit.contain,
+              ),
               Positioned(
                 bottom: 36,
                 child: Text(reward.name,
