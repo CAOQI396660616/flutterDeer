@@ -237,6 +237,68 @@ class HomeBottomBarLabels {
   static String labelFor(int index) => _labels[index.clamp(0, _labels.length - 1)];
 }
 
+class _HomeBanner extends StatelessWidget {
+  const _HomeBanner();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: SizedBox(
+            height: 42,
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                Image.asset(
+                  'assets/images/social_home/bg_new_user.jpg',
+                  fit: BoxFit.cover,
+                  color: const Color(0xAA202650),
+                  colorBlendMode: BlendMode.multiply,
+                ),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[Color(0xCC202650), Color(0x992C2358)],
+                    ),
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    const SizedBox(width: 14),
+                    const Icon(Icons.auto_awesome, color: Color(0xFF8BE8FF), size: 21),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        '新人专享福利，完善资料提高曝光',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF43E5E1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Text(
+                        '去看看',
+                        style: TextStyle(
+                            color: Color(0xFF183A49), fontSize: 11, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
 class _RoomsHomeTab extends StatefulWidget {
   const _RoomsHomeTab({required this.onWelcomeTap, required this.onSearchTap});
   final VoidCallback onWelcomeTap;
@@ -297,6 +359,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
             },
           ),
         ),
+        if (isFamily) const _HomeBanner(),
         _CategoryBar(
           labels: subTabs,
           selected: subTabIndex,
