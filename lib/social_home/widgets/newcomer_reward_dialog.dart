@@ -85,14 +85,19 @@ class NewcomerRewardDialog extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                     const Text(
-                      '新人礼包',
+                      'New Gift',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 21,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 5),
+                    const Text(
+                      'Rewards credited',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                    const SizedBox(height: 18),
                     LayoutBuilder(
                       builder: (BuildContext context, BoxConstraints constraints) {
                         final double itemWidth = (constraints.maxWidth - 24) / 3;
@@ -109,22 +114,7 @@ class NewcomerRewardDialog extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: 190,
-                      height: 56,
-                      child: FilledButton(
-                        key: const Key('newcomer_reward_claim'),
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF14D8D4),
-                          foregroundColor: const Color(0xFF10202A),
-                          shape: const StadiumBorder(),
-                        ),
-                        child: const Text('收下', style: TextStyle(fontSize: 22)),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 14),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(.16),
@@ -136,7 +126,7 @@ class NewcomerRewardDialog extends StatelessWidget {
                         onPressed: () => Navigator.of(context).pop(),
                         color: Colors.white70,
                         icon: const Icon(Icons.close),
-                        tooltip: '关闭',
+                        tooltip: 'Close',
                       ),
                     ),
                       ],
@@ -172,7 +162,7 @@ class _RewardTile extends StatelessWidget {
   Widget build(BuildContext context) => ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          height: 136,
+          height: 102,
           decoration: BoxDecoration(
             border: Border.all(color: const Color(0xFF3A9BFF), width: 2),
             borderRadius: BorderRadius.circular(16),
@@ -183,67 +173,63 @@ class _RewardTile extends StatelessWidget {
             ),
           ),
           child: Stack(
-            alignment: Alignment.center,
             children: <Widget>[
-              Image.asset(
-                reward.imagePath,
-                width: 78,
-                height: 62,
-                fit: BoxFit.contain,
-              ),
-              Positioned(
-                bottom: 36,
-                child: Text(reward.name,
-                    style: const TextStyle(color: Colors.white, fontSize: 12)),
-              ),
-              Positioned(
-                bottom: 8,
-                child: Text(reward.quantity,
-                    style: const TextStyle(
-                        color: Color(0xFFB8F4FF),
-                        fontSize: 23,
-                        fontWeight: FontWeight.w500)),
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: SizedBox(
+                        height: 58,
+                        child: Center(
+                          child: Image.asset(
+                            reward.imagePath,
+                            width: 72,
+                            height: 52,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text(reward.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.white, fontSize: 10, height: 1.1)),
+                    Text(reward.quantity,
+                        style: const TextStyle(
+                            color: Color(0xFFB8F4FF),
+                            fontSize: 17,
+                            height: 1.1,
+                            fontWeight: FontWeight.w500)),
+                  ],
+                ),
               ),
               Positioned(
                 top: 0,
                 right: 0,
-                child: ClipPath(
-                  clipper: _RewardBadgeClipper(),
-                  child: Container(
-                    width: 52,
-                    height: 34,
-                    color: const Color(0xFF8DEEFF),
-                    alignment: Alignment.topRight,
-                    padding: const EdgeInsets.only(top: 3, right: 7),
+                child: Container(
+                    width: 38,
+                    height: 17,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(14),
+                        bottomLeft: Radius.circular(9),
+                      ),
+                      gradient: LinearGradient(
+                        colors: <Color>[Color(0xFFFFD36A), Color(0xFFFF7A5C)],
+                      ),
+                    ),
+                    alignment: Alignment.center,
                     child: Text(reward.badge,
                         style: const TextStyle(
-                            color: Color(0xFF092B78),
-                            fontSize: 18,
+                            color: Color(0xFF6E1D27),
+                            fontSize: 10,
                             fontWeight: FontWeight.w600)),
-                  ),
                 ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 8,
-                child: Container(width: 58, height: 4, color: const Color(0xFF8DEEFF)),
               ),
             ],
           ),
         ),
       );
-}
-
-class _RewardBadgeClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) => Path()
-    ..moveTo(0, 0)
-    ..lineTo(size.width, 0)
-    ..lineTo(size.width, size.height)
-    ..lineTo(0, size.height)
-    ..lineTo(size.width * .22, size.height * .5)
-    ..close();
-
-  @override
-  bool shouldReclip(covariant _RewardBadgeClipper oldClipper) => false;
 }
