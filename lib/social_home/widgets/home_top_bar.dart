@@ -44,53 +44,64 @@ class HomeBrushTabBar extends StatelessWidget {
     required this.selected,
     required this.indicatorProgress,
     required this.onChanged,
+    this.tabWidths = const <double>[55, 73],
   });
 
   final List<String> labels;
   final int selected;
   final double indicatorProgress;
   final ValueChanged<int> onChanged;
+  final List<double> tabWidths;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        width: 150,
-        height: 38,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: <Widget>[
-            Positioned(
-              left: 14 + (indicatorProgress * 87),
-              bottom: 8,
-              width: 27,
-              height: 8,
-              child: const IgnorePointer(
-                child: CustomPaint(painter: _TopTabIndicatorPainter()),
+  Widget build(BuildContext context) {
+    const double tabGap = 22;
+    const double indicatorWidth = 27;
+    final double firstCenter = tabWidths[0] / 2;
+    final double secondCenter = tabWidths[0] + tabGap + (tabWidths[1] / 2);
+    final double indicatorLeft = firstCenter +
+        ((secondCenter - firstCenter) * indicatorProgress.clamp(0.0, 1.0)) -
+        (indicatorWidth / 2);
+    return SizedBox(
+      width: 150,
+      height: 38,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          Positioned(
+            left: indicatorLeft,
+            bottom: 8,
+            width: 27,
+            height: 8,
+            child: const IgnorePointer(
+              child: CustomPaint(painter: _TopTabIndicatorPainter()),
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              SizedBox(
+                width: tabWidths[0],
+                child: _TopTab(
+                  label: labels[0],
+                  selected: selected == 0,
+                  onTap: () => onChanged(0),
+                ),
               ),
-            ),
-            Row(
-              children: <Widget>[
-                SizedBox(
-                  width: 55,
-                  child: _TopTab(
-                    label: labels[0],
-                    selected: selected == 0,
-                    onTap: () => onChanged(0),
-                  ),
+              const SizedBox(width: 22),
+              SizedBox(
+                width: tabWidths[1],
+                child: _TopTab(
+                  label: labels[1],
+                  selected: selected == 1,
+                  onTap: () => onChanged(1),
                 ),
-                const SizedBox(width: 22),
-                SizedBox(
-                  width: 73,
-                  child: _TopTab(
-                    label: labels[1],
-                    selected: selected == 1,
-                    onTap: () => onChanged(1),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _TopTab extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// Square page: parent tabs, child tabs, and brush indicator share Ana Sayfa's flow.
 class SquarePage extends StatefulWidget {
@@ -53,15 +54,14 @@ class _SquarePageState extends State<SquarePage> {
   @override
   Widget build(BuildContext context) {
     final bool isGuild = _pageIndex >= 2;
-    final List<String> childTabs = isGuild
-        ? const <String>['Featured', 'Newest']
-        : const <String>['Recommended', 'Latest'];
+    final List<String> childTabs =
+        isGuild ? const <String>['Featured', 'Newest'] : const <String>['Recommended', 'Latest'];
     final int childIndex = _pageIndex.isEven ? 0 : 1;
     return Column(
       children: <Widget>[
         _SquareTopBar(
           selected: isGuild ? 1 : 0,
-          indicatorProgress: ((_pagePosition - 1).clamp(0.0, 1.0)) as double,
+          indicatorProgress: (_pagePosition - 1).clamp(0.0, 1.0),
           onChanged: _changeParentTab,
         ),
         if (!isGuild) ...<Widget>[
@@ -103,36 +103,12 @@ class _SquareTopBar extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
         child: Row(
           children: <Widget>[
-            SizedBox(
-              width: 150,
-              height: 38,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  Positioned(
-                    left: 14 + (indicatorProgress * 87),
-                    bottom: 8,
-                    width: 27,
-                    height: 8,
-                    child: const IgnorePointer(
-                      child: CustomPaint(painter: _SquareTabIndicatorPainter()),
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      SizedBox(
-                          width: 70,
-                          child: _SquareTab(
-                              label: 'Square', selected: selected == 0, onTap: () => onChanged(0))),
-                      const SizedBox(width: 22),
-                      SizedBox(
-                          width: 58,
-                          child: _SquareTab(
-                              label: 'Guild', selected: selected == 1, onTap: () => onChanged(1))),
-                    ],
-                  ),
-                ],
-              ),
+            HomeBrushTabBar(
+              labels: const <String>['Square', 'Guild'],
+              selected: selected,
+              indicatorProgress: indicatorProgress,
+              tabWidths: const <double>[70, 58],
+              onChanged: onChanged,
             ),
             const Spacer(),
             DecoratedBox(
@@ -148,49 +124,6 @@ class _SquareTopBar extends StatelessWidget {
           ],
         ),
       );
-}
-
-class _SquareTab extends StatelessWidget {
-  const _SquareTab({required this.label, required this.selected, required this.onTap});
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Center(
-          child: Text(label,
-              style: TextStyle(
-                  color: selected ? Colors.white : Colors.white60,
-                  fontSize: 20,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
-        ),
-      );
-}
-
-class _SquareTabIndicatorPainter extends CustomPainter {
-  const _SquareTabIndicatorPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..shader = const LinearGradient(
-        colors: <Color>[Color(0xFFFFD54F), Color(0xFFFF7A00)],
-      ).createShader(Offset.zero & size)
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 3.5
-      ..style = PaintingStyle.stroke;
-    final Path path = Path()
-      ..moveTo(3, size.height * .62)
-      ..quadraticBezierTo(size.width * .28, size.height * .15,
-          size.width * .55, size.height * .52)
-      ..quadraticBezierTo(size.width * .78, size.height * .82, size.width - 2, size.height * .48);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _SquareTabIndicatorPainter oldDelegate) => false;
 }
 
 class _SquareCategoryBar extends StatelessWidget {
@@ -255,7 +188,7 @@ class _SquareFeedPage extends StatelessWidget {
   Widget build(BuildContext context) => ListView(
         padding: const EdgeInsets.only(bottom: 100),
         children: <Widget>[
-          ...(_posts.reversed.toList()).map((post) => _PostCard(post: post, latest: latest)),
+          ..._posts.reversed.toList().map((post) => _PostCard(post: post, latest: latest)),
         ],
       );
 }
@@ -434,8 +367,8 @@ class _GuildCard extends StatelessWidget {
               height: 54,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                    colors: <Color>[Color(0xFF64E6E1), Color(0xFF7B68EE)]),
+                gradient:
+                    const LinearGradient(colors: <Color>[Color(0xFF64E6E1), Color(0xFF7B68EE)]),
                 boxShadow: <BoxShadow>[
                   BoxShadow(color: const Color(0xFF62E2E1).withOpacity(.25), blurRadius: 12)
                 ],

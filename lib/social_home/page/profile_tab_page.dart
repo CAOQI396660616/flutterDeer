@@ -3,6 +3,7 @@ import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
 import 'package:flutter_deer/social_home/page/profile_edit_page.dart';
 import 'package:flutter_deer/social_home/page/profile_settings_page.dart';
+import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// First-stage Profil UI: profile area, pinned tabs, and local mock content.
 class ProfileTabPage extends StatefulWidget {
@@ -54,9 +55,7 @@ class _ProfileTabPageState extends State<ProfileTabPage> {
         SliverPersistentHeader(
           pinned: true,
           delegate: _ProfileTabHeaderDelegate(
-              selected: _pageIndex,
-              pagePosition: _pagePosition,
-              onChanged: _animateToPage),
+              selected: _pageIndex, pagePosition: _pagePosition, onChanged: _animateToPage),
         ),
       ],
       body: PageView(
@@ -218,15 +217,16 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 48;
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => SizedBox(
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Container(
         height: 48,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 18),
-          child: _ProfileTabs(
-            selected: selected,
-            pagePosition: pagePosition,
-            onChanged: onChanged,
-          ),
+        color: const Color(0xE6141820),
+        padding: const EdgeInsets.only(left: 18),
+        alignment: Alignment.centerLeft,
+        child: HomeBrushTabBar(
+          labels: const <String>['Aktiv', 'Bilgi'],
+          selected: selected,
+          indicatorProgress: pagePosition,
+          onChanged: onChanged,
         ),
       );
   @override
@@ -234,101 +234,6 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
       oldDelegate.selected != selected ||
       oldDelegate.pagePosition != pagePosition ||
       oldDelegate.onChanged != onChanged;
-}
-
-class _ProfileTabs extends StatelessWidget {
-  const _ProfileTabs({
-    required this.selected,
-    required this.pagePosition,
-    required this.onChanged,
-  });
-  final int selected;
-  final double pagePosition;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final double progress = pagePosition.clamp(0.0, 1.0);
-    return SizedBox(
-            width: 150,
-            height: 38,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                Positioned(
-                  left: 14 + (progress * 87),
-                  bottom: 8,
-                  width: 27,
-                  height: 8,
-                  child: const IgnorePointer(
-                    child: CustomPaint(painter: _ProfileTabIndicatorPainter()),
-                  ),
-                ),
-                Row(children: <Widget>[
-                  SizedBox(
-                    width: 55,
-                    child: _ProfileTabLabel(
-                      label: 'Aktiv',
-                      selected: selected == 0,
-                      onTap: () => onChanged(0),
-                    ),
-                  ),
-                  const SizedBox(width: 22),
-                  SizedBox(
-                    width: 73,
-                    child: _ProfileTabLabel(
-                      label: 'Bilgi',
-                      selected: selected == 1,
-                      onTap: () => onChanged(1),
-                    ),
-                  ),
-                ]),
-              ],
-            ),
-          );
-  }
-}
-
-class _ProfileTabLabel extends StatelessWidget {
-  const _ProfileTabLabel({required this.label, required this.selected, required this.onTap});
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Center(
-          child: Text(label,
-              style: TextStyle(
-                  color: selected ? Colors.white : Colors.white60,
-                  fontSize: 22,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
-        ),
-      );
-}
-
-class _ProfileTabIndicatorPainter extends CustomPainter {
-  const _ProfileTabIndicatorPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..shader = const LinearGradient(
-        colors: <Color>[Color(0xFFFFD54F), Color(0xFFFF7A00)],
-      ).createShader(Offset.zero & size)
-      ..strokeWidth = 3.5
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-    final Path path = Path()
-      ..moveTo(3, size.height * .62)
-      ..quadraticBezierTo(size.width * .28, size.height * .15, size.width * .55, size.height * .52)
-      ..quadraticBezierTo(size.width * .78, size.height * .82, size.width - 2, size.height * .48);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _ProfileTabIndicatorPainter oldDelegate) => false;
 }
 
 class _DynamicContent extends StatelessWidget {
