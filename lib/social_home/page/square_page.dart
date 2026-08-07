@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// Square page: parent tabs, child tabs, and brush indicator share Ana Sayfa's flow.
@@ -153,7 +154,7 @@ class _SquareCategoryBar extends StatelessWidget {
       );
 }
 
-class _SquareFeedPage extends StatelessWidget {
+class _SquareFeedPage extends StatefulWidget {
   const _SquareFeedPage({required this.latest});
   final bool latest;
 
@@ -185,12 +186,108 @@ class _SquareFeedPage extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) => ListView(
-        padding: const EdgeInsets.only(bottom: 100),
-        children: <Widget>[
-          ..._posts.reversed.toList().map((post) => _PostCard(post: post, latest: latest)),
-        ],
+  State<_SquareFeedPage> createState() => _SquareFeedPageState();
+}
+
+class _SquareFeedPageState extends State<_SquareFeedPage> {
+  final ScrollController _scrollController = ScrollController();
+  late final MockPagedData<_SquarePost> _pager;
+  late List<_SquarePost> _posts;
+  bool _loadingMore = false;
+  bool _noMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pager = MockPagedData<_SquarePost>(pageFactory: _fakePosts);
+    _posts = _pager.firstPage();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        color: const Color(0xFF20E0DE),
+        onRefresh: _refresh,
+        child: ListView.builder(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 100),
+          itemCount: _posts.length + (_loadingMore || _noMore ? 1 : 0),
+          itemBuilder: (_, int index) {
+            if (index == _posts.length) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 24),
+                child: Center(
+                  child: _loadingMore
+                      ? const SizedBox(
+                          width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('Daha fazla veri yok',
+                          style: TextStyle(color: Colors.white38, fontSize: 12)),
+                ),
+              );
+            }
+            return _PostCard(post: _posts[index], latest: widget.latest);
+          },
+        ),
       );
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refresh() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _posts = _pager.firstPage();
+      _noMore = false;
+    });
+  }
+
+  Future<void> _loadMore() async {
+    if (!_pager.hasMore) {
+      setState(() => _noMore = true);
+      return;
+    }
+    setState(() => _loadingMore = true);
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _posts = <_SquarePost>[..._posts, ..._pager.nextPage()];
+      _loadingMore = false;
+      _noMore = !_pager.hasMore;
+    });
+  }
+
+  List<_SquarePost> _fakePosts(int offset, int limit) =>
+      List<_SquarePost>.generate(limit, (int index) {
+        final _SquarePost base =
+            _SquareFeedPage._posts[(offset + index) % _SquareFeedPage._posts.length];
+        final int number = offset + index;
+        return _SquarePost(
+          author:
+              number < _SquareFeedPage._posts.length ? base.author : '${base.author} ${number + 1}',
+          avatar: base.avatar,
+          time: number == 0 ? base.time : '${number + 1}m ago',
+          text: base.text,
+          image: base.image,
+          likes: '${int.parse(base.likes) + number}',
+        );
+      });
 }
 
 /// The live-room recommendation strip belongs to the Square shell rather than
@@ -323,7 +420,7 @@ class _PostCard extends StatelessWidget {
       );
 }
 
-class _GuildListPage extends StatelessWidget {
+class _GuildListPage extends StatefulWidget {
   const _GuildListPage({required this.newest});
   final bool newest;
 
@@ -337,15 +434,107 @@ class _GuildListPage extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final List<_Guild> guilds = newest ? _guilds.reversed.toList() : _guilds;
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
-      itemCount: guilds.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (_, int index) => _GuildCard(guild: guilds[index]),
-    );
+  State<_GuildListPage> createState() => _GuildListPageState();
+}
+
+class _GuildListPageState extends State<_GuildListPage> {
+  final ScrollController _scrollController = ScrollController();
+  late final MockPagedData<_Guild> _pager;
+  late List<_Guild> _guilds;
+  bool _loadingMore = false;
+  bool _noMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pager = MockPagedData<_Guild>(pageFactory: _fakeGuilds);
+    _guilds = _pager.firstPage();
+    _scrollController.addListener(_onScroll);
   }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        color: const Color(0xFF20E0DE),
+        onRefresh: _refresh,
+        child: ListView.separated(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
+          itemCount: _guilds.length + (_loadingMore || _noMore ? 1 : 0),
+          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          itemBuilder: (_, int index) {
+            if (index == _guilds.length) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 22),
+                child: Center(
+                  child: _loadingMore
+                      ? const SizedBox(
+                          width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('Daha fazla veri yok',
+                          style: TextStyle(color: Colors.white38, fontSize: 12)),
+                ),
+              );
+            }
+            return _GuildCard(guild: _guilds[index]);
+          },
+        ),
+      );
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refresh() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _guilds = _pager.firstPage();
+      _noMore = false;
+    });
+  }
+
+  Future<void> _loadMore() async {
+    if (!_pager.hasMore) {
+      setState(() => _noMore = true);
+      return;
+    }
+    setState(() => _loadingMore = true);
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _guilds = <_Guild>[..._guilds, ..._pager.nextPage()];
+      _loadingMore = false;
+      _noMore = !_pager.hasMore;
+    });
+  }
+
+  List<_Guild> _fakeGuilds(int offset, int limit) => List<_Guild>.generate(limit, (int index) {
+        final int sourceIndex = (offset + index) % _GuildListPage._guilds.length;
+        final _Guild base = widget.newest
+            ? _GuildListPage._guilds.reversed.toList()[sourceIndex]
+            : _GuildListPage._guilds[sourceIndex];
+        final int number = offset + index;
+        return _Guild(
+          number < _GuildListPage._guilds.length ? base.name : '${base.name} ${number + 1}',
+          base.description,
+          base.members,
+          base.icon,
+        );
+      });
 }
 
 class _GuildCard extends StatelessWidget {

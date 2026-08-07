@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/social_home/data/mock_home_data.dart';
+import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/message_tab_page.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 import 'package:flutter_deer/social_home/widgets/newcomer_reward_dialog.dart';
 import 'package:flutter_deer/social_home/widgets/room_card.dart';
+import 'package:flutter_deer/social_home/widgets/rooms_banner.dart';
 import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
 
 class SocialHomePage extends StatefulWidget {
@@ -360,6 +362,7 @@ class _RoomsHomeTabState extends State<_RoomsHomeTab> {
           ),
         ),
         if (isFamily) const _HomeBanner(),
+        if (!isFamily) const RoomsBanner(),
         _CategoryBar(
           labels: subTabs,
           selected: subTabIndex,
@@ -423,16 +426,20 @@ class _FakeRoomListPage extends StatefulWidget {
 }
 
 class _FakeRoomListPageState extends State<_FakeRoomListPage> {
-  static const int _pageSize = 10;
   final ScrollController _scrollController = ScrollController();
+  late final MockPagedData<RoomModel> _pager;
   late List<RoomModel> _rooms;
   bool _loadingMore = false;
-  int _page = 1;
+  bool _noMore = false;
 
   @override
   void initState() {
     super.initState();
-    _rooms = MockHomeData.roomsForPage(widget.pageIndex, 0, _pageSize);
+    _pager = MockPagedData<RoomModel>(
+      pageFactory: (int offset, int limit) =>
+          MockHomeData.roomsForPage(widget.pageIndex, offset, limit),
+    );
+    _rooms = _pager.firstPage();
     _scrollController.addListener(_onScroll);
   }
 
@@ -466,13 +473,16 @@ class _FakeRoomListPageState extends State<_FakeRoomListPage> {
                     childAspectRatio: .91),
               ),
             ),
-            if (_loadingMore)
-              const SliverToBoxAdapter(
+            if (_loadingMore || _noMore)
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: 28),
+                  padding: const EdgeInsets.only(bottom: 28),
                   child: Center(
-                    child: SizedBox(
-                        width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2)),
+                    child: _loadingMore
+                        ? const SizedBox(
+                            width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Text('Daha fazla veri yok',
+                            style: TextStyle(color: Colors.white38, fontSize: 12)),
                   ),
                 ),
               ),
@@ -481,7 +491,7 @@ class _FakeRoomListPageState extends State<_FakeRoomListPage> {
       );
 
   void _onScroll() {
-    if (_scrollController.position.extentAfter < 220 && !_loadingMore) {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
       _loadMore();
     }
   }
@@ -492,23 +502,26 @@ class _FakeRoomListPageState extends State<_FakeRoomListPage> {
       return;
     }
     setState(() {
-      _page = 1;
-      _rooms = MockHomeData.roomsForPage(widget.pageIndex, 0, _pageSize);
+      _rooms = _pager.firstPage();
+      _noMore = false;
     });
   }
 
   Future<void> _loadMore() async {
+    if (!_pager.hasMore) {
+      setState(() => _noMore = true);
+      return;
+    }
     setState(() => _loadingMore = true);
     await Future<void>.delayed(const Duration(milliseconds: 650));
     if (!mounted) {
       return;
     }
-    final List<RoomModel> nextRooms =
-        MockHomeData.roomsForPage(widget.pageIndex, _page * _pageSize, _pageSize);
+    final List<RoomModel> nextRooms = _pager.nextPage();
     setState(() {
       _rooms = <RoomModel>[..._rooms, ...nextRooms];
-      _page++;
       _loadingMore = false;
+      _noMore = !_pager.hasMore;
     });
   }
 }

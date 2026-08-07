@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 
 /// Mesaj ve arkadaş içeriği.
@@ -103,16 +104,17 @@ class _ChatContent extends StatefulWidget {
 }
 
 class _ChatContentState extends State<_ChatContent> {
-  static const int _pageSize = 3;
   final ScrollController _scrollController = ScrollController();
+  late final MockPagedData<_ChatMessageData> _pager;
   late List<_ChatMessageData> _messages;
   bool _loadingMore = false;
-  int _page = 1;
+  bool _noMore = false;
 
   @override
   void initState() {
     super.initState();
-    _messages = _fakeMessages(0, _pageSize);
+    _pager = MockPagedData<_ChatMessageData>(pageFactory: _fakeMessages);
+    _messages = _pager.firstPage();
     _scrollController.addListener(_onScroll);
   }
 
@@ -132,17 +134,21 @@ class _ChatContentState extends State<_ChatContent> {
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 110),
-          itemCount: 1 + _messages.length + (_loadingMore ? 1 : 0),
+          itemCount: 1 + _messages.length + (_loadingMore || _noMore ? 1 : 0),
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
               return const _ProfileBanner();
             }
-            if (index == _messages.length + 1) {
-              return const Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 22),
+            if (index == _messages.length + 1 && (_loadingMore || _noMore)) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 22),
                 child: Center(
-                    child: SizedBox(
-                        width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))),
+                  child: _loadingMore
+                      ? const SizedBox(
+                          width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('Daha fazla veri yok',
+                          style: TextStyle(color: Colors.white38, fontSize: 12)),
+                ),
               );
             }
             return _MessageItem(data: _messages[index - 1]);
@@ -151,7 +157,7 @@ class _ChatContentState extends State<_ChatContent> {
       );
 
   void _onScroll() {
-    if (_scrollController.position.extentAfter < 220 && !_loadingMore) {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
       _loadMore();
     }
   }
@@ -162,21 +168,25 @@ class _ChatContentState extends State<_ChatContent> {
       return;
     }
     setState(() {
-      _page = 1;
-      _messages = _fakeMessages(0, _pageSize);
+      _messages = _pager.firstPage();
+      _noMore = false;
     });
   }
 
   Future<void> _loadMore() async {
+    if (!_pager.hasMore) {
+      setState(() => _noMore = true);
+      return;
+    }
     setState(() => _loadingMore = true);
     await Future<void>.delayed(const Duration(milliseconds: 650));
     if (!mounted) {
       return;
     }
     setState(() {
-      _messages = <_ChatMessageData>[..._messages, ..._fakeMessages(_page * _pageSize, _pageSize)];
-      _page++;
+      _messages = <_ChatMessageData>[..._messages, ..._pager.nextPage()];
       _loadingMore = false;
+      _noMore = !_pager.hasMore;
     });
   }
 
@@ -331,8 +341,19 @@ class _ChatMessageData {
   final String preview;
 }
 
-class _FriendContent extends StatelessWidget {
+class _FriendContent extends StatefulWidget {
   const _FriendContent();
+
+  @override
+  State<_FriendContent> createState() => _FriendContentState();
+}
+
+class _FriendContentState extends State<_FriendContent> {
+  final ScrollController _scrollController = ScrollController();
+  late final MockPagedData<_FriendData> _pager;
+  late List<_FriendData> _friends;
+  bool _loadingMore = false;
+  bool _noMore = false;
 
   static const List<String> _names = <String>[
     'Yıldız Rüyası',
@@ -366,16 +387,101 @@ class _FriendContent extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) => ListView.separated(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 110),
-        itemCount: _names.length,
-        separatorBuilder: (_, __) => Divider(height: 1, color: Colors.white.withOpacity(.06)),
-        itemBuilder: (_, int index) => _FriendItem(
-          name: _names[index],
-          avatar: _avatars[index % _avatars.length],
-          isMale: index.isEven,
+  void initState() {
+    super.initState();
+    _pager = MockPagedData<_FriendData>(pageFactory: _fakeFriends);
+    _friends = _pager.firstPage();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        color: const Color(0xFF20E0DE),
+        onRefresh: _refresh,
+        child: ListView.separated(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 110),
+          itemCount: _friends.length + (_loadingMore || _noMore ? 1 : 0),
+          separatorBuilder: (_, __) => Divider(height: 1, color: Colors.white.withOpacity(.06)),
+          itemBuilder: (_, int index) {
+            if (index == _friends.length) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 22),
+                child: Center(
+                  child: _loadingMore
+                      ? const SizedBox(
+                          width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('Daha fazla veri yok',
+                          style: TextStyle(color: Colors.white38, fontSize: 12)),
+                ),
+              );
+            }
+            final _FriendData friend = _friends[index];
+            return _FriendItem(name: friend.name, avatar: friend.avatar, isMale: friend.isMale);
+          },
         ),
       );
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refresh() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _friends = _pager.firstPage();
+      _noMore = false;
+    });
+  }
+
+  Future<void> _loadMore() async {
+    if (!_pager.hasMore) {
+      setState(() => _noMore = true);
+      return;
+    }
+    setState(() => _loadingMore = true);
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _friends = <_FriendData>[..._friends, ..._pager.nextPage()];
+      _loadingMore = false;
+      _noMore = !_pager.hasMore;
+    });
+  }
+
+  List<_FriendData> _fakeFriends(int offset, int limit) =>
+      List<_FriendData>.generate(limit, (int index) {
+        final int sourceIndex = (offset + index) % _names.length;
+        final int cycle = (offset + index) ~/ _names.length;
+        return _FriendData(
+          name: cycle == 0 ? _names[sourceIndex] : '${_names[sourceIndex]} ${cycle + 1}',
+          avatar: _avatars[sourceIndex % _avatars.length],
+          isMale: (offset + index).isEven,
+        );
+      });
+}
+
+class _FriendData {
+  const _FriendData({required this.name, required this.avatar, required this.isMale});
+  final String name;
+  final String avatar;
+  final bool isMale;
 }
 
 class _FriendItem extends StatelessWidget {

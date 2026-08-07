@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
+import 'package:flutter_deer/social_home/data/mock_paged_data.dart';
 import 'package:flutter_deer/social_home/page/profile_edit_page.dart';
 import 'package:flutter_deer/social_home/page/profile_settings_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
@@ -238,33 +239,158 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
 
 class _DynamicContent extends StatelessWidget {
   const _DynamicContent();
+
   @override
-  Widget build(BuildContext context) =>
-      ListView(padding: const EdgeInsets.all(20), children: const <Widget>[
-        _ContentCard(
-            icon: Icons.emoji_emotions_outlined,
-            title: 'Aktivitelerime hoş geldin',
-            body: 'Henüz aktivite yok. İlk paylaşımını yapabilirsin.'),
-        _ContentCard(
-            icon: Icons.auto_awesome,
-            title: 'Yeni başlayan görevi tamamlandı',
-            body: '1 yeni başlangıç rozeti kazandın.'),
-      ]);
+  Widget build(BuildContext context) => const _ProfilePagedContent(
+        items: <_ProfileListItem>[
+          _ProfileListItem(
+              icon: Icons.emoji_emotions_outlined,
+              title: 'Aktivitelerime hoş geldin',
+              body: 'Henüz aktivite yok. İlk paylaşımını yapabilirsin.'),
+          _ProfileListItem(
+              icon: Icons.auto_awesome,
+              title: 'Yeni başlayan görevi tamamlandı',
+              body: '1 yeni başlangıç rozeti kazandın.'),
+        ],
+      );
 }
 
 class _ProfileContent extends StatelessWidget {
   const _ProfileContent();
+
   @override
-  Widget build(BuildContext context) =>
-      ListView(padding: const EdgeInsets.all(20), children: const <Widget>[
-        Text('Profil bilgileri',
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
-        SizedBox(height: 14),
-        _ContentCard(
-            icon: Icons.location_on_outlined,
-            title: 'Guangdong',
-            body: 'Konum bilgisi henüz tamamlanmadı'),
-      ]);
+  Widget build(BuildContext context) => const _ProfilePagedContent(
+        title: 'Profil bilgileri',
+        items: <_ProfileListItem>[
+          _ProfileListItem(
+              icon: Icons.location_on_outlined,
+              title: 'Guangdong',
+              body: 'Konum bilgisi henüz tamamlanmadı'),
+        ],
+      );
+}
+
+class _ProfilePagedContent extends StatefulWidget {
+  const _ProfilePagedContent({this.title, required this.items});
+  final String? title;
+  final List<_ProfileListItem> items;
+
+  @override
+  State<_ProfilePagedContent> createState() => _ProfilePagedContentState();
+}
+
+class _ProfilePagedContentState extends State<_ProfilePagedContent> {
+  final ScrollController _scrollController = ScrollController();
+  late final MockPagedData<_ProfileListItem> _pager;
+  late List<_ProfileListItem> _items;
+  bool _loadingMore = false;
+  bool _noMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pager = MockPagedData<_ProfileListItem>(pageFactory: _fakeItems);
+    _items = _pager.firstPage();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        color: const Color(0xFF20E0DE),
+        onRefresh: _refresh,
+        child: ListView.builder(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
+          itemCount:
+              (widget.title == null ? 0 : 1) + _items.length + (_loadingMore || _noMore ? 1 : 0),
+          itemBuilder: (_, int index) {
+            if (widget.title != null && index == 0) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 14),
+                child: Text(widget.title!,
+                    style: const TextStyle(
+                        color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+              );
+            }
+            final int contentIndex = index - (widget.title == null ? 0 : 1);
+            if (contentIndex == _items.length) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 22),
+                child: Center(
+                  child: _loadingMore
+                      ? const SizedBox(
+                          width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('Daha fazla veri yok',
+                          style: TextStyle(color: Colors.white38, fontSize: 12)),
+                ),
+              );
+            }
+            final _ProfileListItem item = _items[contentIndex];
+            return _ContentCard(icon: item.icon, title: item.title, body: item.body);
+          },
+        ),
+      );
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 220 && !_loadingMore && !_noMore) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _refresh() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _items = _pager.firstPage();
+      _noMore = false;
+    });
+  }
+
+  Future<void> _loadMore() async {
+    if (!_pager.hasMore) {
+      setState(() => _noMore = true);
+      return;
+    }
+    setState(() => _loadingMore = true);
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _items = <_ProfileListItem>[..._items, ..._pager.nextPage()];
+      _loadingMore = false;
+      _noMore = !_pager.hasMore;
+    });
+  }
+
+  List<_ProfileListItem> _fakeItems(int offset, int limit) =>
+      List<_ProfileListItem>.generate(limit, (int index) {
+        final _ProfileListItem base = widget.items[(offset + index) % widget.items.length];
+        final int number = offset + index;
+        return _ProfileListItem(
+          icon: base.icon,
+          title: number < widget.items.length ? base.title : '${base.title} ${number + 1}',
+          body: base.body,
+        );
+      });
+}
+
+class _ProfileListItem {
+  const _ProfileListItem({required this.icon, required this.title, required this.body});
+  final IconData icon;
+  final String title;
+  final String body;
 }
 
 class _ContentCard extends StatelessWidget {
