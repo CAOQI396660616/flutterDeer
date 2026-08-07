@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_deer/social_home/data/mock_home_data.dart';
 import 'package:flutter_deer/social_home/models/room_model.dart';
 import 'package:flutter_deer/social_home/page/profile_tab_page.dart';
+import 'package:flutter_deer/social_home/page/square_page.dart';
 import 'package:flutter_deer/social_home/widgets/home_bottom_bar.dart';
 import 'package:flutter_deer/social_home/widgets/home_top_bar.dart';
 import 'package:flutter_deer/social_home/widgets/newcomer_reward_dialog.dart';
@@ -193,6 +194,9 @@ class _SocialHomePageState extends State<SocialHomePage> with WidgetsBindingObse
 
   Widget _buildBody(int bottomIndex) {
     if (bottomIndex != 0) {
+      if (bottomIndex == 1) {
+        return const SquarePage();
+      }
       if (bottomIndex == 3) {
         return const ProfileTabPage();
       }

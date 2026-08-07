@@ -138,9 +138,9 @@ class _ProfileTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   _ProfileTabHeaderDelegate({required this.controller});
   final TabController controller;
   @override
-  double get minExtent => 52;
+  double get minExtent => 48;
   @override
-  double get maxExtent => 52;
+  double get maxExtent => 48;
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Container(
         color: const Color(0xE6141820),
