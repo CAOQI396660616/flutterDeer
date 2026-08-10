@@ -15,7 +15,7 @@ class WebViewPage extends StatefulWidget {
 
   final String title;
   final String url;
-  
+
   @override
   _WebViewPageState createState() => _WebViewPageState();
 }
