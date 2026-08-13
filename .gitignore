@@ -77,3 +77,18 @@ lib/generated_plugin_registrant.dart
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 /ios/build/
+
+
+
+
+# Documentation
+project_docs/
+*.kotlin
+*.vscode
+.trae
+.trae_tmp/
+# Trae debugger artifacts
+.dbg/
+debug-*.md
+#忽略中间temp
+.*/
