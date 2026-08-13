@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/models/login_user.dart';
 import 'package:flutter_deer/login/page/complete_profile_gender_page.dart';
 import 'package:flutter_deer/login/store/login_user_store.dart';
 import 'package:flutter_deer/login/widgets/remote_avatar.dart';
-import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
+import 'package:flutter_deer/routers/fluro_navigator.dart';
 import 'package:flutter_deer/social_home/data/user_assets.dart';
+import 'package:flutter_deer/social_home/widgets/welcome_lottie_animation.dart';
 import 'package:lottie/lottie.dart';
 
 /// Hiplay social sign-in page.
@@ -123,6 +125,18 @@ class _LoginPageState extends State<LoginPage> {
                         _TermsAgreement(
                           accepted: _acceptedTerms,
                           onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: () => NavigatorUtils.push(context, LoginRouter.voiceVibeLoginPage),
+                          icon: const Icon(Icons.auto_awesome_outlined, size: 18),
+                          label: const Text('体验 VoiceVibe 登录设计'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: const Color(0x33211A33),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            shape: const StadiumBorder(),
+                          ),
                         ),
                       ],
                     ),

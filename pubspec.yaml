@@ -75,6 +75,7 @@ dependencies:
   scratcher: ^2.5.0
   # 动画效果 https://github.com/xvrh/lottie-flutter
   lottie: ^3.3.0
+  flutter_svg: ^2.0.17
   video_player: ^2.9.5
   win32: 5.15.0
 
@@ -118,6 +119,7 @@ flutter:
     - assets/images/order/
     - assets/images/order/dark/
     - assets/images/login/
+    - assets/images/login/voice_vibe/
     - assets/images/login_social/
     - assets/images/goods/
     - assets/images/shop/
