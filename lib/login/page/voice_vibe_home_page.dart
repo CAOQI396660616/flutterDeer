@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/login/data/voice_vibe_home_data.dart';
+import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/models/voice_vibe_home_model.dart';
+import 'package:flutter_deer/routers/fluro_navigator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// VoiceVibe 声浪首页。
@@ -57,6 +59,10 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
   /// 切换底部导航栏。
   void _selectTab(int index) {
     if (_selectedTabIndex == index) {
+      return;
+    }
+    if (index == 1) {
+      NavigatorUtils.push(context, LoginRouter.voiceVibeDiscoverPage);
       return;
     }
     setState(() => _selectedTabIndex = index);
