@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_deer/login/login_router.dart';
+import 'package:flutter_deer/routers/fluro_navigator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// VoiceVibe 声浪登录页。
@@ -63,7 +65,7 @@ class _VoiceVibeLoginPageState extends State<VoiceVibeLoginPage> {
     _startCountdown();
   }
 
-  /// 校验本地演示输入，并反馈登录演示结果。
+  /// 校验本地演示输入，通过后进入 VoiceVibe 首页。
   void _submitLogin() {
     if (!_acceptedTerms) {
       _showMessage('请先阅读并同意用户协议和隐私政策');
@@ -73,7 +75,7 @@ class _VoiceVibeLoginPageState extends State<VoiceVibeLoginPage> {
       _showMessage('请输入手机号码和验证码');
       return;
     }
-    _showMessage('登录演示已提交');
+    NavigatorUtils.push(context, LoginRouter.voiceVibeHomePage);
   }
 
   /// 显示页面内轻量反馈，避免演示操作静默失败。

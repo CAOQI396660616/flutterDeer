@@ -6,6 +6,7 @@ import 'page/register_page.dart';
 import 'page/reset_password_page.dart';
 import 'page/sms_login_page.dart';
 import 'page/update_password_page.dart';
+import 'page/voice_vibe_home_page.dart';
 import 'page/voice_vibe_login_page.dart';
 
 
@@ -17,6 +18,7 @@ class LoginRouter implements IRouterProvider{
   static String resetPasswordPage = '/login/resetPassword';
   static String updatePasswordPage = '/login/updatePassword';
   static String voiceVibeLoginPage = '/login/voiceVibe';
+  static String voiceVibeHomePage = '/login/voiceVibe/home';
   
   @override
   void initRouter(FluroRouter router) {
@@ -26,6 +28,7 @@ class LoginRouter implements IRouterProvider{
     router.define(resetPasswordPage, handler: Handler(handlerFunc: (_, __) => const ResetPasswordPage()));
     router.define(updatePasswordPage, handler: Handler(handlerFunc: (_, __) => const UpdatePasswordPage()));
     router.define(voiceVibeLoginPage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeLoginPage()));
+    router.define(voiceVibeHomePage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeHomePage()));
   }
   
 }
