@@ -61,12 +61,18 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
     if (_selectedTabIndex == index) {
       return;
     }
-    if (index == 1) {
-      NavigatorUtils.push(context, LoginRouter.voiceVibeDiscoverPage);
-      return;
+    switch (index) {
+      case 1:
+        NavigatorUtils.push(context, LoginRouter.voiceVibeDiscoverPage);
+        return;
+      case 2:
+        NavigatorUtils.push(context, LoginRouter.voiceVibeMessagePage);
+        return;
+      case 3:
+        NavigatorUtils.push(context, LoginRouter.voiceVibeProfilePage);
+        return;
     }
     setState(() => _selectedTabIndex = index);
-    _showMessage('${_bottomTabs[index].label}功能暂未配置');
   }
 
   /// 显示页面内轻量反馈，避免演示操作静默失败。

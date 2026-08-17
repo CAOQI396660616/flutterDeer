@@ -9,6 +9,8 @@ import 'page/update_password_page.dart';
 import 'page/voice_vibe_discover_page.dart';
 import 'page/voice_vibe_home_page.dart';
 import 'page/voice_vibe_login_page.dart';
+import 'page/voice_vibe_message_page.dart';
+import 'page/voice_vibe_profile_page.dart';
 
 
 class LoginRouter implements IRouterProvider{
@@ -21,6 +23,8 @@ class LoginRouter implements IRouterProvider{
   static String voiceVibeLoginPage = '/login/voiceVibe';
   static String voiceVibeHomePage = '/login/voiceVibe/home';
   static String voiceVibeDiscoverPage = '/login/voiceVibe/discover';
+  static String voiceVibeMessagePage = '/login/voiceVibe/messages';
+  static String voiceVibeProfilePage = '/login/voiceVibe/profile';
   
   @override
   void initRouter(FluroRouter router) {
@@ -32,6 +36,8 @@ class LoginRouter implements IRouterProvider{
     router.define(voiceVibeLoginPage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeLoginPage()));
     router.define(voiceVibeHomePage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeHomePage()));
     router.define(voiceVibeDiscoverPage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeDiscoverPage()));
+    router.define(voiceVibeMessagePage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeMessagePage()));
+    router.define(voiceVibeProfilePage, handler: Handler(handlerFunc: (_, __) => const VoiceVibeProfilePage()));
   }
   
 }
