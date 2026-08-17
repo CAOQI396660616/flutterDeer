@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/login/data/voice_vibe_discover_data.dart';
+import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/models/voice_vibe_discover_model.dart';
+import 'package:flutter_deer/login/page/voice_vibe_live_room_page.dart';
+import 'package:flutter_deer/login/widgets/voice_vibe_bottom_navigation_bar.dart';
+import 'package:flutter_deer/routers/fluro_navigator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// VoiceVibe 声浪发现页。
@@ -29,6 +33,7 @@ class _VoiceVibeDiscoverPageState extends State<VoiceVibeDiscoverPage> {
   static const String _assetDir = 'assets/images/login/voice_vibe';
 
   int _selectedChipIndex = 0;
+  static const int _selectedTabIndex = 1;
 
   @override
   void initState() {
@@ -52,6 +57,32 @@ class _VoiceVibeDiscoverPageState extends State<VoiceVibeDiscoverPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _selectTab(int index) {
+    if (index == _selectedTabIndex) {
+      return;
+    }
+    final String? target = <int, String>{
+      0: LoginRouter.voiceVibeHomePage,
+      2: LoginRouter.voiceVibeMessagePage,
+      3: LoginRouter.voiceVibeProfilePage,
+    }[index];
+    if (target != null) {
+      NavigatorUtils.push(context, target, replace: true);
+    }
+  }
+
+  void _openRoom(VoiceVibeDiscoverGridCard card) {
+    NavigatorUtils.push(
+      context,
+      VoiceVibeLiveRoomPage.routePath(
+        title: card.title,
+        coverAsset: card.coverAsset,
+        hostName: card.hostLine.replaceFirst('Host: ', '').split(' · ').first,
+        listenerLabel: card.hostLine.split(' · ').last,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: _backgroundColor,
@@ -66,6 +97,10 @@ class _VoiceVibeDiscoverPageState extends State<VoiceVibeDiscoverPage> {
               _buildHostsSection(),
             ],
           ),
+        ),
+        bottomNavigationBar: VoiceVibeBottomNavigationBar(
+          currentIndex: _selectedTabIndex,
+          onTap: _selectTab,
         ),
       );
 
@@ -140,18 +175,15 @@ class _VoiceVibeDiscoverPageState extends State<VoiceVibeDiscoverPage> {
                         Expanded(
                           child: _TrendingGridCard(
                             card: VoiceVibeDiscoverData.trendingCards[row * 2],
-                            onTap: () => _showMessage(
-                              '即将进入「${VoiceVibeDiscoverData.trendingCards[row * 2].title}」',
-                            ),
+                            onTap: () => _openRoom(VoiceVibeDiscoverData.trendingCards[row * 2]),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _TrendingGridCard(
                             card: VoiceVibeDiscoverData.trendingCards[row * 2 + 1],
-                            onTap: () => _showMessage(
-                              '即将进入「${VoiceVibeDiscoverData.trendingCards[row * 2 + 1].title}」',
-                            ),
+                            onTap: () =>
+                                _openRoom(VoiceVibeDiscoverData.trendingCards[row * 2 + 1]),
                           ),
                         ),
                       ],

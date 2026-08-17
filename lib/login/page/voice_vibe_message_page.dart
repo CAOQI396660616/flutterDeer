@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/login/data/voice_vibe_message_data.dart';
+import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/models/voice_vibe_message_model.dart';
+import 'package:flutter_deer/login/widgets/voice_vibe_bottom_navigation_bar.dart';
+import 'package:flutter_deer/routers/fluro_navigator.dart';
 
 /// VoiceVibe 声浪消息页。
 ///
@@ -16,14 +19,12 @@ class VoiceVibeMessagePage extends StatefulWidget {
 
 class _VoiceVibeMessagePageState extends State<VoiceVibeMessagePage> {
   static const Color _backgroundColor = Color(0xFFFEF7FF);
-  static const Color _primaryColor = Color(0xFF6750A4);
-  static const Color _surfaceColor = Color(0xFFF7F2FA);
   static const Color _outlineColor = Color(0xFFE7E0EC);
   static const Color _onSurfaceColor = Color(0xFF1C1B1F);
   static const Color _secondaryTextColor = Color(0xFF49454F);
   static const Color _liveColor = Color(0xFFFF0055);
 
-  static const String _assetDir = 'assets/images/login/voice_vibe';
+  static const int _selectedTabIndex = 2;
 
   @override
   void initState() {
@@ -38,6 +39,20 @@ class _VoiceVibeMessagePageState extends State<VoiceVibeMessagePage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _selectTab(int index) {
+    if (index == _selectedTabIndex) {
+      return;
+    }
+    final String? target = <int, String>{
+      0: LoginRouter.voiceVibeHomePage,
+      1: LoginRouter.voiceVibeDiscoverPage,
+      3: LoginRouter.voiceVibeProfilePage,
+    }[index];
+    if (target != null) {
+      NavigatorUtils.push(context, target, replace: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: _backgroundColor,
@@ -50,6 +65,10 @@ class _VoiceVibeMessagePageState extends State<VoiceVibeMessagePage> {
               _buildMessageList(),
             ],
           ),
+        ),
+        bottomNavigationBar: VoiceVibeBottomNavigationBar(
+          currentIndex: _selectedTabIndex,
+          onTap: _selectTab,
         ),
       );
 
@@ -70,8 +89,7 @@ class _VoiceVibeMessagePageState extends State<VoiceVibeMessagePage> {
         child: Column(
           children: <Widget>[
             for (int i = 0; i < VoiceVibeMessageData.messages.length; i++) ...[
-              if (i > 0)
-                const Divider(height: 1, indent: 68, color: _outlineColor),
+              if (i > 0) const Divider(height: 1, indent: 68, color: _outlineColor),
               _MessageItem(
                 message: VoiceVibeMessageData.messages[i],
                 onTap: () => _showMessage(
@@ -123,9 +141,7 @@ class _MessageItem extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            message.unreadCount > 99
-                                ? '99+'
-                                : '${message.unreadCount}',
+                            message.unreadCount > 99 ? '99+' : '${message.unreadCount}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 9,
@@ -160,8 +176,7 @@ class _MessageItem extends StatelessWidget {
                         Text(
                           message.timeLabel,
                           style: const TextStyle(
-                            color:
-                                _VoiceVibeMessagePageState._secondaryTextColor,
+                            color: _VoiceVibeMessagePageState._secondaryTextColor,
                             fontSize: 12,
                           ),
                         ),
@@ -173,8 +188,7 @@ class _MessageItem extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color:
-                            _VoiceVibeMessagePageState._secondaryTextColor,
+                        color: _VoiceVibeMessagePageState._secondaryTextColor,
                         fontSize: 13,
                       ),
                     ),

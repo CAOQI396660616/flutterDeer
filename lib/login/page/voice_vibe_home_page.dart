@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_deer/login/data/voice_vibe_home_data.dart';
 import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/models/voice_vibe_home_model.dart';
+import 'package:flutter_deer/login/page/voice_vibe_live_room_page.dart';
+import 'package:flutter_deer/login/widgets/voice_vibe_bottom_navigation_bar.dart';
 import 'package:flutter_deer/routers/fluro_navigator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -30,14 +32,6 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
 
   static const String _assetDir = 'assets/images/login/voice_vibe';
 
-  /// 底部导航项配置，图标与文案同 Figma 节点 `3:178`。
-  static const List<_BottomTabData> _bottomTabs = <_BottomTabData>[
-    _BottomTabData(label: '首页', iconAsset: '$_assetDir/voice_vibe_tab_home.svg'),
-    _BottomTabData(label: '发现', iconAsset: '$_assetDir/voice_vibe_tab_compass.svg'),
-    _BottomTabData(label: '消息', iconAsset: '$_assetDir/voice_vibe_tab_message.svg'),
-    _BottomTabData(label: '我的', iconAsset: '$_assetDir/voice_vibe_tab_user.svg'),
-  ];
-
   int _selectedCategoryIndex = 0;
   int _selectedTabIndex = 0;
 
@@ -63,16 +57,33 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
     }
     switch (index) {
       case 1:
-        NavigatorUtils.push(context, LoginRouter.voiceVibeDiscoverPage);
+        NavigatorUtils.push(context, LoginRouter.voiceVibeDiscoverPage, replace: true);
         return;
       case 2:
-        NavigatorUtils.push(context, LoginRouter.voiceVibeMessagePage);
+        NavigatorUtils.push(context, LoginRouter.voiceVibeMessagePage, replace: true);
         return;
       case 3:
-        NavigatorUtils.push(context, LoginRouter.voiceVibeProfilePage);
+        NavigatorUtils.push(context, LoginRouter.voiceVibeProfilePage, replace: true);
         return;
     }
     setState(() => _selectedTabIndex = index);
+  }
+
+  void _openRoom({
+    required String title,
+    required String coverAsset,
+    required String hostName,
+    required String listenerLabel,
+  }) {
+    NavigatorUtils.push(
+      context,
+      VoiceVibeLiveRoomPage.routePath(
+        title: title,
+        coverAsset: coverAsset,
+        hostName: hostName,
+        listenerLabel: listenerLabel,
+      ),
+    );
   }
 
   /// 显示页面内轻量反馈，避免演示操作静默失败。
@@ -196,7 +207,12 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
                   final VoiceVibeLiveRoom room = VoiceVibeHomeData.featuredRooms[index];
                   return _FeaturedLiveCard(
                     room: room,
-                    onTap: () => _showMessage('即将进入「${room.title}」'),
+                    onTap: () => _openRoom(
+                      title: room.title,
+                      coverAsset: room.coverAsset,
+                      hostName: room.hostName,
+                      listenerLabel: room.listenerLabel,
+                    ),
                   );
                 },
               ),
@@ -224,7 +240,12 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _RecommendRoomItem(
                   room: room,
-                  onTap: () => _showMessage('即将进入「${room.title}」'),
+                  onTap: () => _openRoom(
+                    title: room.title,
+                    coverAsset: room.avatarAsset,
+                    hostName: room.hostName,
+                    listenerLabel: room.listenerLabel.replaceFirst(' 在听', ''),
+                  ),
                 ),
               ),
           ],
@@ -251,37 +272,10 @@ class _VoiceVibeHomePageState extends State<VoiceVibeHomePage> {
         ),
       );
 
-  Widget _buildBottomNavigationBar() => Container(
-        decoration: const BoxDecoration(
-          color: _surfaceColor,
-          border: Border(top: BorderSide(color: Color(0x0F000000))),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                for (int index = 0; index < _bottomTabs.length; index++)
-                  _BottomTabItem(
-                    data: _bottomTabs[index],
-                    selected: index == _selectedTabIndex,
-                    onTap: () => _selectTab(index),
-                  ),
-              ],
-            ),
-          ),
-        ),
+  Widget _buildBottomNavigationBar() => VoiceVibeBottomNavigationBar(
+        currentIndex: _selectedTabIndex,
+        onTap: _selectTab,
       );
-}
-
-/// 底部导航项配置数据。
-class _BottomTabData {
-  const _BottomTabData({required this.label, required this.iconAsset});
-
-  final String label;
-  final String iconAsset;
 }
 
 /// 顶部圆形图标按钮，用于搜索和通知入口。
@@ -353,9 +347,7 @@ class _CategoryTab extends StatelessWidget {
               width: 16,
               height: 3,
               decoration: BoxDecoration(
-                color: selected
-                    ? _VoiceVibeHomePageState._primaryColor
-                    : Colors.transparent,
+                color: selected ? _VoiceVibeHomePageState._primaryColor : Colors.transparent,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -663,64 +655,6 @@ class _WaveformIndicator extends StatelessWidget {
                 ),
               ),
           ],
-        ),
-      );
-}
-
-/// 底部导航单项，选中态展示胶囊背景。
-class _BottomTabItem extends StatelessWidget {
-  const _BottomTabItem({
-    required this.data,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final _BottomTabData data;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-        button: true,
-        selected: selected,
-        label: data.label,
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: HitTestBehavior.opaque,
-          child: SizedBox(
-            width: 64,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(
-                  width: 48,
-                  height: 32,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? _VoiceVibeHomePageState._secondaryContainerColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Opacity(
-                    opacity: selected ? 1 : 0.6,
-                    child: SvgPicture.asset(data.iconAsset, width: 22, height: 22),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  data.label,
-                  style: TextStyle(
-                    color: selected
-                        ? _VoiceVibeHomePageState._primaryColor
-                        : _VoiceVibeHomePageState._onSurfaceColor.withOpacity(0.6),
-                    fontSize: 12,
-                    fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       );
 }

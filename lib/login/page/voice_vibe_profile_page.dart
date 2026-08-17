@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_deer/login/data/voice_vibe_profile_data.dart';
+import 'package:flutter_deer/login/login_router.dart';
 import 'package:flutter_deer/login/models/voice_vibe_profile_model.dart';
+import 'package:flutter_deer/login/widgets/voice_vibe_bottom_navigation_bar.dart';
+import 'package:flutter_deer/routers/fluro_navigator.dart';
 
 /// VoiceVibe 声浪「我的」页面。
 ///
@@ -23,7 +26,7 @@ class _VoiceVibeProfilePageState extends State<VoiceVibeProfilePage> {
   static const Color _onSurfaceColor = Color(0xFF1C1B1F);
   static const Color _secondaryTextColor = Color(0xFF49454F);
 
-  static const String _assetDir = 'assets/images/login/voice_vibe';
+  static const int _selectedTabIndex = 3;
 
   @override
   void initState() {
@@ -36,6 +39,20 @@ class _VoiceVibeProfilePageState extends State<VoiceVibeProfilePage> {
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _selectTab(int index) {
+    if (index == _selectedTabIndex) {
+      return;
+    }
+    final String? target = <int, String>{
+      0: LoginRouter.voiceVibeHomePage,
+      1: LoginRouter.voiceVibeDiscoverPage,
+      2: LoginRouter.voiceVibeMessagePage,
+    }[index];
+    if (target != null) {
+      NavigatorUtils.push(context, target, replace: true);
+    }
   }
 
   @override
@@ -53,6 +70,10 @@ class _VoiceVibeProfilePageState extends State<VoiceVibeProfilePage> {
             ],
           ),
         ),
+        bottomNavigationBar: VoiceVibeBottomNavigationBar(
+          currentIndex: _selectedTabIndex,
+          onTap: _selectTab,
+        ),
       );
 
   Widget _buildProfileHeader() => Padding(
@@ -66,8 +87,7 @@ class _VoiceVibeProfilePageState extends State<VoiceVibeProfilePage> {
                 height: 64,
                 fit: BoxFit.cover,
                 semanticLabel: '${VoiceVibeProfileData.userName} 头像',
-                errorBuilder: (_, __, ___) =>
-                    const SizedBox(width: 64, height: 64),
+                errorBuilder: (_, __, ___) => const SizedBox(width: 64, height: 64),
               ),
             ),
             const SizedBox(width: 16),
@@ -107,8 +127,7 @@ class _VoiceVibeProfilePageState extends State<VoiceVibeProfilePage> {
                   ),
                   decoration: BoxDecoration(
                     color: _secondaryContainerColor,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(100)),
+                    borderRadius: const BorderRadius.all(Radius.circular(100)),
                   ),
                   child: const Text(
                     '编辑',
@@ -146,9 +165,7 @@ class _VoiceVibeProfilePageState extends State<VoiceVibeProfilePage> {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: <Widget>[
-            for (int i = 0;
-                i < VoiceVibeProfileData.menuItems.length;
-                i++) ...[
+            for (int i = 0; i < VoiceVibeProfileData.menuItems.length; i++) ...[
               if (i > 0)
                 const Divider(
                   height: 1,
@@ -219,8 +236,7 @@ class _ProfileMenuItem extends StatelessWidget {
                   width: 28,
                   height: 28,
                   semanticLabel: '${item.label}图标',
-                  errorBuilder: (_, __, ___) =>
-                      const SizedBox(width: 28, height: 28),
+                  errorBuilder: (_, __, ___) => const SizedBox(width: 28, height: 28),
                 ),
               ),
               const SizedBox(width: 16),
@@ -247,8 +263,7 @@ class _ProfileMenuItem extends StatelessWidget {
               Icon(
                 Icons.chevron_right,
                 size: 20,
-                color:
-                    _VoiceVibeProfilePageState._secondaryTextColor,
+                color: _VoiceVibeProfilePageState._secondaryTextColor,
               ),
             ],
           ),
